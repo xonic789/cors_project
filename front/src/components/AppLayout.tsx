@@ -13,9 +13,14 @@ const AppLayoutWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  padding-bottom: 100px;
 `;
 const MenuWrapper = styled.div`
-  margin-top: auto;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
 `;
 const MenuList = styled.ul`
   display: flex;
