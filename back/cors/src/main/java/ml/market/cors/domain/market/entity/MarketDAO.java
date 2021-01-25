@@ -17,8 +17,9 @@ public class MarketDAO {
     private Long market_id;
 
 
-
-    private MemberDAO member_id;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private MemberDAO member;
 
 
     @Column(name = "name")

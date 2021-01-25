@@ -15,6 +15,8 @@ public class Blacklist_TokenDAO {
     @Column(name = "hash")
     private String hash;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
     private MemberDAO member_id;
 
     @Column(name = "expire_date")

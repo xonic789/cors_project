@@ -25,4 +25,5 @@ public class CountDAO {
 
     @Column(name = "wish_count")
     private Integer wish_count;
+
 }

@@ -12,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name="member")
-@Getter()
+@Getter
 @NoArgsConstructor
 public class MemberDAO {
     @Id
@@ -43,6 +43,10 @@ public class MemberDAO {
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
+    }
+
+    public void createMember(String email){
+        this.email=email;
     }
 
 }

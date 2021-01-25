@@ -19,7 +19,7 @@ public class Book_CategoryDAO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cid;
 
-    @OneToMany(mappedBy = "cid")
+    @OneToMany(mappedBy = "category")
     private List<ArticleDAO> articles = new ArrayList<>();
 
     @Column(name = "one_depth")
