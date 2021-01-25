@@ -174,7 +174,7 @@ class ArticleServiceImplTest {
         em.flush();
         em.clear();
 
-        ArticleDAO result1 = articleService.findOne(articleDAO1.getArticle_id());
+        ArticleDAO result1 = articleService.findOne(articleDAO1.getArticle_id());         
         ArticleDAO result2 = articleService.findOne(articleDAO2.getArticle_id());
         ArticleDAO result3 = articleService.findOne(articleDAO3.getArticle_id());
 
