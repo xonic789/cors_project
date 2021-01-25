@@ -4,14 +4,20 @@ import styled from 'styled-components';
 import LoginForm from './LoginForm';
 import SocialLogin from './SocialLogin';
 
-const Positioner = styled.div`
-  width: 600px;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+const Wrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+`;
+
+const Layout = styled.div`
+  width: 100%;
+  max-width: 600px;
+  min-width: 300px;
+  height: 100vh;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
 `;
 
@@ -19,47 +25,50 @@ const TitleBox = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 36px;
+  margin-bottom: 2em;
 `;
 
 const Logo = styled.img`
-  width: 70px;
-  height: 70px;
+  width: 10vw;
+  height: 10vw;
 `;
 
 const Title = styled.h1`
-  font-size: 76px;
+  font-size: 10vw;
   color: #3162C7;
 `;
 
 const LinkBox = styled.div`
-  width: 90%;
+  width: 19em;
+  font-size: 4vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 38px;
+  margin-bottom: 2em;
 `;
 
 const StyledLink = styled(Link)`
-  font-size: 26px;
   font-weight: 500;
+  text-decoration: none;
   color: #707070;
 `;
 
 function Login():JSX.Element {
   return (
-    <Positioner>
-      <TitleBox>
-        <Logo />
-        <Title>코스마켓</Title>
-      </TitleBox>
-      <LoginForm />
-      <LinkBox>
-        <StyledLink to="/join">회원가입</StyledLink>
-        <StyledLink to="/main">비회원 둘러보기</StyledLink>
-      </LinkBox>
-      <SocialLogin />
-    </Positioner>
+    <Wrapper>
+      <Layout>
+        <TitleBox>
+          <Logo />
+          <Title>코스마켓</Title>
+        </TitleBox>
+        <LoginForm />
+        <LinkBox>
+          <StyledLink to="/join">회원가입</StyledLink>
+          <StyledLink to="/main">비회원 둘러보기</StyledLink>
+        </LinkBox>
+        <SocialLogin />
+      </Layout>
+    </Wrapper>
   );
 }
 

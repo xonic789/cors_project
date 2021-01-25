@@ -1,23 +1,27 @@
 import React from 'react';
 import styled from 'styled-components';
+import facebookLogo from './images/logo_facebook.png';
+import googleLogo from './images/logo_google.png';
+import kakaoLogo from './images/logo_kakao.png';
 
 const SocialLoginBox = styled.div`
-  width: 348px;
+  width: 11em;
+  font-size: 4.5vw;
   display: flex;
   justify-content: space-between;
 `;
 
 const SocialItem = styled.img`
-  width: 80px;
-  height: 80px;
+  width: 2.5em;
+  height: 2.5em;
 `;
 
 function SocialLogin():JSX.Element {
   return (
     <SocialLoginBox>
-      <SocialItem />
-      <SocialItem />
-      <SocialItem />
+      <SocialItem src={facebookLogo} />
+      <SocialItem src={googleLogo} />
+      <SocialItem src={kakaoLogo} />
     </SocialLoginBox>
   );
 }

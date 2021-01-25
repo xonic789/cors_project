@@ -2,39 +2,42 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const Form = styled.form`
-  width: 100%;
+  width: 90%;
   display: flex;
   flex-direction: column;
+  align-items: center;
 `;
 
 const InputBox = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 54.9px;
+  align-items: center;
+  margin-bottom: 1.8em;
 `;
 
 const Input = styled.input`
-  width: 100%;
-  font-size: 30px;
-  padding: 23px 35px;
+  width: 18em;
+  font-size: 4.5vw;
+  padding: 0.8em 1.3em;
   outline: none;
   border: 2px solid #3162C7;
   border-radius: 8px;
   &:not(:last-child) {
-    margin-bottom: 38px;
+    margin-bottom: 1em;
   }
 `;
 
 const Button = styled.button`
+  width: 18em;
   text-align: center;
-  padding: 27px 0;
+  padding: 1em 0;
   background: #6F96E9;
   color: #FFF;
-  font-size: 30px;
+  font-size: 4.5vw;
   border: none;
   border-radius: 200px;
   outline: none;
-  margin-bottom: 33.1px;
+  margin-bottom: 1.2em;
 `;
 
 function LoginForm():JSX.Element {
