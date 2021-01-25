@@ -15,5 +15,5 @@ public class image_infoDAO {
     private String image3;
 
     @Enumerated(EnumType.STRING)
-    private DivisionEnum image_division;
+    private Division image_division;
 }

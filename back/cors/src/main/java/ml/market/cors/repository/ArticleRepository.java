@@ -23,7 +23,7 @@ public class ArticleRepository {
     }
 
     public List<ArticleDAO> findAll(){
-        return em.createQuery("select a from ArticleDAO a")
+        return em.createQuery("select a from ArticleDAO a",ArticleDAO.class)
                 .getResultList();
     }
 

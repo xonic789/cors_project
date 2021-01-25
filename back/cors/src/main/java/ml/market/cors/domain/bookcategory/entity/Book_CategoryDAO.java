@@ -16,8 +16,11 @@ import java.util.List;
 public class Book_CategoryDAO {
     @Id
     @Column(name = "cid")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long cid;
+
+    public Book_CategoryDAO(Long cid) {
+        this.cid = cid;
+    }
 
     @OneToMany(mappedBy = "category")
     private List<ArticleDAO> articles = new ArrayList<>();
