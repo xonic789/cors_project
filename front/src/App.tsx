@@ -11,6 +11,7 @@ function App():JSX.Element {
             <Route path="/" exact component={Login} />
           </Switch>
         </BrowserRouter>
+        <a href="/oauth2/authorization/google">sample button</a>
       </div>
     </div>
   );
