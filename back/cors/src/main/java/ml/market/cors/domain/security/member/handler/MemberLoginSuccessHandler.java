@@ -1,7 +1,9 @@
 package ml.market.cors.domain.security.member.handler;
 
+import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
+import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.util.CookieManagement;
 import ml.market.cors.domain.util.JwtTokenManagement;
@@ -66,6 +68,9 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         long member_id =  (long) authentication.getPrincipal();
         List memberRoles = (List)authentication.getAuthorities();
         Map claims = getClaimsMap(TokenAttribute.ACCESS_TOKEN, member_id, memberRoles);
+        //List tt = (List)claims.get(TokenAttribute.MEMBER_ROLE);
+        //MemberGrantAuthority d = ((MemberGrantAuthority)tt.get(0));
+
         String accessToken = (String) claims.get(TOKEN_CLAIM_NAME);
         claims = getClaimsMap(TokenAttribute.REFRESH_TOKEN, member_id, memberRoles);
         String refreshToken = (String) claims.get(TOKEN_CLAIM_NAME);

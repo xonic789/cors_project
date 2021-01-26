@@ -11,6 +11,6 @@ public class MemberGrantAuthority implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return memberRole.getRole();
+        return "ROLE_ADMIN";
     }
 }

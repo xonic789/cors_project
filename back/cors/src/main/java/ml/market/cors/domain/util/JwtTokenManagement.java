@@ -31,7 +31,7 @@ public class JwtTokenManagement {
 
     private final Blacklist_TokenRepository blacklist_tokenRepository;
 
-    @Scheduled(fixedDelay = 1000 * 60 * 15)
+    @Scheduled(fixedDelay = 1000 * 60 * 2)
     private void cleaner(){
         Date nowDate = new Date();
         Long expireDate;
@@ -294,7 +294,7 @@ public class JwtTokenManagement {
 
         headers = setHeader();
         expireDate = createExpireDate(TokenAttribute.ACCESS_EXPIRETIME);
-        paramClaims = setClaim((long)claims.get(TokenAttribute.ID_CLAIM));
+        paramClaims = setClaim(((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue());
         if(accessToken == null) {
             accessToken = new StringBuilder();
         }

@@ -9,4 +9,9 @@ public class MainController {
     public String login(){
         return "hell";
     }
+
+    @PostMapping("/t")
+    public String t(){
+        return "t";
+    }
 }

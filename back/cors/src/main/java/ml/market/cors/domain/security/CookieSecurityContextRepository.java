@@ -1,7 +1,9 @@
 package ml.market.cors.domain.security;
 
+import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
+import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.util.CookieManagement;
 import ml.market.cors.domain.util.JwtTokenManagement;
@@ -22,22 +24,21 @@ import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Optional;
+import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class CookieSecurityContextRepository implements SecurityContextRepository {
-    @Autowired
-    private JwtTokenManagement mJwtTokenManagement;
+    private final JwtTokenManagement mJwtTokenManagement;
 
-    @Autowired
-    private TokenInfoRepository mTokenInfoRepo;
+    private final TokenInfoRepository mTokenInfoRepo;
 
-    @Autowired
-    private Blacklist_TokenRepository mBlacklistTokenInfoRepo;
+    private final Blacklist_TokenRepository mBlacklistTokenInfoRepo;
 
-    @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
 
     private boolean isBlacklistToken(String token, Cookie[] cookies, HttpServletResponse res) {
         if (mJwtTokenManagement.isBlackList(token.toString()) == false) {
@@ -130,11 +131,15 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
             }
         }
 
-        long member_id = (long) claims.get(TokenAttribute.ID_CLAIM);
+        Long member_id = ((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue();
         Optional<MemberDAO> optional = memberRepository.findById(member_id);
         MemberDAO memberDAO = optional.get();
-        MemberRole memberRole = (MemberRole) claims.get(TokenAttribute.MEMBER_ROLE);
-        JwtCertificationToken authToken = new JwtCertificationToken(memberDAO.getEmail(), memberRole);
+        List memberRoles = (List) claims.get(TokenAttribute.MEMBER_ROLE);
+
+        List list = new LinkedList();
+        list.add(new MemberGrantAuthority(MemberRole.ROLE_ADMIN));
+
+        JwtCertificationToken authToken = new JwtCertificationToken(memberDAO.getEmail(), list);
         securityContext.setAuthentication(authToken);
         return securityContext;
     }

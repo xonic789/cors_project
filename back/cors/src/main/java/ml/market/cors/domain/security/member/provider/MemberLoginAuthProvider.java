@@ -34,7 +34,7 @@ public class MemberLoginAuthProvider implements AuthenticationProvider {
         }
 
         String orgPasswd =  memberDAO.getPassword();
-        if(orgPasswd.equals(passwd)){
+        if(!orgPasswd.equals(passwd)){
             throw new BadCredentialsException(passwd);
         }
 
