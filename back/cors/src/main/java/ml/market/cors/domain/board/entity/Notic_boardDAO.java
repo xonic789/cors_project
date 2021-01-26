@@ -1,5 +1,7 @@
 package ml.market.cors.domain.board.entity;
 
+import ml.market.cors.domain.member.entity.MemberDAO;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
