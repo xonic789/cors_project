@@ -1,6 +1,6 @@
 package ml.market.cors.domain.article.entity;
 
-public enum DivisionEnum {
+public enum Division {
     SALES,
     PURCHASE
 }

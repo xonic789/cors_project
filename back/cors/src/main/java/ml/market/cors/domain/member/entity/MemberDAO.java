@@ -15,7 +15,7 @@ import java.util.List;
 
 @Entity
 @Table(name="member")
-@Getter()
+@Getter
 @NoArgsConstructor
 public class MemberDAO implements UserDetails{
     @Id
@@ -60,6 +60,7 @@ public class MemberDAO implements UserDetails{
         return null;
     }
 
+
     @Override
     public boolean isAccountNonExpired() {
         return false;
@@ -78,6 +79,9 @@ public class MemberDAO implements UserDetails{
     @Override
     public boolean isEnabled() {
         return false;
+
+    public void createMember(String email){
+        this.email=email;
     }
 
 }

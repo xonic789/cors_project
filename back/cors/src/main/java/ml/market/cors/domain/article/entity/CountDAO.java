@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class CountDAO {
     @Column(name = "chat_count")
-    private Integer chat_count;
+    private int chat_count;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +21,9 @@ public class CountDAO {
 
 
     @Column(name = "views")
-    private Integer views;
+    private int views;
 
     @Column(name = "wish_count")
-    private Integer wish_count;
+    private int wish_count;
+
 }

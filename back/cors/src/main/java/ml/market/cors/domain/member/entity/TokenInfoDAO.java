@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
+import ml.market.cors.domain.member.entity.MemberDAO;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
