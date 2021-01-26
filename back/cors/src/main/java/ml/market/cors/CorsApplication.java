@@ -8,9 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-@EntityScan("ml.market.cors.domain")
-@EnableJpaRepositories("ml.market.cors.repository")
-@SpringBootApplication(scanBasePackages={"ml.market.cors"})
+@SpringBootApplication
 @EnableTransactionManagement
 @EnableScheduling
 public class CorsApplication {

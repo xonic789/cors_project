@@ -2,10 +2,9 @@ package ml.market.cors.domain.article.service;
 
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.article.entity.ArticleDAO;
-import ml.market.cors.domain.article.entity.CountDAO;
 import ml.market.cors.domain.article.entity.Progress;
-import ml.market.cors.repository.ArticleRepository;
-import ml.market.cors.repository.CountRepository;
+import ml.market.cors.repository.article.ArticleRepository;
+import ml.market.cors.repository.article.CountRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

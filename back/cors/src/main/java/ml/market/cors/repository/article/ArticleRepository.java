@@ -1,4 +1,4 @@
-package ml.market.cors.repository;
+package ml.market.cors.repository.article;
 
 
 import lombok.RequiredArgsConstructor;

@@ -7,3 +7,4 @@ import org.springframework.stereotype.Repository;
 @Repository("blacklistTokenRepository")
 public interface Blacklist_TokenRepository extends JpaRepository<Blacklist_TokenDAO, String> {
 }
+

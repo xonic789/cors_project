@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "tokenInfo")
+@Table(name = "token_info")
 @NoArgsConstructor
 @Getter
 public class TokenInfoDAO {

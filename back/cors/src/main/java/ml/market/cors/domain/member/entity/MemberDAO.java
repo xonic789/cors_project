@@ -79,7 +79,7 @@ public class MemberDAO implements UserDetails{
     @Override
     public boolean isEnabled() {
         return false;
-
+    }
     public void createMember(String email){
         this.email=email;
     }

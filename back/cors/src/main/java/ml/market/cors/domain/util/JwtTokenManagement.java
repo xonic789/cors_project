@@ -2,6 +2,7 @@ package ml.market.cors.domain.util;
 
 import io.jsonwebtoken.*;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.Blacklist_TokenDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
@@ -23,12 +24,12 @@ import java.security.Key;
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenManagement {
-    @Qualifier("tokenInfoRepository")
-    private TokenInfoRepository tokenInfoRepository;
 
-    @Qualifier("blacklistTokenRepository")
-    private Blacklist_TokenRepository blacklist_tokenRepository;
+    private final TokenInfoRepository tokenInfoRepository;
+
+    private final Blacklist_TokenRepository blacklist_tokenRepository;
 
     @Scheduled(fixedDelay = 1000 * 60 * 15)
     private void cleaner(){
