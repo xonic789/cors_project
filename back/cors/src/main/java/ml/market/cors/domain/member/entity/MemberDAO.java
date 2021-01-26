@@ -2,11 +2,14 @@ package ml.market.cors.domain.member.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
+import ml.market.cors.domain.security.member.role.MemberRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -14,17 +17,17 @@ import java.util.List;
 @Table(name="member")
 @Getter
 @NoArgsConstructor
-public class MemberDAO {
+public class MemberDAO implements UserDetails{
     @Id
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long member_id;
+    private long member_id;
 
     @Column(name = "email")
     private String email;
 
-    @Column(name = "role")
-    private String role;
+    @Enumerated(EnumType.STRING)
+    private MemberRole role;
 
     @Column(name = "passwd")
     private String password;
@@ -33,17 +36,49 @@ public class MemberDAO {
     private String address;
 
     @Column(name = "latitude")
-    private Integer latitude;
+    private int latitude;
 
-    @Column(name = "longtitude")
-    private Integer longtitude;
+    @Column(name = "longitude")
+    private int longitude;
 
     @Column(name = "nickname")
     private String nickname;
 
+    @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        List grants = new LinkedList();
+        grants.add(new MemberGrantAuthority(this.role));
+        return grants;
+    }
+
+    public MemberDAO(Long member_id) {
+        this.member_id = member_id;
+    }
+
+    @Override
+    public String getUsername() {
         return null;
     }
+
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
 
     public void createMember(String email){
         this.email=email;
