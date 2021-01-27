@@ -29,6 +29,11 @@ public class MemberLoginAuthProvider implements AuthenticationProvider {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
+    private boolean comparePassword(String reqPassword, String password) {
+        boolean bResult = bCryptPasswordEncoder.matches(reqPassword, password);
+        return bResult;
+    }
+
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String email = (String) authentication.getPrincipal();
@@ -40,8 +45,9 @@ public class MemberLoginAuthProvider implements AuthenticationProvider {
         }
 
         String orgPasswd =  memberDAO.getPassword();
-        if(!orgPasswd.equals(passwd)){
-            throw new BadCredentialsException(passwd);
+        boolean bResult = comparePassword(passwd, orgPasswd);
+        if(!bResult) {
+            throw new BadCredentialsException(email);
         }
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(memberDAO.getMember_id(), passwd, memberDAO.getAuthorities());

@@ -11,6 +11,10 @@ public class JwtCertificationToken implements Authentication {
 
     private List roles;
 
+    public JwtCertificationToken(String email) {
+        this.email = email;
+    }
+
     public JwtCertificationToken(String email, List roles) {
         this.email = email;
         this.roles = roles;
@@ -33,7 +37,7 @@ public class JwtCertificationToken implements Authentication {
 
     @Override
     public Object getPrincipal() {
-        return this.email;
+        return this;
     }
 
     @Override

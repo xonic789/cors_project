@@ -1,27 +1,21 @@
 package ml.market.cors.domain.security.member.handler;
 
-import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
-import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
-import ml.market.cors.domain.security.member.role.MemberRole;
-import ml.market.cors.domain.util.CookieManagement;
-import ml.market.cors.domain.util.JwtTokenManagement;
-import ml.market.cors.domain.util.TokenAttribute;
-import ml.market.cors.domain.util.eCookie;
+import ml.market.cors.domain.util.cookie.CookieManagement;
+import ml.market.cors.domain.util.token.JwtTokenManagement;
+import ml.market.cors.domain.util.token.TokenAttribute;
+import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.util.*;
 
 public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {

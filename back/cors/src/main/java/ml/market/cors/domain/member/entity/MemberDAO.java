@@ -55,6 +55,16 @@ public class MemberDAO implements UserDetails{
         this.member_id = member_id;
     }
 
+    public MemberDAO(String email, MemberRole role, String password, String address, int latitude, int longitude, String nickname) {
+        this.email = email;
+        this.role = role;
+        this.password = password;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.nickname = nickname;
+    }
+
     @Override
     public String getUsername() {
         return null;

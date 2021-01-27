@@ -1,4 +1,4 @@
-package ml.market.cors.domain.util;
+package ml.market.cors.domain.util.token;
 
 public class TokenAttribute {
     public static final String ID_CLAIM= "id";

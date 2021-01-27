@@ -1,23 +1,20 @@
-package ml.market.cors.domain.util;
+package ml.market.cors.domain.util.token;
 
 import io.jsonwebtoken.*;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.Blacklist_TokenDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
+import ml.market.cors.domain.util.cookie.CookieManagement;
+import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.repository.member.Blacklist_TokenRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
