@@ -10,10 +10,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
-@Component
-@RequiredArgsConstructor
 public class MemberLoginAuthService implements UserDetailsService {
-    private final MemberRepository memberRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
     private MemberDAO findByEmail(String email) {
         MemberDAO memberDAO = null;

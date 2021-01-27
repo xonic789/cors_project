@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.Blacklist_TokenDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
+import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
+import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.repository.member.Blacklist_TokenRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -205,14 +207,13 @@ public class JwtTokenManagement {
     }
 
     public void deleteAllTokenDB(String accessToken, String refreshToken) {
-        String errMsg;
         boolean result = true;
-        if(accessToken != null){
+        if(accessToken != null && !accessToken.equals("")){
             if(insertBlackList(accessToken, TokenAttribute.ACCESS_TOKEN) == false){
                 result = false;
             }
         }
-        if(refreshToken != null){
+        if(refreshToken != null && !refreshToken.equals("")){
             if(insertBlackList(refreshToken, TokenAttribute.REFRESH_TOKEN) == false){
                 result = false;
             }
@@ -227,7 +228,7 @@ public class JwtTokenManagement {
 
     public String refresh(Cookie[] cookies, HttpServletResponse res) {
         Cookie cook = CookieManagement.search(TokenAttribute.ACCESS_TOKEN, cookies);
-        StringBuilder accessToken = null;
+        StringBuilder accessToken = new StringBuilder();
         if(cook != null){
             accessToken = new StringBuilder(cook.getValue());
         }
@@ -249,8 +250,9 @@ public class JwtTokenManagement {
         Map headers = null;
         Map paramClaims = null;
         eCookie cookAttr;
+        TokenInfoDAO tokenInfoDAO = null;
         if(claims == null) {
-            TokenInfoDAO tokenInfoDAO = getTokenInfo(refreshToken.toString());
+            tokenInfoDAO = getTokenInfo(refreshToken.toString());
             if (tokenInfoDAO == null) {
                 deleteAllTokenDB(accessToken.toString(), refreshToken.toString());
                 CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
@@ -260,7 +262,10 @@ public class JwtTokenManagement {
 
             headers = setHeader();
             long member_id = tokenInfoDAO.getMember_id().getMember_id();
-            paramClaims = setClaim(member_id);
+            MemberRole memberRole = tokenInfoDAO.getMember_id().getRole();
+            List memberRoles = new LinkedList();
+            memberRoles.add(new MemberGrantAuthority(memberRole));
+            paramClaims = setClaim(member_id, memberRoles);
             refreshToken.delete(0, refreshToken.length());
             expireDate = createExpireDate(TokenAttribute.REFRESH_EXPIRETIME);
             refreshToken.append(create(expireDate, headers, paramClaims));
@@ -294,10 +299,8 @@ public class JwtTokenManagement {
 
         headers = setHeader();
         expireDate = createExpireDate(TokenAttribute.ACCESS_EXPIRETIME);
-        paramClaims = setClaim(((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue());
-        if(accessToken == null) {
-            accessToken = new StringBuilder();
-        }
+        List memberRoles = (List) claims.get(TokenAttribute.MEMBER_ROLE);
+        paramClaims = setClaim(((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue(), memberRoles);
         accessToken.delete(0, accessToken.length());
         accessToken.append(create(expireDate, headers, paramClaims));
         if(accessToken.toString() == null){
@@ -333,8 +336,9 @@ public class JwtTokenManagement {
         tokenInfoRepository.save(insertDAO);
     }
 
-    private Map setClaim(long id){
+    private Map setClaim(long id, List memberRoles){
         Map claims = new HashMap();
+        claims.put(TokenAttribute.MEMBER_ROLE, memberRoles);
         claims.put(TokenAttribute.ID_CLAIM, id);
         claims.put(TokenAttribute.IAT_CLAIM, System.currentTimeMillis());
         return claims;

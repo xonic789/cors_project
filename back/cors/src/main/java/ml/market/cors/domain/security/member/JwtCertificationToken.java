@@ -1,15 +1,9 @@
 package ml.market.cors.domain.security.member;
 
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import ml.market.cors.domain.security.member.role.CustomGrantAuthority;
-import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
-import ml.market.cors.domain.security.member.role.MemberRole;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 public class JwtCertificationToken implements Authentication {
@@ -24,9 +18,7 @@ public class JwtCertificationToken implements Authentication {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List grants = new LinkedList<GrantedAuthority>();
-        grants.add(new CustomGrantAuthority());
-        return grants;
+        return roles;
     }
 
     @Override

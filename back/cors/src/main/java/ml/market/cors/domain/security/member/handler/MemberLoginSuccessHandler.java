@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.*;
 
-@Component
 public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     @Autowired
     private TokenInfoRepository tokenInfoRepository;
@@ -68,9 +67,6 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         long member_id =  (long) authentication.getPrincipal();
         List memberRoles = (List)authentication.getAuthorities();
         Map claims = getClaimsMap(TokenAttribute.ACCESS_TOKEN, member_id, memberRoles);
-        //List tt = (List)claims.get(TokenAttribute.MEMBER_ROLE);
-        //MemberGrantAuthority d = ((MemberGrantAuthority)tt.get(0));
-
         String accessToken = (String) claims.get(TOKEN_CLAIM_NAME);
         claims = getClaimsMap(TokenAttribute.REFRESH_TOKEN, member_id, memberRoles);
         String refreshToken = (String) claims.get(TOKEN_CLAIM_NAME);
