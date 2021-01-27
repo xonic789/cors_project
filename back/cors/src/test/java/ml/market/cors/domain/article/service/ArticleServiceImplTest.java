@@ -1,8 +1,8 @@
 package ml.market.cors.domain.article.service;
 
-import ml.market.cors.domain.article.entity.ArticleDAO;
-import ml.market.cors.domain.article.entity.Division;
-import ml.market.cors.domain.article.entity.Progress;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.enums.Division;
+import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
@@ -45,7 +45,7 @@ class ArticleServiceImplTest {
         articleService.saveArticle(articleDAO);
 
         //then
-        assertEquals(articleDAO.getArticle_id(),articleService.findOne(articleDAO.getArticle_id()).getArticle_id());
+        assertEquals(articleDAO.getArticle_id(),articleService.findById(articleDAO.getArticle_id()).getArticle_id());
     }
 
     @Test
@@ -105,7 +105,7 @@ class ArticleServiceImplTest {
         ArticleDAO articleDAO1 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
                 LocalDateTime.now(), book_categoryDAO1, 10000, Division.PURCHASE);
         articleService.saveArticle(articleDAO1);
-        ArticleDAO findArticle = articleService.findOne(articleDAO1.getArticle_id());
+        ArticleDAO findArticle = articleService.findById(articleDAO1.getArticle_id());
 
 
         //when
@@ -122,7 +122,7 @@ class ArticleServiceImplTest {
         em.flush();
         em.clear();
 
-        ArticleDAO resultArticle = articleService.findOne(articleDAO1.getArticle_id());
+        ArticleDAO resultArticle = articleService.findById(articleDAO1.getArticle_id());
 
         //then
         assertEquals(findArticle,resultArticle);
@@ -162,9 +162,9 @@ class ArticleServiceImplTest {
 
         //when
 
-        ArticleDAO findArticle1 = articleService.findOne(articleDAO1.getArticle_id());
-        ArticleDAO findArticle2 = articleService.findOne(articleDAO2.getArticle_id());
-        ArticleDAO findArticle3 = articleService.findOne(articleDAO3.getArticle_id());
+        ArticleDAO findArticle1 = articleService.findById(articleDAO1.getArticle_id());
+        ArticleDAO findArticle2 = articleService.findById(articleDAO2.getArticle_id());
+        ArticleDAO findArticle3 = articleService.findById(articleDAO3.getArticle_id());
 
         articleService.updateArticleProgress(findArticle1.getArticle_id(),progress1);
         articleService.updateArticleProgress(findArticle2.getArticle_id(),progress2);
@@ -173,9 +173,9 @@ class ArticleServiceImplTest {
         em.flush();
         em.clear();
 
-        ArticleDAO result1 = articleService.findOne(articleDAO1.getArticle_id());         
-        ArticleDAO result2 = articleService.findOne(articleDAO2.getArticle_id());
-        ArticleDAO result3 = articleService.findOne(articleDAO3.getArticle_id());
+        ArticleDAO result1 = articleService.findById(articleDAO1.getArticle_id());
+        ArticleDAO result2 = articleService.findById(articleDAO2.getArticle_id());
+        ArticleDAO result3 = articleService.findById(articleDAO3.getArticle_id());
 
 
 

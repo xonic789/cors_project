@@ -1,4 +1,4 @@
-package ml.market.cors.domain.article.entity;
+package ml.market.cors.domain.article.entity.enums;
 
 
 

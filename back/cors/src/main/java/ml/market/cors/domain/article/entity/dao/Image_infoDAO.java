@@ -1,10 +1,12 @@
-package ml.market.cors.domain.article.entity;
+package ml.market.cors.domain.article.entity.dao;
+
+import ml.market.cors.domain.article.entity.enums.Division;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "image_info")
-public class image_infoDAO {
+public class Image_infoDAO {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "index_id")

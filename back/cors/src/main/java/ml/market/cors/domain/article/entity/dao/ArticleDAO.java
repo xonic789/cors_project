@@ -1,9 +1,10 @@
-package ml.market.cors.domain.article.entity;
+package ml.market.cors.domain.article.entity.dao;
 
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import ml.market.cors.domain.article.entity.enums.Division;
+import ml.market.cors.domain.article.entity.enums.Progress;
+import ml.market.cors.domain.article.service.ArticleForm;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
@@ -15,7 +16,6 @@ import java.util.Objects;
 @Table(name="article")
 @Getter
 @NoArgsConstructor
-@ToString
 public class ArticleDAO {
     @Id
     @Column(name = "article_id")
@@ -28,6 +28,9 @@ public class ArticleDAO {
 
     @Column(name = "content")
     private String content;
+
+    @Column(name = "title")
+    private String title;
 
     @Column(name = "rprice")
     private int rprice;
@@ -77,21 +80,29 @@ public class ArticleDAO {
         this.member = member;
     }
 
-    public static ArticleDAO createArticle (MemberDAO memberDAO, String content,
-                              int rprice, LocalDateTime write_date,
-                              Book_CategoryDAO category, int tprice, Division division){
 
-        return new ArticleDAO(new CountDAO(),content,rprice,write_date,Progress.POSTING,category,tprice,division,memberDAO);
-    }
-
-    public void updateArticle(String content, int rprice, LocalDateTime write_date,
-                              Progress progress,int tprice, Division division) {
+    public ArticleDAO(String content, int rprice, LocalDateTime write_date, Progress progress, int tprice, Division division) {
         this.content = content;
         this.rprice = rprice;
         this.write_date = write_date;
         this.progress = progress;
         this.tprice = tprice;
         this.division = division;
+    }
+
+    public static ArticleDAO createArticle (MemberDAO memberDAO, String content,
+                                            int rprice, LocalDateTime write_date,
+                                            Book_CategoryDAO category, int tprice, Division division){
+
+        return new ArticleDAO(new CountDAO(),content,rprice,write_date,Progress.POSTING,category,tprice,division,memberDAO);
+    }
+
+    public void updateArticle(ArticleForm articleForm) {
+        this.content = articleForm.getContent();
+        this.rprice = articleForm.getRprice();
+        this.progress = articleForm.getProgress();
+        this.tprice = articleForm.getTprice();
+        this.division = articleForm.getDivision();
     }
 
     public void updateProgress(Progress progress){

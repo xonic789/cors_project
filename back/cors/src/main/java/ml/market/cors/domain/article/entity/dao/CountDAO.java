@@ -1,8 +1,7 @@
-package ml.market.cors.domain.article.entity;
+package ml.market.cors.domain.article.entity.dao;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ml.market.cors.domain.article.entity.ArticleDAO;
 
 import javax.persistence.*;
 

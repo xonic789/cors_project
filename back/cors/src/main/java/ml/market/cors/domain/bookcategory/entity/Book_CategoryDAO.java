@@ -1,9 +1,10 @@
 package ml.market.cors.domain.bookcategory.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ml.market.cors.domain.article.entity.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Table(name="book_category")
-@Getter()
+@Getter
 @NoArgsConstructor
 public class Book_CategoryDAO {
     @Id
@@ -22,6 +23,7 @@ public class Book_CategoryDAO {
         this.cid = cid;
     }
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<ArticleDAO> articles = new ArrayList<>();
 

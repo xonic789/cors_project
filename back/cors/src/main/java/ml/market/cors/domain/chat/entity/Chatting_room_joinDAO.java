@@ -1,6 +1,6 @@
 package ml.market.cors.domain.chat.entity;
 
-import ml.market.cors.domain.article.entity.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;

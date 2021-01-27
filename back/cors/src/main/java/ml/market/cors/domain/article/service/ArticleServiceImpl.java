@@ -1,14 +1,18 @@
 package ml.market.cors.domain.article.service;
 
 import lombok.RequiredArgsConstructor;
-import ml.market.cors.domain.article.entity.ArticleDAO;
-import ml.market.cors.domain.article.entity.Progress;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dto.ArticleDTO;
+import ml.market.cors.domain.article.entity.enums.Division;
+import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
+import ml.market.cors.repository.article.query.ArticleQueryRepository;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -17,6 +21,7 @@ public class ArticleServiceImpl implements ArticleService{
 
     private final ArticleRepository articleRepository;
     private final CountRepository countRepository;
+    private final ArticleQueryRepository articleQueryRepository;
 
     @Override
     public void saveArticle(ArticleDAO articleDAO){
@@ -25,15 +30,20 @@ public class ArticleServiceImpl implements ArticleService{
     }
 
     @Override
-    public ArticleDAO findOne(Long id){
-        return articleRepository.findOne(id);
+    public ArticleDAO findById(Long id){
+        return articleRepository.findById(id).get();
     }
+
+    /**
+     * 게시물 수정
+     * @param article_id
+     * @param articleForm
+     */
 
     @Override
     public void updateArticle(Long article_id,ArticleForm articleForm) {
-        ArticleDAO findArticle = articleRepository.findOne(article_id);
-        findArticle.updateArticle(articleForm.getContent(), articleForm.getRprice(),
-                LocalDateTime.now(),articleForm.getProgress(),articleForm.getTprice(),articleForm.getDivision());
+        ArticleDAO findArticle = findById(article_id);
+        findArticle.updateArticle(articleForm);
     }
 
     /**
@@ -45,7 +55,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     public void updateArticleProgress(Long article_id,String progress){
         String upperCase = progress.toUpperCase();
-        ArticleDAO findArticle = articleRepository.findOne(article_id);
+        ArticleDAO findArticle = findById(article_id);
         if(upperCase != null && upperCase.equals(Progress.TRADING.toString())){
             findArticle.updateProgress(Progress.TRADING);
         }else if(upperCase != null && upperCase.equals(Progress.COMPLETED.toString())){
@@ -55,6 +65,11 @@ public class ArticleServiceImpl implements ArticleService{
         }
     }
 
+    @Override
+    public List<ArticleDTO> findByDivision(Division division, Pageable pageable) {
+        return articleQueryRepository.findByDivision(division,pageable);
+
+    }
 
 
 }
