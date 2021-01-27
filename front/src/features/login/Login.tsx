@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import LoginForm from './LoginForm';
+import JoinForm from './JoinForm';
 import SocialLogin from './SocialLogin';
 
 const Wrapper = styled.div`
@@ -54,6 +55,21 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
+  const [inputState, setInputState] = useState<string>('login');
+
+  const onClickInputsHanler = () => {
+    switch (inputState) {
+      case ('login'):
+        setInputState('join');
+        break;
+      case ('join'):
+        setInputState('login');
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <Wrapper>
       <Layout>
@@ -61,10 +77,10 @@ function Login():JSX.Element {
           <Logo />
           <Title>코스마켓</Title>
         </TitleBox>
-        <LoginForm />
+        {inputState === 'login' ? <LoginForm /> : <JoinForm />}
         <LinkBox>
-          <StyledLink to="/join">회원가입</StyledLink>
-          <StyledLink to="/main">비회원 둘러보기</StyledLink>
+          <StyledLink to="/" onClick={onClickInputsHanler}>{inputState === 'login' ? '회원가입' : '로그인'}</StyledLink>
+          <StyledLink to="/home">비회원 둘러보기</StyledLink>
         </LinkBox>
         <SocialLogin />
       </Layout>

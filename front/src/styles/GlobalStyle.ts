@@ -5,8 +5,6 @@ const GlobalStyle = createGlobalStyle`
   ${reset}
   * {
     box-sizing: border-box;
-    padding: 0;
-    margin: 0;
   }
 `;
 
