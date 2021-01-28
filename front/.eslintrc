@@ -48,4 +48,19 @@
     "linebreak-style": "off",
     "no-param-reassign": "off"
   }
+  /*"@typescript-eslint/ban-types": ["error",
+    {
+        "types": {
+            "String": false,
+            "Boolean": false,
+            "Number": false,
+            "Symbol": false,
+            "{}": true,
+            "Object": false,
+            "object": false,
+            "Function": false
+        },
+        "extendDefaults": true
+    }
+  ]*/
 }
