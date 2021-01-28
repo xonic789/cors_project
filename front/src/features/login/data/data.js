@@ -1,7 +1,7 @@
 const token = {
   data: {
-    accessToken: 'asdasdasdasdsadasdas',
-    refreshToken: 'asdasdasdasdasdasdasd',
+    accessToken: 'asdasdasdasdasdas',
+    refreshToken: 'dasdasdasdasdasd',
   },
 };
 

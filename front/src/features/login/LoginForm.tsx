@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import cookie from 'react-cookies';
 import styled from 'styled-components';
-import token from './data/data';
+import { useDispatch } from 'react-redux';
+import { postLogin } from './LoginSlice';
 
 const Form = styled.form`
-  width: 90%;
+  width: 90vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -23,9 +23,9 @@ const Input = styled.input`
   font-size: 4.5vw;
   padding: 0.8em 1.3em;
   outline: none;
-  border: 2px solid rgba(49, 98, 199, 0.5);
+  border: 2px solid #3162C788;
   border-radius: 8px;
-  box-shadow: 5px 5px 10px rgba(49, 98, 199, 0.5);
+  box-shadow: 5px 5px 10px #3162C755;
   &:not(:last-child) {
     margin-bottom: 1em;
   }
@@ -46,8 +46,8 @@ const Button = styled.button`
 `;
 
 interface inputForm {
-  email:string,
-  passwd:string
+  email: string,
+  passwd: string
 }
 
 const LoginForm:React.FC = () => {
@@ -55,7 +55,11 @@ const LoginForm:React.FC = () => {
     email: '',
     passwd: '',
   });
-
+  const [loginState, setLoginState] = useState({
+    logined: false,
+    user: {},
+  });
+  const dispatch = useDispatch();
   const history = useHistory();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,54 +71,15 @@ const LoginForm:React.FC = () => {
   };
 
   const onLogin = (e:React.FormEvent<HTMLFormElement>) => {
-    const emailRegExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-
-    const isEmail = (text: string) => text.match(emailRegExp);
-    const isSpace = (text: string) => text === '';
-
-    const { email, passwd } = inputs;
     e.preventDefault();
-    if (isSpace(email)) {
-      alert('아이디가 입력되지 않았습니다.');
-    } else if (isSpace(passwd)) {
-      alert('비밀번호가 입력되지 않았습니다.');
-    } else if (!isEmail(email)) {
-      alert('아이디가 이메일 형식이 아닙니다.');
-    } else {
-      alert('로그인 요청');
-      const result = token;
-      const expires = new Date();
-      expires.setDate(Date.now() + 1000 * 60 * 60 * 24 * 14);
-
-      cookie.save(
-        'access_token',
-        result.data.accessToken,
-        {
-          path: '/',
-          expires,
-        },
-      );
-
-      cookie.save(
-        'refresh_token',
-        result.data.refreshToken,
-        {
-          path: '/',
-          expires,
-        },
-      );
-
-      console.log(cookie.loadAll());
-
-      history.push('/home');
-    }
+    dispatch(postLogin({ email: inputs.email, passwd: inputs.passwd }));
   };
 
   return (
     <Form method="POST" onSubmit={onLogin}>
       <InputBox>
-        <Input type="text" name="email" placeholder="아이디" value={inputs.email} onChange={handleChange} />
-        <Input type="password" name="passwd" placeholder="비밀번호" value={inputs.passwd} onChange={handleChange} />
+        <Input type="email" name="email" placeholder="아이디" value={inputs.email} onChange={handleChange} required />
+        <Input type="password" name="passwd" placeholder="비밀번호" value={inputs.passwd} onChange={handleChange} required />
       </InputBox>
       <Button type="submit">로그인</Button>
     </Form>
