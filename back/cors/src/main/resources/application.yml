@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: dev
+
+  datasource:
+    url: jdbc:mysql://118.67.128.36:3306/corsdb?serverTimezone=UTC&characterEncoding=UTF-8
+    username: cors
+    password: Dd3552468!
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  devtools:
+    livereload:
+      enabled: true
+
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+        use_sql_comments: true
+
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
