@@ -18,9 +18,15 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "typeRoots": ["./node_modules/@types","@types"],
+    "declaration": true, // lib 만들 때 .d.ts 파일을 자동으로
+    "declarationDir": "@types" // 이 폴더에 만들어주는 옵션
   },
   "include": [
-    "src"
-  ]
+    "./"
+  ],
+  "exclude": [
+    "./node_modules"   
+  ],
 }

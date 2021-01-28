@@ -1,7 +1,8 @@
 import React from 'react';
 import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import AppLayout from './components/AppLayout';
 import Login from './features/login/Login';
-import GlobalStyle from './styles/GlobalStyle';
+import GlobalStyle from './styles/GlobalStyles';
 
 function App():JSX.Element {
   return (
@@ -11,6 +12,7 @@ function App():JSX.Element {
         <BrowserRouter>
           <Switch>
             <Route path="/" exact component={Login} />
+            <Route path="/home" exact component={AppLayout} />
           </Switch>
         </BrowserRouter>
       </div>
