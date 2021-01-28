@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 
 import styled from 'styled-components';
 import postList from './mockdata';
+import Header from './Header';
 
 const PostListWrapper = styled.div`
   display: flex;
   max-width: 100vw;
   flex-wrap: wrap;
+  padding-top: 150px;
 `;
 const PostListContent = styled.div`
   display: flex;
@@ -28,12 +30,13 @@ const PostList = () => {
   const [post, setPost] = useState(postList);
   return (
     <PostListWrapper>
+      <Header />
       {
-        post.article.map((p) => (
+        post.data.map((p) => (
           <PostListContent>
             <img src={p.Images.sumnail} alt="" />
             <h3>{p.title}</h3>
-            <h3>{p.rprice}</h3>
+            <h3>{p.rprice}원</h3>
           </PostListContent>
         ))
       }

@@ -1,5 +1,7 @@
-interface articleInterface {
-  postId: number, // 게시글 기본키
+import shortId from 'shortid';
+
+export interface articleInterface {
+  postId: string, // 게시글 기본키
   memberId: number, // 작성자
   rprice: number, // 판매가격
   contens: string, // 내용
@@ -15,21 +17,35 @@ interface articleInterface {
   division: 'purchase' | 'sale', // 구매 판매 구분
 }
 
-interface CategoryInterface {
+export interface CategoryInterface {
   cid: number,
   oneDepth: string,
   twoDepth: string
   threeDepth: string,
 }
 
-interface PostListInterface {
-  article: articleInterface[]
+export interface PostListInterface {
+  data: articleInterface[]
 }
 
+export interface AddBookPostInterfce {
+  memberId: number, // 작성자
+  rprice: number, // 판매가격
+  contens: string, // 내용
+  progress: 'completed' | 'hide' | 'trading' | 'posting', // 게시글 상태
+  title: string, // 책제목
+  Images: { // 이미지들
+    sumnail: string,
+    image: string[]
+  },
+  category: CategoryInterface, // 카테고리 키
+  tprice: number, // 원래가격
+  division: 'purchase' | 'sale', // 구매 판매 구분
+}
 const PostList:PostListInterface = {
-  article: [
+  data: [
     {
-      postId: 1,
+      postId: 'aaaa',
       memberId: 123,
       rprice: 20000,
       writeDate: new Date('2019-01-16'),
@@ -50,7 +66,7 @@ const PostList:PostListInterface = {
       division: 'sale',
     },
     {
-      postId: 2,
+      postId: 'bbb',
       memberId: 123,
       rprice: 20000,
       writeDate: new Date('2019-01-16'),
@@ -71,7 +87,7 @@ const PostList:PostListInterface = {
       division: 'sale',
     },
     {
-      postId: 3,
+      postId: 'cccc',
       memberId: 123,
       rprice: 20000,
       writeDate: new Date('2019-01-16'),
@@ -92,7 +108,7 @@ const PostList:PostListInterface = {
       division: 'sale',
     },
     {
-      postId: 4,
+      postId: 'dddd',
       memberId: 123,
       rprice: 20000,
       writeDate: new Date('2019-01-16'),
@@ -113,7 +129,7 @@ const PostList:PostListInterface = {
       division: 'sale',
     },
     {
-      postId: 5,
+      postId: 'eeee',
       memberId: 123,
       rprice: 20000,
       writeDate: new Date('2019-01-16'),
@@ -134,7 +150,7 @@ const PostList:PostListInterface = {
       division: 'sale',
     },
     {
-      postId: 6,
+      postId: 'ffff',
       memberId: 123,
       rprice: 20000,
       writeDate: new Date('2019-01-16'),
@@ -156,5 +172,22 @@ const PostList:PostListInterface = {
     },
   ],
 };
+
+export const dummyBookPost = (data: AddBookPostInterfce) => ({
+  postId: shortId.generate(),
+  memberId: data.memberId, // 내가 넣어줄 값
+  rprice: data.rprice, // 내가 넣어줄 값
+  writeDate: new Date(),
+  progress: data.progress, // 내가 넣어줄 값
+  title: data.title, // 내가 넣어줄 값
+  Images: {
+    sumnail: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNEqDnzERi5Aa-o2Qk7r-GmibgwZWM0wV4utkTJZBRNULFk8KwNzUKtPXvgPE&usqp=CAc',
+    image: [],
+  }, // 내가 넣어줄 값
+  contens: data.contens, // 내가 넣어줄 값
+  category: data.category,
+  tprice: data.tprice, // 내가 넣어줄 값
+  division: data.division, // 내가 넣어줄 값
+});
 
 export default PostList;

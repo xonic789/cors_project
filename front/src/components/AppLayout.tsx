@@ -47,10 +47,10 @@ const MenuItem = styled.li<MenuItemProps>`
 const AppLayout: React.FC = () => {
   const [active, setActive] = useState<number>(0);
   const tabTitle = [
-    ['/images/icons/home2.png', '/images/icons/home.png', '홈'],
-    ['/../images/icons/chat2.png', '/images/icons/chat.png', '채팅'],
-    ['/../images/icons/market2.png', '/images/icons/market.png', '마켓'],
-    ['/../images/icons/my2.png', '/images/icons/my.png', 'MY'],
+    ['/images/icons/home.png', '/images/icons/home_active.png', '홈'],
+    ['/../images/icons/chat.png', '/images/icons/chat_active.png', '채팅'],
+    ['/../images/icons/market.png', '/images/icons/market_active.png', '마켓'],
+    ['/../images/icons/my.png', '/images/icons/my_active.png', 'MY'],
   ];
   const tab:TabInterface = {
     0: <PostList />,

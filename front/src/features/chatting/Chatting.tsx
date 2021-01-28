@@ -32,6 +32,11 @@ const Chatting = () => {
     // setData(data.concat(sampleMockMessage));
     // stompClient.send("/chat/send", {}, JSON.stringify(sendMessageData));
   }
+  return (
+    <div>
+      
+    </div>
+  )
   
 }
 
