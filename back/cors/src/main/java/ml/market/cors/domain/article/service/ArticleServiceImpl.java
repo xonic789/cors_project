@@ -2,11 +2,14 @@ package ml.market.cors.domain.article.service;
 
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.dto.ArticleDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
+import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
+import ml.market.cors.repository.article.Image_info_Repository;
 import ml.market.cors.repository.article.query.ArticleQueryRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,11 +25,14 @@ public class ArticleServiceImpl implements ArticleService{
     private final ArticleRepository articleRepository;
     private final CountRepository countRepository;
     private final ArticleQueryRepository articleQueryRepository;
+    private final Image_info_Repository image_info_repository;
 
     @Override
-    public void saveArticle(ArticleDAO articleDAO){
-        countRepository.save(articleDAO.getCountDAO());
-        articleRepository.save(articleDAO);
+    public ArticleDAO saveArticle(ArticleForm articleForm, MemberDAO memberDAO){
+        ArticleDAO createArticle = ArticleDAO.createArticleForm(articleForm,memberDAO);
+        countRepository.save(createArticle.getCountDAO());
+        image_info_repository.save(createArticle.getImage_info());
+        return articleRepository.save(createArticle);
     }
 
     @Override
@@ -41,9 +47,12 @@ public class ArticleServiceImpl implements ArticleService{
      */
 
     @Override
-    public void updateArticle(Long article_id,ArticleForm articleForm) {
+    public ArticleDAO updateArticle(Long article_id,ArticleForm articleForm) {
         ArticleDAO findArticle = findById(article_id);
-        findArticle.updateArticle(articleForm);
+        Image_infoDAO findImage = image_info_repository.findById(
+                findArticle.getImage_info().getIndex_id()).get();
+        findImage.update_Image_info(articleForm.getImage2(), articleForm.getImage3(), articleForm.getDivision());
+        return findArticle.updateArticle(articleForm, findImage);
     }
 
     /**
@@ -53,16 +62,18 @@ public class ArticleServiceImpl implements ArticleService{
      * @param progress
      */
     @Override
-    public void updateArticleProgress(Long article_id,String progress){
+    public Progress updateArticleProgress(Long article_id, String progress){
         String upperCase = progress.toUpperCase();
         ArticleDAO findArticle = findById(article_id);
         if(upperCase != null && upperCase.equals(Progress.TRADING.toString())){
-            findArticle.updateProgress(Progress.TRADING);
+            return findArticle.updateProgress(Progress.TRADING);
         }else if(upperCase != null && upperCase.equals(Progress.COMPLETED.toString())){
-            findArticle.updateProgress(Progress.COMPLETED);
+            return findArticle.updateProgress(Progress.COMPLETED);
         }else if(upperCase != null && upperCase.equals(Progress.HIDE.toString())){
-            findArticle.updateProgress(Progress.HIDE);
+            return findArticle.updateProgress(Progress.HIDE);
         }
+
+        return findArticle.getProgress();
     }
 
     @Override

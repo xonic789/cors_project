@@ -14,8 +14,14 @@ import java.time.LocalDateTime;
 public class ArticleForm {
 
     private Long articleId;
-
+    private Long memberId;
+    private String image1;
+    private String image2;
+    private String image3;
     private String content;
+    private String title;
+    private Long cid;
+
 
     private int rprice;
 
@@ -26,4 +32,6 @@ public class ArticleForm {
     private int tprice;
 
     private Division division;
+
+
 }

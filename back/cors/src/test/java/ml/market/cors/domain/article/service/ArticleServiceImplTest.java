@@ -1,12 +1,15 @@
 package ml.market.cors.domain.article.service;
 
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
+import ml.market.cors.repository.article.Image_info_Repository;
+import ml.market.cors.repository.bookcategory.Book_Category_Repository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +27,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class ArticleServiceImplTest {
 
     @PersistenceContext EntityManager em;
-    @Autowired
-    ArticleRepository articleRepository;
+    @Autowired ArticleRepository articleRepository;
     @Autowired ArticleService articleService;
-    @Autowired
-    CountRepository countRepository;
+    @Autowired CountRepository countRepository;
+    @Autowired Image_info_Repository image_info_repository;
+    @Autowired Book_Category_Repository book_category_repository;
+
 
     @Test
     public void 게시물_생성() throws Exception{
@@ -37,55 +41,59 @@ class ArticleServiceImplTest {
         memberDAO.createMember("dltmddn@na.na");
         em.persist(memberDAO);
 
+        Book_CategoryDAO book_categoryDAO = new Book_CategoryDAO(1L);
+        book_category_repository.save(book_categoryDAO);
 
-        ArticleDAO articleDAO = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), new Book_CategoryDAO(), 10000, Division.PURCHASE);
+
+        ArticleForm articleForm = getArticleForm();
+
 
         //when
-        articleService.saveArticle(articleDAO);
+        ArticleDAO articleDAO = articleService.saveArticle(articleForm,memberDAO);
+
+        em.flush();
+        em.clear();
+
+        ArticleDAO findArticle = articleService.findById(articleDAO.getArticle_id());
+
 
         //then
-        assertEquals(articleDAO.getArticle_id(),articleService.findById(articleDAO.getArticle_id()).getArticle_id());
+        assertEquals(articleForm.getTitle(),findArticle.getTitle());
+    }
+
+    private ArticleForm getArticleForm() {
+        ArticleForm articleForm = new ArticleForm();
+        articleForm.setMemberId(1L);
+        articleForm.setImage1("이미지1");
+        articleForm.setImage2("이미지2");
+        articleForm.setImage3("이미지3");
+        articleForm.setContent("내용입니다");
+        articleForm.setTitle("제목입니다");
+        articleForm.setCid(1L);
+        articleForm.setRprice(10000);
+        articleForm.setProgress(Progress.POSTING);
+        articleForm.setDivision(Division.SALES);
+        return articleForm;
     }
 
     @Test
-    public void 모든_게시물_조회() throws Exception{
+    public void 게시물_조회() throws Exception{
         //given
         MemberDAO memberDAO = new MemberDAO();
         memberDAO.createMember("dltmddn@na.na");
         em.persist(memberDAO);
 
         Book_CategoryDAO book_categoryDAO1 = new Book_CategoryDAO(1L);
-        Book_CategoryDAO book_categoryDAO2 = new Book_CategoryDAO(2L);
-        Book_CategoryDAO book_categoryDAO3 = new Book_CategoryDAO(3L);
-        Book_CategoryDAO book_categoryDAO4 = new Book_CategoryDAO(4L);
-        Book_CategoryDAO book_categoryDAO5 = new Book_CategoryDAO(5L);
+        book_category_repository.save(book_categoryDAO1);
 
-        em.persist(book_categoryDAO1);
-        em.persist(book_categoryDAO2);
-        em.persist(book_categoryDAO3);
-        em.persist(book_categoryDAO4);
-        em.persist(book_categoryDAO5);
-
-
-        ArticleDAO articleDAO1 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO1, 10000, Division.PURCHASE);
-        ArticleDAO articleDAO2 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO2, 10000, Division.PURCHASE);
-        ArticleDAO articleDAO3 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO3, 10000, Division.PURCHASE);
-        ArticleDAO articleDAO4 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO4, 10000, Division.PURCHASE);
-        ArticleDAO articleDAO5 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO5, 10000, Division.PURCHASE);
-
-
+        ArticleForm articleForm = getArticleForm();
         //when
-        articleService.saveArticle(articleDAO1);
-        articleService.saveArticle(articleDAO2);
-        articleService.saveArticle(articleDAO3);
-        articleService.saveArticle(articleDAO4);
-        articleService.saveArticle(articleDAO5);
+        articleService.saveArticle(articleForm,memberDAO);
+        articleService.saveArticle(articleForm,memberDAO);
+        articleService.saveArticle(articleForm,memberDAO);
+        articleService.saveArticle(articleForm,memberDAO);
+        articleService.saveArticle(articleForm,memberDAO);
+
 
         //then
         assertEquals(articleRepository.findAll().size(),5);
@@ -100,32 +108,32 @@ class ArticleServiceImplTest {
         em.persist(memberDAO);
 
         Book_CategoryDAO book_categoryDAO1 = new Book_CategoryDAO(1L);
-        em.persist(book_categoryDAO1);
+        book_category_repository.save(book_categoryDAO1);
 
-        ArticleDAO articleDAO1 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO1, 10000, Division.PURCHASE);
-        articleService.saveArticle(articleDAO1);
-        ArticleDAO findArticle = articleService.findById(articleDAO1.getArticle_id());
+        ArticleForm articleForm = getArticleForm();
 
-
-        //when
-        ArticleForm articleForm = new ArticleForm();
-        articleForm.setContent("바뀌었다.");
-        articleForm.setDivision(Division.PURCHASE);
-        articleForm.setProgress(Progress.POSTING);
-        articleForm.setRprice(10000);
-        articleForm.setTprice(2000);
-        articleForm.setWriteDate(LocalDateTime.now());
-
-        articleService.updateArticle(findArticle.getArticle_id(),articleForm);
+        ArticleDAO articleDAO = articleService.saveArticle(articleForm,memberDAO);
 
         em.flush();
         em.clear();
 
-        ArticleDAO resultArticle = articleService.findById(articleDAO1.getArticle_id());
+        System.out.println(articleDAO.getArticle_id());
 
+        //when
+        ArticleForm updateForm = new ArticleForm();
+        updateForm.setContent("바뀌었다.");
+        updateForm.setDivision(Division.PURCHASE);
+        updateForm.setProgress(Progress.POSTING);
+        updateForm.setRprice(10000);
+        updateForm.setTprice(2000);
+        updateForm.setImage1("이미지 바뀜");
+        updateForm.setImage2("이미지 바뀜");
+        updateForm.setImage3("이미지 바뀜");
+        ArticleDAO findArticle = articleService.findById(articleDAO.getArticle_id());
+
+        articleService.updateArticle(findArticle.getArticle_id(),updateForm);
         //then
-        assertEquals(findArticle,resultArticle);
+        assertNotEquals(articleForm.getContent(),findArticle.getContent());
     }
 
     @Test
@@ -136,25 +144,19 @@ class ArticleServiceImplTest {
         em.persist(memberDAO);
 
         Book_CategoryDAO book_categoryDAO1 = new Book_CategoryDAO(1L);
-        em.persist(book_categoryDAO1);
+        book_category_repository.save(book_categoryDAO1);
 
-        Book_CategoryDAO book_categoryDAO2 = new Book_CategoryDAO(2L);
-        em.persist(book_categoryDAO2);
+        ArticleForm articleForm1 = getArticleForm();
+        ArticleForm articleForm2 = getArticleForm();
+        ArticleForm articleForm3 = getArticleForm();
 
-        Book_CategoryDAO book_categoryDAO3 = new Book_CategoryDAO(3L);
-        em.persist(book_categoryDAO3);
+        ArticleDAO.createArticleForm(articleForm1,memberDAO);
+        ArticleDAO.createArticleForm(articleForm2,memberDAO);
+        ArticleDAO.createArticleForm(articleForm3,memberDAO);
 
-        ArticleDAO articleDAO1 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO1, 10000, Division.PURCHASE);
-        articleService.saveArticle(articleDAO1);
-
-        ArticleDAO articleDAO2 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO2, 10000, Division.PURCHASE);
-        articleService.saveArticle(articleDAO2);
-
-        ArticleDAO articleDAO3 = ArticleDAO.createArticle(memberDAO, "테스트", 10000,
-                LocalDateTime.now(), book_categoryDAO3, 10000, Division.PURCHASE);
-        articleService.saveArticle(articleDAO3);
+        ArticleDAO articleDAO1 = articleService.saveArticle(articleForm1,memberDAO);
+        ArticleDAO articleDAO2 = articleService.saveArticle(articleForm2,memberDAO);
+        ArticleDAO articleDAO3 = articleService.saveArticle(articleForm3,memberDAO);
 
         String progress1 = "hide";
         String progress2 = "trading";

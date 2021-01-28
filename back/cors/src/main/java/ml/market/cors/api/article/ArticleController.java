@@ -1,22 +1,27 @@
 package ml.market.cors.api.article;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.article.entity.dto.ArticleDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
+import ml.market.cors.domain.article.entity.search.ArticleSearch;
+import ml.market.cors.domain.article.service.ArticleForm;
 import ml.market.cors.domain.article.service.ArticleService;
+import ml.market.cors.domain.member.entity.MemberDAO;
+import ml.market.cors.domain.security.member.JwtCertificationToken;
+import ml.market.cors.domain.util.Errors;
 import ml.market.cors.domain.util.Message;
+import ml.market.cors.domain.util.ResponseEntityUtils;
 import ml.market.cors.domain.util.StatusEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.charset.Charset;
 import java.util.List;
@@ -29,9 +34,11 @@ public class ArticleController {
     private final String PURCHASE="purchase";
 
     private final ArticleService articleService;
+    private final ResponseEntityUtils responseEntityUtils;
 
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(ArticleService articleService,ResponseEntityUtils responseEntityUtils) {
         this.articleService = articleService;
+        this.responseEntityUtils= responseEntityUtils;
     }
 
     //CRUD
@@ -41,51 +48,44 @@ public class ArticleController {
      * 게시물 분류 (purchase or sales)
      * @param division
      * @param pageable
-     * @return
+     * @return List.size()==0 HttpStatus.No_CONTENT
+     * @return List.size()>0 HttpStatus.OK
+     * @return HttpStatus.BAD_REQUEST
      */
     @GetMapping("/api/articles/{division}")
     public ResponseEntity<Message<Object>> getArticleList(
             @PathVariable String division,
-            Pageable pageable){
+            Pageable pageable, @ModelAttribute ArticleSearch articleSearch){
         if(division.equals(SALES)){
-            return success(new ArticleList<>(articleService.findByDivision(Division.SALES, pageable)));
+            List<ArticleDTO> list = articleService.findByDivision(Division.SALES, pageable);
+            if(list.size()==0){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }else{
+                return responseEntityUtils.getMessageResponseEntityOK(list);
+            }
         }else if(division.equals(PURCHASE)){
-            return success(new ArticleList<>(articleService.findByDivision(Division.PURCHASE, pageable)));
+            List<ArticleDTO> list = articleService.findByDivision(Division.PURCHASE, pageable);
+            if(list.size()==0){
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }else {
+                return responseEntityUtils.getMessageResponseEntityOK(list);
+            }
         }
-
-        return null;
+        return responseEntityUtils.getMessageResponseEntityBadRequest(
+                new Errors("URI",
+                        "division",
+                        division,
+                        "sales or purchase 만 입력해야 합니다."));
+    }
+    @PostMapping("/api/article")
+    public ResponseEntity<Message<Object>> insertArticle(
+            MultipartFile file
+    ){
+        return responseEntityUtils.getMessageResponseEntityBadRequest(null);
     }
 
-    @Data
-    @AllArgsConstructor
-    static class ArticleList<T>{
-        T data;
-
-    }
 
 
-
-
-
-    public ResponseEntity<Message<Object>> success(Object data){
-        Message<Object> message = new Message<>();
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        message.setStatus(StatusEnum.OK);
-        message.setMessage("성공 코드");
-        message.setData(data);
-        return new ResponseEntity<Message<Object>>(message,headers,HttpStatus.OK);
-    }
-
-    public ResponseEntity<Message<Object>> failed(Object data){
-        Message<Object> message = new Message<>();
-        HttpHeaders headers= new HttpHeaders();
-        headers.setContentType(new MediaType("application", "json", Charset.forName("UTF-8")));
-        message.setStatus(StatusEnum.OK);
-        message.setMessage("성공 코드");
-        message.setData(data);
-        return new ResponseEntity<Message<Object>>(message,headers,HttpStatus.OK);
-    }
 
 
 

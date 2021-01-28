@@ -2,12 +2,12 @@ package ml.market.cors.domain.util;
 
 public enum StatusEnum {
 
-    OK(200, "OK"),
-    CREATED(201,"CREATED"),
-    NO_CONTENT(204,"NO_CONTENT"),
-    BAD_REQUEST(400, "BAD_REQUEST"),
-    NOT_FOUND(404, "NOT_FOUND"),
-    INTERNAL_SERER_ERROR(500, "INTERNAL_SERVER_ERROR");
+    OK(200, "OK"), // 성공
+    CREATED(201,"CREATED"), // POST insert 성공
+    NO_CONTENT(204,"NO_CONTENT"), // 데이터가 없음
+    BAD_REQUEST(400, "BAD_REQUEST"), // 잘못된 요청
+    NOT_FOUND(404, "NOT_FOUND"), // 페이지 찾을 수 없음
+    INTERNAL_SERER_ERROR(500, "INTERNAL_SERVER_ERROR"); // 서버 에러
 
     int statusCode;
     String code;

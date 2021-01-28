@@ -3,6 +3,7 @@ package ml.market.cors.domain.article.entity.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import ml.market.cors.domain.article.entity.dao.CountDAO;
+import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 
@@ -16,6 +17,7 @@ public class ArticleDTO {
     private int tprice;
     private Progress progress;
     private Book_CategoryDAO category;
+    private Image_infoDAO image;
     private String nickname;
 
     @QueryProjection

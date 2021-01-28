@@ -9,6 +9,7 @@ import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;
+import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -22,7 +23,7 @@ public class ArticleDAO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long article_id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "count_id")
     private CountDAO countDAO;
 
@@ -52,61 +53,52 @@ public class ArticleDAO {
     @Enumerated(EnumType.STRING)
     private Division division;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "index_id")
+    private Image_infoDAO image_info;
+
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
-                      Progress progress, Book_CategoryDAO category, int tprice, Division division, MemberDAO member) {
+                      Progress progress, int tprice, Division division,
+                      Image_infoDAO image_info,String title,MemberDAO memberDAO) {
         this.countDAO = countDAO;
         this.content = content;
         this.rprice = rprice;
         this.write_date = write_date;
         this.progress = progress;
-        this.category = category;
         this.tprice = tprice;
         this.division = division;
         this.member = member;
-    }
-    public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
-                      Book_CategoryDAO category, int tprice, Division division, MemberDAO member) {
-        this.countDAO = countDAO;
-        this.content = content;
-        this.rprice = rprice;
-        this.write_date = write_date;
-        this.category = category;
-        this.tprice = tprice;
-        this.division = division;
-        this.member = member;
+        this.image_info=image_info;
+        this.title=title;
+        this.member=memberDAO;
     }
 
-
-    public ArticleDAO(String content, int rprice, LocalDateTime write_date, Progress progress, int tprice, Division division) {
-        this.content = content;
-        this.rprice = rprice;
-        this.write_date = write_date;
-        this.progress = progress;
-        this.tprice = tprice;
-        this.division = division;
+    public static ArticleDAO createArticleForm(ArticleForm articleForm, MemberDAO member){
+        return new ArticleDAO(
+                new CountDAO(), articleForm.getContent(),
+                articleForm.getRprice(), LocalDateTime.now(),
+                articleForm.getProgress(), articleForm.getTprice(),
+                articleForm.getDivision(),
+                new Image_infoDAO(articleForm.getImage1(), articleForm.getImage2(), articleForm.getImage3(), articleForm.getDivision()),
+                articleForm.getTitle(),member);
     }
 
-    public static ArticleDAO createArticle (MemberDAO memberDAO, String content,
-                                            int rprice, LocalDateTime write_date,
-                                            Book_CategoryDAO category, int tprice, Division division){
-
-        return new ArticleDAO(new CountDAO(),content,rprice,write_date,Progress.POSTING,category,tprice,division,memberDAO);
-    }
-
-    public void updateArticle(ArticleForm articleForm) {
+    public ArticleDAO updateArticle(ArticleForm articleForm,Image_infoDAO image_info) {
         this.content = articleForm.getContent();
-        this.rprice = articleForm.getRprice();
         this.progress = articleForm.getProgress();
         this.tprice = articleForm.getTprice();
         this.division = articleForm.getDivision();
+        this.image_info=image_info;
+        return this;
     }
 
-    public void updateProgress(Progress progress){
+    public Progress updateProgress(Progress progress){
         this.progress=progress;
+        return this.getProgress();
     }
 
     @Override
