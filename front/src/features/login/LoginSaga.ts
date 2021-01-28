@@ -1,10 +1,10 @@
 import cookie from 'react-cookies';
-import { all, call, ForkEffect, put, takeEvery } from 'redux-saga/effects';
+import { all, call, ForkEffect, put, takeLatest } from 'redux-saga/effects';
 import { postLogin, postLoginSuccess, postLoginError } from './LoginSlice';
-import postLoginAsync from '../../api/loginAPI';
+import { loginPostApi } from '../../api/loginApi';
 
-function* postLoginSaga(action:any) {
-  const token = yield call(postLoginAsync);
+function* postLoginSaga(action: any) {
+  const token = yield call(loginPostApi);
 
   if (token.data.accessToken === '' || token.data.refreshToken === '') {
     console.log('로그인 실패');
@@ -36,7 +36,7 @@ function* postLoginSaga(action:any) {
 }
 
 function* loginSaga(): Generator<ForkEffect<never>, void, unknown> {
-  yield takeEvery(postLogin, postLoginSaga);
+  yield takeLatest(postLogin, postLoginSaga);
 }
 
 export default function* rootSaga() {

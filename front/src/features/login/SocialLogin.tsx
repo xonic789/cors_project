@@ -1,8 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import kakaoLogo from './images/logo_kakao.png';
-import googleLogo from './images/logo_google.png';
-import facebookLogo from './images/logo_facebook.png';
 
 const SocialLoginBox = styled.div`
   width: 11em;
@@ -31,9 +28,9 @@ function SocialLogin():JSX.Element {
   };
   return (
     <SocialLoginBox>
-      <SocialItem src={facebookLogo} onClick={() => onClickLoginHandler('facebook')} />
-      <SocialItem src={googleLogo} onClick={() => onClickLoginHandler('google')} />
-      <SocialItem src={kakaoLogo} onClick={() => onClickLoginHandler('kakao')} />
+      <SocialItem src="/images/icons/p.png" onClick={() => onClickLoginHandler('facebook')} />
+      <SocialItem src="/images/icons/g.png" onClick={() => onClickLoginHandler('google')} />
+      <SocialItem src="/images/icons/k.png" onClick={() => onClickLoginHandler('kakao')} />
     </SocialLoginBox>
   );
 }

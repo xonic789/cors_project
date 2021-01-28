@@ -9,10 +9,10 @@ const loginSlice = createSlice({
   reducers: {
     postLogin: (state, action) => state,
     postLoginSuccess: (state, action) => {
-      console.log(action.payload);
+      state.logined = true;
     },
     postLoginError: (state, action) => {
-      console.log(action.payload);
+      state.logined = false;
     },
   },
 });
