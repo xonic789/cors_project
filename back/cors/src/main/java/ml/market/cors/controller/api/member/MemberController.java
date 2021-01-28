@@ -7,6 +7,8 @@ import ml.market.cors.domain.mail.vo.MailVO;
 import ml.market.cors.domain.member.service.MemberManagement;
 import ml.market.cors.domain.member.service.MemberVO;
 import ml.market.cors.domain.security.member.role.MemberRole;
+import ml.market.cors.domain.util.map.KaKaoMapManagement;
+import ml.market.cors.domain.util.map.KakaoResMapVO;
 import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +28,7 @@ public class MemberController {
     private EmailManagement emailManagement;
 
     @PostMapping("/check/nickname")
-    public void existNickname(@RequestBody MemberVO memberVO, HttpServletResponse response){
+    public void existNickname(@ModelAttribute MemberVO memberVO, HttpServletResponse response){
         try {
             if (memberManagement.existNickname(memberVO.getNickname())) {
                 throw new Exception();
@@ -37,16 +39,16 @@ public class MemberController {
     }
 
     @PostMapping("/check/email")
-    public void existEmail(@RequestBody MailVO mailVO, HttpServletResponse response){
+    public void existEmail(@RequestParam("email") String email, HttpServletResponse response){
         try{
-            emailManagement.insert(mailVO.getEmail());
+            emailManagement.insert(email);
         }catch (Exception e){
             response.setStatus(411);
         }
     }
 
     @PostMapping("/check/code")
-    public void isCode(@RequestBody MailVO mailVO, HttpServletResponse response){
+    public void isCode(@ModelAttribute MailVO mailVO, HttpServletResponse response){
         try{
             if(!emailManagement.checkCode(mailVO)){
                 response.setStatus(411);
@@ -57,7 +59,7 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public void join(@RequestBody MemberVO memberVo, HttpServletResponse response) {
+    public void join(@ModelAttribute MemberVO memberVo, HttpServletResponse response) {
         try{
             if(!memberManagement.create(memberVo)){
                 response.setStatus(411);

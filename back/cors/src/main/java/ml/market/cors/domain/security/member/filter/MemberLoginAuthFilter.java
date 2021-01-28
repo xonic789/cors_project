@@ -49,9 +49,6 @@ public class MemberLoginAuthFilter extends UsernamePasswordAuthenticationFilter 
         UsernamePasswordAuthenticationToken token = null;
 
         try{
-            //test loginMemberVO = new ObjectMapper().readValue(request.getInputStream(), test.class);
-            //String d = new JSONObject((Map) loginMemberVO.getData()).toString();
-            //MemberVO aa= new ObjectMapper().readValue(d, MemberVO.class);
             LoginForm wee = new LoginForm(request.getParameter("email"), request.getParameter("passwd"));
             token = new UsernamePasswordAuthenticationToken(wee.getEmail(), wee.getPasswd());
         } catch (Exception except) {

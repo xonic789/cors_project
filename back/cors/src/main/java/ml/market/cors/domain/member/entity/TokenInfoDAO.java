@@ -19,14 +19,13 @@ public class TokenInfoDAO {
     @Column(name = "hash")
     private String hash;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private MemberDAO member_id;
+    @Column(name = "member_id")
+    private long member_id;
 
     @Column(name = "expire_date")
     private long expire_date;
 
-    public TokenInfoDAO(String hash, MemberDAO member_id, long expireTime) {
+    public TokenInfoDAO(String hash, long member_id, long expireTime) {
         this.expire_date = expireTime;
         this.member_id = member_id;
         this.hash = hash;

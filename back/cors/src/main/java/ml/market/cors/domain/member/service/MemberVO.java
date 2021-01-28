@@ -1,6 +1,7 @@
 package ml.market.cors.domain.member.service;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,6 +10,7 @@ import java.util.Collection;
 
 @Getter
 @RequiredArgsConstructor
+@Data
 public class MemberVO {
     private long member_id;
 
@@ -25,13 +27,4 @@ public class MemberVO {
     private String address;
 
     private String nickname;
-
-    public MemberVO(@JsonProperty("passwd") String passwd, @JsonProperty("email") String email
-            , @JsonProperty("address") String address, @JsonProperty("nickname") String nickname) {
-        this.passwd = passwd;
-        this.email = email;
-        this.address = address;
-        this.nickname = nickname;
-    }
-
 }

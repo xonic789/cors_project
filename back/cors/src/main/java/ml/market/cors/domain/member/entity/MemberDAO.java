@@ -37,10 +37,10 @@ public class MemberDAO implements UserDetails{
     private String address;
 
     @Column(name = "latitude")
-    private int latitude;
+    private double latitude;
 
     @Column(name = "longitude")
-    private int longitude;
+    private double longitude;
 
     @Column(name = "nickname")
     private String nickname;
@@ -60,7 +60,7 @@ public class MemberDAO implements UserDetails{
         this.member_id = member_id;
     }
 
-    public MemberDAO(String email, MemberRole role, String password, String address, int latitude, int longitude, String nickname
+    public MemberDAO(String email, MemberRole role, String password, String address, double latitude, double longitude, String nickname
     ,eSubscriberType subscriberType) {
         this.email = email;
         this.role = role;

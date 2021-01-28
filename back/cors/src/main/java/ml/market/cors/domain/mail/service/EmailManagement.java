@@ -31,7 +31,7 @@ public class EmailManagement extends MailTransfer {
     private EmailStateRepository emailStateRepository;
 
 
-    @Scheduled(fixedDelay = 1000 * 60)
+    @Scheduled(fixedDelay = 1000 * 60 * 20)
     @Transactional(isolation = Isolation.SERIALIZABLE)
     protected void cleaner(){
         List<EmailStateDAO> waiters = emailStateRepository.findAll();
@@ -56,12 +56,12 @@ public class EmailManagement extends MailTransfer {
                 throw new NoSuchElementException();
             }
             int code = rand.nextInt(CODE_BOUNDRY);
-            emailStateRepository.save(new EmailStateDAO(email, eMailAuthenticatedFlag.N, expireTime
-                    , code));
             String text = "인증코드: " + code;
             if(super.send(email, "인증메일", text) == false){
                 throw new RuntimeException();
             }
+            emailStateRepository.save(new EmailStateDAO(email, eMailAuthenticatedFlag.N, expireTime
+                    , code));
         }catch (Exception e){
             throw new RuntimeException();
         }

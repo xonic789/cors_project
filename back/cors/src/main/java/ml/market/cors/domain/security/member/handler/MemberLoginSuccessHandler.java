@@ -74,7 +74,7 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             Long expireTime = refreshTokenExpireTime.getTime();
             Optional<MemberDAO> optional = memberRepository.findById(member_id);
             MemberDAO memberDAO = optional.get();
-            TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(refreshToken, memberDAO, expireTime);
+            TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(refreshToken, memberDAO.getMember_id(), expireTime);
             tokenInfoRepository.save(tokenInfoDAO);
             response.setContentType("application/json");
             eCookie cookAttr = eCookie.ACCESS_TOKEN;
