@@ -15,7 +15,7 @@ public class MailTransfer {
 
     private String tail = "@naver.com";
 
-    private String password = "ahtpgns5652";
+    private String password = "!ahtpgns5652";
 
     private Properties props = System.getProperties();
 

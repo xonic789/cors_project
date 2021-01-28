@@ -33,4 +33,5 @@ public class MemberVO {
         this.address = address;
         this.nickname = nickname;
     }
+
 }

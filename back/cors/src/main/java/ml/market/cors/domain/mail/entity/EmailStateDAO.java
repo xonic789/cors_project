@@ -3,11 +3,9 @@ package ml.market.cors.domain.mail.entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Getter
 @Entity
@@ -19,8 +17,9 @@ public class EmailStateDAO {
     @Column(name = "email")
     private String email;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "authenticated_flag")
-    private char authenticatedFlag;
+    private eMailAuthenticatedFlag authenticatedFlag;
 
     @Column(name = "expire_time")
     private long expireTime;

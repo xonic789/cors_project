@@ -9,7 +9,9 @@ import ml.market.cors.domain.security.member.filter.MemberLoginAuthFilter;
 import java.lang.reflect.Member;
 import java.util.List;
 
+import ml.market.cors.domain.security.member.filter.MemberLogoutFilter;
 import ml.market.cors.domain.security.member.handler.MemberLoginSuccessHandler;
+import ml.market.cors.domain.security.member.handler.MemberLogoutHandler;
 import ml.market.cors.domain.security.member.manager.MemberProviderManager;
 import ml.market.cors.domain.security.member.provider.MemberLoginAuthProvider;
 import ml.market.cors.domain.security.member.service.MemberLoginAuthService;
@@ -55,23 +57,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .securityContext().securityContextRepository(mCookieSecurityContextRepository)
                     .and()
                     .authorizeRequests()
-                    .antMatchers("/login").anonymous()
-                    .antMatchers("/join").anonymous()
-                    .antMatchers("/test").hasRole("ADMIN")
+                    .antMatchers("/api/login").anonymous()
+                    .antMatchers("/api/join").anonymous()
+                    .antMatchers("/api/logout").anonymous()
+                    .antMatchers("/api/test").hasRole("ADMIN")
                     .antMatchers("/**").permitAll()
                     .and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .formLogin()
                     .disable()
+                    .addFilter(getMemberLogoutFilter())
                     .addFilter(getMemberAuthenticationFilter());
 
+    }
+    @Bean
+    public MemberLogoutFilter getMemberLogoutFilter(){
+        MemberLogoutFilter memberLogoutFilter = new MemberLogoutFilter("/", getMemberLogoutHandler());
+        memberLogoutFilter.setFilterProcessesUrl("/api/logout");
+        return memberLogoutFilter;
+    }
+
+    @Bean
+    public MemberLogoutHandler getMemberLogoutHandler(){
+        return new MemberLogoutHandler();
     }
 
     @Bean
     public MemberLoginAuthFilter getMemberAuthenticationFilter() throws Exception {
         MemberLoginAuthFilter memberLoginAuthFilter = new MemberLoginAuthFilter(getMemberProviderManager());
-        memberLoginAuthFilter.setFilterProcessesUrl("/login");
+        memberLoginAuthFilter.setFilterProcessesUrl("/api/login");
         memberLoginAuthFilter.setAuthenticationSuccessHandler(getMemberLoginSuccessHandler());
         return memberLoginAuthFilter;
     }
