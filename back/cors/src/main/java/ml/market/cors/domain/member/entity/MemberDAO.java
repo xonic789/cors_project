@@ -2,6 +2,7 @@ package ml.market.cors.domain.member.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ml.market.cors.domain.member.eSubscriberType;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import org.springframework.security.core.GrantedAuthority;
@@ -36,13 +37,17 @@ public class MemberDAO implements UserDetails{
     private String address;
 
     @Column(name = "latitude")
-    private int latitude;
+    private double latitude;
 
     @Column(name = "longitude")
-    private int longitude;
+    private double longitude;
 
     @Column(name = "nickname")
     private String nickname;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name ="subscriber_type")
+    private eSubscriberType subscriberType;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -53,6 +58,18 @@ public class MemberDAO implements UserDetails{
 
     public MemberDAO(Long member_id) {
         this.member_id = member_id;
+    }
+
+    public MemberDAO(String email, MemberRole role, String password, String address, double latitude, double longitude, String nickname
+    ,eSubscriberType subscriberType) {
+        this.email = email;
+        this.role = role;
+        this.password = password;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.nickname = nickname;
+        this.subscriberType = subscriberType;
     }
 
     @Override

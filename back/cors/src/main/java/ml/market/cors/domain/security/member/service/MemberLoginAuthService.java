@@ -1,5 +1,6 @@
 package ml.market.cors.domain.security.member.service;
 
+import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import java.util.List;
 
-@Component
 public class MemberLoginAuthService implements UserDetailsService {
     @Autowired
     private MemberRepository memberRepository;

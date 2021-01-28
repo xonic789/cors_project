@@ -9,4 +9,8 @@ import java.util.List;
 @Repository("memberRepository")
 public interface MemberRepository extends JpaRepository<MemberDAO, Long> {
     public MemberDAO findByEmail(String email);
+
+    public boolean existsByEmail(String email);
+
+    public boolean existsByNickname(String nickname);
 }

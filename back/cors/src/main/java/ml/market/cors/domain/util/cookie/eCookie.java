@@ -1,4 +1,4 @@
-package ml.market.cors.domain.util;
+package ml.market.cors.domain.util.cookie;
 
 public enum eCookie {
     ACCESS_TOKEN("ACCESS_TOKEN", 15*60, "/"),

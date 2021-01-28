@@ -2,27 +2,22 @@ package ml.market.cors.domain.security.member.handler;
 
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
-import ml.market.cors.domain.security.member.role.MemberRole;
-import ml.market.cors.domain.util.CookieManagement;
-import ml.market.cors.domain.util.JwtTokenManagement;
-import ml.market.cors.domain.util.TokenAttribute;
-import ml.market.cors.domain.util.eCookie;
+import ml.market.cors.domain.util.cookie.CookieManagement;
+import ml.market.cors.domain.util.token.JwtTokenManagement;
+import ml.market.cors.domain.util.token.TokenAttribute;
+import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.transaction.Transactional;
 import java.util.*;
 
-@Component
 public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
     @Autowired
     private TokenInfoRepository tokenInfoRepository;
@@ -79,7 +74,7 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             Long expireTime = refreshTokenExpireTime.getTime();
             Optional<MemberDAO> optional = memberRepository.findById(member_id);
             MemberDAO memberDAO = optional.get();
-            TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(refreshToken, memberDAO, expireTime);
+            TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(refreshToken, memberDAO.getMember_id(), expireTime);
             tokenInfoRepository.save(tokenInfoDAO);
             response.setContentType("application/json");
             eCookie cookAttr = eCookie.ACCESS_TOKEN;

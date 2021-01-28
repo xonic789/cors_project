@@ -1,5 +1,6 @@
 package ml.market.cors.domain.security.member.provider;
 
+import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
@@ -12,16 +13,26 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
 import java.util.List;
 
-@Component
 public class MemberLoginAuthProvider implements AuthenticationProvider {
     @Autowired
     private MemberLoginAuthService memberLoginAuthService;
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public MemberLoginAuthProvider(BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
+
+    private boolean comparePassword(String reqPassword, String password) {
+        boolean bResult = bCryptPasswordEncoder.matches(reqPassword, password);
+        return bResult;
+    }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
@@ -34,8 +45,10 @@ public class MemberLoginAuthProvider implements AuthenticationProvider {
         }
 
         String orgPasswd =  memberDAO.getPassword();
-        if(orgPasswd.equals(passwd)){
-            throw new BadCredentialsException(passwd);
+
+        boolean bResult = comparePassword(passwd, orgPasswd);
+        if(!bResult) {
+            throw new BadCredentialsException(email);
         }
 
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(memberDAO.getMember_id(), passwd, memberDAO.getAuthorities());

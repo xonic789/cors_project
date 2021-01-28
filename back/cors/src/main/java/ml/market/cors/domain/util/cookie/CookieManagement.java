@@ -1,4 +1,4 @@
-package ml.market.cors.domain.util;
+package ml.market.cors.domain.util.cookie;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;

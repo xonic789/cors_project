@@ -1,21 +1,21 @@
-package ml.market.cors.domain.util;
+package ml.market.cors.domain.util.token;
 
 import io.jsonwebtoken.*;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.Blacklist_TokenDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
+import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
+import ml.market.cors.domain.security.member.role.MemberRole;
+import ml.market.cors.domain.util.cookie.CookieManagement;
+import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.repository.member.Blacklist_TokenRepository;
+import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -26,12 +26,13 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenManagement {
+    private final MemberRepository memberRepository;
 
     private final TokenInfoRepository tokenInfoRepository;
 
     private final Blacklist_TokenRepository blacklist_tokenRepository;
 
-    @Scheduled(fixedDelay = 1000 * 60 * 15)
+    @Scheduled(fixedDelay = 1000 * 60 * 20)
     private void cleaner(){
         Date nowDate = new Date();
         Long expireDate;
@@ -152,7 +153,7 @@ public class JwtTokenManagement {
         return claims;
     }
     private TokenInfoDAO getTokenInfo(String token){
-        TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(token, null, 0L);
+        TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(token, 0, 0L);
         Optional<TokenInfoDAO> optional = tokenInfoRepository.findById(token);
         try{
             optional.get();
@@ -205,14 +206,13 @@ public class JwtTokenManagement {
     }
 
     public void deleteAllTokenDB(String accessToken, String refreshToken) {
-        String errMsg;
         boolean result = true;
-        if(accessToken != null){
+        if(accessToken != null && !accessToken.equals("")){
             if(insertBlackList(accessToken, TokenAttribute.ACCESS_TOKEN) == false){
                 result = false;
             }
         }
-        if(refreshToken != null){
+        if(refreshToken != null && !refreshToken.equals("")){
             if(insertBlackList(refreshToken, TokenAttribute.REFRESH_TOKEN) == false){
                 result = false;
             }
@@ -227,43 +227,48 @@ public class JwtTokenManagement {
 
     public String refresh(Cookie[] cookies, HttpServletResponse res) {
         Cookie cook = CookieManagement.search(TokenAttribute.ACCESS_TOKEN, cookies);
-        StringBuilder accessToken = null;
+        String accessToken = null;
         if(cook != null){
-            accessToken = new StringBuilder(cook.getValue());
+            accessToken = cook.getValue();
         }
         cook = CookieManagement.search(TokenAttribute.REFRESH_TOKEN, cookies);
-        StringBuilder refreshToken = null;
+        String refreshToken = null;
         if(cook != null){
-            refreshToken = new StringBuilder(cook.getValue());
+            refreshToken = cook.getValue();
         }
 
         if(isAvailRefresh(cookies) == false){
-            deleteAllTokenDB(accessToken.toString(), refreshToken.toString());
+            deleteAllTokenDB(accessToken, refreshToken);
             CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
             CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
             return null;
         }
 
         Date expireDate = null;
-        Map claims = getClaims(refreshToken.toString());
+        Map claims = getClaims(refreshToken);
         Map headers = null;
         Map paramClaims = null;
         eCookie cookAttr;
+        TokenInfoDAO tokenInfoDAO = null;
         if(claims == null) {
-            TokenInfoDAO tokenInfoDAO = getTokenInfo(refreshToken.toString());
+            tokenInfoDAO = getTokenInfo(refreshToken);
             if (tokenInfoDAO == null) {
-                deleteAllTokenDB(accessToken.toString(), refreshToken.toString());
+                deleteAllTokenDB(accessToken, refreshToken);
                 CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
                 CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
                 return null;
             }
 
             headers = setHeader();
-            long member_id = tokenInfoDAO.getMember_id().getMember_id();
-            paramClaims = setClaim(member_id);
-            refreshToken.delete(0, refreshToken.length());
+            long member_id = tokenInfoDAO.getMember_id();
+            Optional<MemberDAO> optional = memberRepository.findById(member_id);
+            MemberDAO memberDao = optional.get();
+            MemberRole memberRole = memberDao.getRole();
+            List memberRoles = new LinkedList();
+            memberRoles.add(new MemberGrantAuthority(memberRole));
+            paramClaims = setClaim(member_id, memberRoles);
             expireDate = createExpireDate(TokenAttribute.REFRESH_EXPIRETIME);
-            refreshToken.append(create(expireDate, headers, paramClaims));
+            refreshToken = create(expireDate, headers, paramClaims);
             if (refreshToken.toString() == null) {
                 try {
                     deleteAllTokenDB(accessToken.toString(), refreshToken.toString());
@@ -275,7 +280,7 @@ public class JwtTokenManagement {
                 return null;
             }
 
-            boolean result = updateTokenInfo(refreshToken.toString(), tokenInfoDAO.getHash(), member_id, expireDate.getTime());
+            boolean result = updateTokenInfo(refreshToken, tokenInfoDAO.getHash(), member_id, expireDate.getTime());
             if (result == false) {
                 deleteAllTokenDB(accessToken.toString(), tokenInfoDAO.getHash());
                 CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
@@ -284,9 +289,9 @@ public class JwtTokenManagement {
             }
 
             cookAttr = eCookie.REFRESH_TOKEN;
-            cook = CookieManagement.add(TokenAttribute.REFRESH_TOKEN, cookAttr.getMaxAge(), cookAttr.getPath(), refreshToken.toString());
+            cook = CookieManagement.add(TokenAttribute.REFRESH_TOKEN, cookAttr.getMaxAge(), cookAttr.getPath(), refreshToken);
             res.addCookie(cook);
-            claims = getClaims(refreshToken.toString());
+            claims = getClaims(refreshToken);
             if(claims == null){
                 return null;
             }
@@ -294,16 +299,13 @@ public class JwtTokenManagement {
 
         headers = setHeader();
         expireDate = createExpireDate(TokenAttribute.ACCESS_EXPIRETIME);
-        paramClaims = setClaim((long)claims.get(TokenAttribute.ID_CLAIM));
-        if(accessToken == null) {
-            accessToken = new StringBuilder();
-        }
-        accessToken.delete(0, accessToken.length());
-        accessToken.append(create(expireDate, headers, paramClaims));
+        List memberRoles = (List) claims.get(TokenAttribute.MEMBER_ROLE);
+        paramClaims = setClaim(((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue(), memberRoles);
+        accessToken = create(expireDate, headers, paramClaims);
         if(accessToken.toString() == null){
             //log
             try{
-                deleteAllTokenDB(accessToken.toString(), refreshToken.toString());
+                deleteAllTokenDB(accessToken, refreshToken);
             } catch (Exception except){
                 //log
             }
@@ -312,9 +314,9 @@ public class JwtTokenManagement {
             return null;
         }
         cookAttr = eCookie.ACCESS_TOKEN;
-        cook = CookieManagement.add(TokenAttribute.ACCESS_TOKEN, cookAttr.getMaxAge(), cookAttr.getPath(), accessToken.toString());
+        cook = CookieManagement.add(TokenAttribute.ACCESS_TOKEN, cookAttr.getMaxAge(), cookAttr.getPath(), accessToken);
         res.addCookie(cook);
-        return accessToken.toString();
+        return accessToken;
     }
 
     public boolean updateTokenInfo(String dst, String src, long member_id, long expireTime) {
@@ -329,12 +331,13 @@ public class JwtTokenManagement {
     }
 
     private void insertTokenInfo(String token, long member_id, long expireTime){
-        TokenInfoDAO insertDAO = new TokenInfoDAO(token, new MemberDAO(member_id), expireTime);
+        TokenInfoDAO insertDAO = new TokenInfoDAO(token, member_id, expireTime);
         tokenInfoRepository.save(insertDAO);
     }
 
-    private Map setClaim(long id){
+    private Map setClaim(long id, List memberRoles){
         Map claims = new HashMap();
+        claims.put(TokenAttribute.MEMBER_ROLE, memberRoles);
         claims.put(TokenAttribute.ID_CLAIM, id);
         claims.put(TokenAttribute.IAT_CLAIM, System.currentTimeMillis());
         return claims;
