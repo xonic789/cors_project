@@ -15,7 +15,8 @@ public interface ArticleService {
     ArticleDAO findById(Long id);
     ArticleDAO updateArticle(Long article_id,ArticleForm articleForm);
     Progress updateArticleProgress(Long article_id, String progress);
-
     List<ArticleDTO> findByDivision(Division division, Pageable pageable);
+    void deleteArticle(Long article_id);
+
 }
 

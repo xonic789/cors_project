@@ -55,4 +55,14 @@ public class ArticleQueryRepository {
         return articleDAO.division.eq(divisionCond);
     }
 
+    public ArticleDAO findById(Long article_id){
+        return query
+                .selectFrom(articleDAO)
+                .from(articleDAO)
+                .join(articleDAO.countDAO).fetchJoin()
+                .join(articleDAO.image_info).fetchJoin()
+                .where(articleDAO.article_id.eq(article_id))
+                .fetch().get(0);
+    }
+
 }

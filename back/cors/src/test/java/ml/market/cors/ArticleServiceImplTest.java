@@ -1,9 +1,11 @@
-package ml.market.cors.domain.article.service;
+package ml.market.cors;
 
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
+import ml.market.cors.domain.article.service.ArticleForm;
+import ml.market.cors.domain.article.service.ArticleService;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
@@ -13,14 +15,19 @@ import ml.market.cors.repository.bookcategory.Book_Category_Repository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.annotation.Order;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @Transactional
@@ -64,9 +71,6 @@ class ArticleServiceImplTest {
     private ArticleForm getArticleForm() {
         ArticleForm articleForm = new ArticleForm();
         articleForm.setMemberId(1L);
-        articleForm.setImage1("이미지1");
-        articleForm.setImage2("이미지2");
-        articleForm.setImage3("이미지3");
         articleForm.setContent("내용입니다");
         articleForm.setTitle("제목입니다");
         articleForm.setCid(1L);
@@ -126,9 +130,6 @@ class ArticleServiceImplTest {
         updateForm.setProgress(Progress.POSTING);
         updateForm.setRprice(10000);
         updateForm.setTprice(2000);
-        updateForm.setImage1("이미지 바뀜");
-        updateForm.setImage2("이미지 바뀜");
-        updateForm.setImage3("이미지 바뀜");
         ArticleDAO findArticle = articleService.findById(articleDAO.getArticle_id());
 
         articleService.updateArticle(findArticle.getArticle_id(),updateForm);
@@ -150,9 +151,9 @@ class ArticleServiceImplTest {
         ArticleForm articleForm2 = getArticleForm();
         ArticleForm articleForm3 = getArticleForm();
 
-        ArticleDAO.createArticleForm(articleForm1,memberDAO);
-        ArticleDAO.createArticleForm(articleForm2,memberDAO);
-        ArticleDAO.createArticleForm(articleForm3,memberDAO);
+        ArticleDAO.createArticleForm(articleForm1,memberDAO,book_categoryDAO1);
+        ArticleDAO.createArticleForm(articleForm2,memberDAO,book_categoryDAO1);
+        ArticleDAO.createArticleForm(articleForm3,memberDAO,book_categoryDAO1);
 
         ArticleDAO articleDAO1 = articleService.saveArticle(articleForm1,memberDAO);
         ArticleDAO articleDAO2 = articleService.saveArticle(articleForm2,memberDAO);

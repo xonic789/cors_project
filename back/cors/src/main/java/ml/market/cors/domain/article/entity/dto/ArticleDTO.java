@@ -6,6 +6,7 @@ import ml.market.cors.domain.article.entity.dao.CountDAO;
 import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 public class ArticleDTO {
@@ -19,6 +20,7 @@ public class ArticleDTO {
     private Book_CategoryDAO category;
     private Image_infoDAO image;
     private String nickname;
+
 
     @QueryProjection
     public ArticleDTO(Long articleId, CountDAO countDAO, String title, int tprice, Progress progress, Book_CategoryDAO category, String nickname) {

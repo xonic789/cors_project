@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name="count")
-@Getter()
+@Getter
 @NoArgsConstructor
 public class CountDAO {
     @Column(name = "chat_count")
