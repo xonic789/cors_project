@@ -43,6 +43,7 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         }else if(type.equals(TokenAttribute.REFRESH_TOKEN)){
             expireDate = mJwtTokenManagement.createExpireDate(TokenAttribute.REFRESH_EXPIRETIME);
         }
+
         token = mJwtTokenManagement.create(expireDate, headers, claims);
         Map resultMap = new HashMap();
         resultMap.put(TOKEN_CLAIM_NAME, token);
@@ -75,13 +76,13 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             Optional<MemberDAO> optional = memberRepository.findById(member_id);
             MemberDAO memberDAO = optional.get();
             TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(refreshToken, memberDAO.getMember_id(), expireTime);
-            tokenInfoRepository.save(tokenInfoDAO);
+            tokenInfoDAO = tokenInfoRepository.save(tokenInfoDAO);
             response.setContentType("application/json");
             eCookie cookAttr = eCookie.ACCESS_TOKEN;
             Cookie cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), accessToken);
             response.addCookie(cookie);
             cookAttr = eCookie.REFRESH_TOKEN;
-            cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), refreshToken);
+            cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), Long.toString(tokenInfoDAO.getTokenindex()));
             response.addCookie(cookie);
         } catch(Exception e) {
             response.setStatus(400);

@@ -15,6 +15,8 @@ import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
@@ -33,7 +35,7 @@ public class JwtTokenManagement {
     private final Blacklist_TokenRepository blacklist_tokenRepository;
 
     @Scheduled(fixedDelay = 1000 * 60 * 20)
-    private void cleaner(){
+    protected void cleaner(){
         Date nowDate = new Date();
         Long expireDate;
         List<Blacklist_TokenDAO> blacklistTokenInfoList = blacklist_tokenRepository.findAll();
@@ -47,12 +49,12 @@ public class JwtTokenManagement {
         for (TokenInfoDAO tokenInfoDAO : tokenInfoExpireList) {
             expireDate = tokenInfoDAO.getExpire_date();
             if(nowDate.after(new Date(expireDate))){
-                tokenInfoRepository.delete(new TokenInfoDAO(tokenInfoDAO.getHash()));
+                tokenInfoRepository.delete(new TokenInfoDAO(tokenInfoDAO.getTokenindex()));
             }
         }
     }
 
-    public boolean delete(String token, String id, String tokenType) {
+    public boolean delete(String token, String tokenType) {
         Date date = new Date();
         long expireTime = 0;
         if(tokenType == TokenAttribute.REFRESH_TOKEN){
@@ -60,11 +62,17 @@ public class JwtTokenManagement {
         }else if(tokenType == TokenAttribute.ACCESS_TOKEN){
             expireTime = date.getTime() + TokenAttribute.ACCESS_EXPIRETIME;
         }
+
         Blacklist_TokenDAO blacklistTokenInfoDAO = new Blacklist_TokenDAO(token, expireTime);
         blacklist_tokenRepository.save(blacklistTokenInfoDAO);
         if (tokenType.equals(TokenAttribute.REFRESH_TOKEN)) {
+            long token_Index = Long.parseLong(token);
+            TokenInfoDAO tokenInfoDAO = tokenInfoRepository.findByTokenindex(token_Index);
+            if(tokenInfoDAO == null){
+                return true;
+            }
             try{
-                tokenInfoRepository.deleteById(token);
+                tokenInfoRepository.deleteById(token_Index);
             }catch (EmptyResultDataAccessException e){
                 return true;
             }catch(Exception e){
@@ -113,11 +121,20 @@ public class JwtTokenManagement {
         if (key == null) {
             return null;
         }
-        JwtBuilder builder = Jwts.builder()
-                .setHeader(header)
-                .setClaims(claim)
-                .setExpiration(expireDate)
-                .signWith(SignatureAlgorithm.HS256, key);
+        JwtBuilder builder;
+        if(expireDate == null){
+            builder = Jwts.builder()
+                    .setHeader(header)
+                    .setClaims(claim)
+                    .signWith(SignatureAlgorithm.HS256, key);
+        }
+        else{
+            builder = Jwts.builder()
+                    .setHeader(header)
+                    .setClaims(claim)
+                    .setExpiration(expireDate)
+                    .signWith(SignatureAlgorithm.HS256, key);
+        }
         String token = builder.compact();
         return token;
     }
@@ -152,15 +169,13 @@ public class JwtTokenManagement {
         }
         return claims;
     }
-    private TokenInfoDAO getTokenInfo(String token){
-        TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(token, 0, 0L);
-        Optional<TokenInfoDAO> optional = tokenInfoRepository.findById(token);
-        try{
-            optional.get();
-        }catch (NoSuchElementException except){
+
+    public TokenInfoDAO findTokenIndex(long tokenIndex){
+        TokenInfoDAO tokenInfoDAO = tokenInfoRepository.findByTokenindex(tokenIndex);
+        if(tokenInfoDAO == null){
             return null;
         }
-        return optional.get();
+        return tokenInfoDAO;
     }
 
     public boolean isAvailRefresh(Cookie[] cookies) {
@@ -168,11 +183,17 @@ public class JwtTokenManagement {
         if(cook == null){
             return false;
         }
-        String refreshToken = cook.getValue();
-        if(isBlackList(refreshToken)){
+
+        long token_Index = Long.parseLong(cook.getValue());
+        TokenInfoDAO tokenInfoDAO = findTokenIndex(token_Index);
+        if(tokenInfoDAO == null){
             return false;
         }
-        if(isVerify(refreshToken) == false){
+
+        if(isBlackList(tokenInfoDAO.getHash())){
+            return false;
+        }
+        if(isVerify(tokenInfoDAO.getHash()) == false){
             return false;
         }
         return true;
@@ -196,16 +217,16 @@ public class JwtTokenManagement {
         return true;
     }
 
-    private boolean deleteByIdTokenInfo(String token){
+    private boolean deleteByIdTokenInfo(long token_index){
         try {
-            tokenInfoRepository.deleteById(token);
+            tokenInfoRepository.deleteById(token_index);
         }catch (Exception e){
             return false;
         }
         return true;
     }
 
-    public void deleteAllTokenDB(String accessToken, String refreshToken) {
+    public void deleteAllTokenDB(String accessToken, long token_index ,String refreshToken) {
         boolean result = true;
         if(accessToken != null && !accessToken.equals("")){
             if(insertBlackList(accessToken, TokenAttribute.ACCESS_TOKEN) == false){
@@ -216,7 +237,7 @@ public class JwtTokenManagement {
             if(insertBlackList(refreshToken, TokenAttribute.REFRESH_TOKEN) == false){
                 result = false;
             }
-            if(deleteByIdTokenInfo(refreshToken) == false){
+            if(deleteByIdTokenInfo(token_index) == false){
                 result = false;
             }
         }
@@ -225,20 +246,32 @@ public class JwtTokenManagement {
         }
     }
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public String refresh(Cookie[] cookies, HttpServletResponse res) {
         Cookie cook = CookieManagement.search(TokenAttribute.ACCESS_TOKEN, cookies);
         String accessToken = null;
         if(cook != null){
             accessToken = cook.getValue();
         }
+
         cook = CookieManagement.search(TokenAttribute.REFRESH_TOKEN, cookies);
+        long refreshTokenIndex = 0;
         String refreshToken = null;
+        TokenInfoDAO tokenInfoDAO = null;
         if(cook != null){
-            refreshToken = cook.getValue();
+            refreshTokenIndex = Long.parseLong(cook.getValue());
+            tokenInfoDAO = findTokenIndex(refreshTokenIndex);
+            if(tokenInfoDAO == null){
+                deleteAllTokenDB(accessToken, refreshTokenIndex, null);
+                CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
+                CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
+                return null;
+            }
+            refreshToken = tokenInfoDAO.getHash();
         }
 
         if(isAvailRefresh(cookies) == false){
-            deleteAllTokenDB(accessToken, refreshToken);
+            deleteAllTokenDB(accessToken, refreshTokenIndex , refreshToken);
             CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
             CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
             return null;
@@ -249,63 +282,55 @@ public class JwtTokenManagement {
         Map headers = null;
         Map paramClaims = null;
         eCookie cookAttr;
-        TokenInfoDAO tokenInfoDAO = null;
         if(claims == null) {
-            tokenInfoDAO = getTokenInfo(refreshToken);
-            if (tokenInfoDAO == null) {
-                deleteAllTokenDB(accessToken, refreshToken);
-                CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
-                CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
-                return null;
-            }
+            deleteAllTokenDB(accessToken, refreshTokenIndex, refreshToken);
+            CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
+            CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
+            return null;
+        }
 
-            headers = setHeader();
-            long member_id = tokenInfoDAO.getMember_id();
-            Optional<MemberDAO> optional = memberRepository.findById(member_id);
-            MemberDAO memberDao = optional.get();
-            MemberRole memberRole = memberDao.getRole();
-            List memberRoles = new LinkedList();
-            memberRoles.add(new MemberGrantAuthority(memberRole));
-            paramClaims = setClaim(member_id, memberRoles);
-            expireDate = createExpireDate(TokenAttribute.REFRESH_EXPIRETIME);
-            refreshToken = create(expireDate, headers, paramClaims);
-            if (refreshToken.toString() == null) {
-                try {
-                    deleteAllTokenDB(accessToken.toString(), refreshToken.toString());
-                } catch (Exception e) {
-
-                }
-                CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
-                CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
-                return null;
+        headers = setHeader();
+        long member_id = tokenInfoDAO.getMember_id();
+        Optional<MemberDAO> optional = memberRepository.findById(member_id);
+        MemberDAO memberDao = optional.get();
+        MemberRole memberRole = memberDao.getRole();
+        List memberRoles = new LinkedList();
+        memberRoles.add(new MemberGrantAuthority(memberRole));
+        paramClaims = setClaim(member_id, memberRoles);
+        expireDate = createExpireDate(TokenAttribute.REFRESH_EXPIRETIME);
+        refreshToken = create(expireDate, headers, paramClaims);
+        if (refreshToken == null) {
+            try {
+                deleteAllTokenDB(accessToken, refreshTokenIndex, tokenInfoDAO.getHash());
+            } catch (Exception e) {
+                //log
             }
+            CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
+            CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
+            return null;
+        }
 
-            boolean result = updateTokenInfo(refreshToken, tokenInfoDAO.getHash(), member_id, expireDate.getTime());
-            if (result == false) {
-                deleteAllTokenDB(accessToken.toString(), tokenInfoDAO.getHash());
-                CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
-                CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
-                return null;
-            }
-
-            cookAttr = eCookie.REFRESH_TOKEN;
-            cook = CookieManagement.add(TokenAttribute.REFRESH_TOKEN, cookAttr.getMaxAge(), cookAttr.getPath(), refreshToken);
-            res.addCookie(cook);
-            claims = getClaims(refreshToken);
-            if(claims == null){
-                return null;
-            }
+        boolean result = updateTokenInfo(refreshTokenIndex, refreshToken, tokenInfoDAO.getHash(), member_id, expireDate.getTime());
+        if (result == false) {
+            deleteAllTokenDB(accessToken, refreshTokenIndex, tokenInfoDAO.getHash());
+            CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
+            CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
+            return null;
+        }
+        claims = getClaims(refreshToken);
+        if(claims == null){
+            return null;
         }
 
         headers = setHeader();
         expireDate = createExpireDate(TokenAttribute.ACCESS_EXPIRETIME);
-        List memberRoles = (List) claims.get(TokenAttribute.MEMBER_ROLE);
+        memberRoles = (List) claims.get(TokenAttribute.MEMBER_ROLE);
         paramClaims = setClaim(((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue(), memberRoles);
         accessToken = create(expireDate, headers, paramClaims);
         if(accessToken.toString() == null){
             //log
             try{
-                deleteAllTokenDB(accessToken, refreshToken);
+                deleteAllTokenDB(accessToken, refreshTokenIndex ,refreshToken);
             } catch (Exception except){
                 //log
             }
@@ -319,20 +344,12 @@ public class JwtTokenManagement {
         return accessToken;
     }
 
-    public boolean updateTokenInfo(String dst, String src, long member_id, long expireTime) {
+    private boolean updateTokenInfo(long tokenIndex, String dst, String src, long member_id, long expireTime) {
         if(insertBlackList(src, TokenAttribute.REFRESH_TOKEN) == false){
             return false;
         }
-        if(deleteByIdTokenInfo(src) == false){
-            return false;
-        }
-        insertTokenInfo(dst, member_id, expireTime);
+        tokenInfoRepository.save(new TokenInfoDAO(tokenIndex, dst, member_id, expireTime));
         return true;
-    }
-
-    private void insertTokenInfo(String token, long member_id, long expireTime){
-        TokenInfoDAO insertDAO = new TokenInfoDAO(token, member_id, expireTime);
-        tokenInfoRepository.save(insertDAO);
     }
 
     private Map setClaim(long id, List memberRoles){

@@ -47,7 +47,6 @@ public class MemberLoginAuthFilter extends UsernamePasswordAuthenticationFilter 
         }
 
         UsernamePasswordAuthenticationToken token = null;
-
         try{
             LoginForm wee = new LoginForm(request.getParameter("email"), request.getParameter("passwd"));
             token = new UsernamePasswordAuthenticationToken(wee.getEmail(), wee.getPasswd());

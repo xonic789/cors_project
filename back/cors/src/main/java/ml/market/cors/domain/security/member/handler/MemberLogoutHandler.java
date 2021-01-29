@@ -42,7 +42,7 @@ public class MemberLogoutHandler implements LogoutHandler {
             if(cookie == null){
                 continue;
             }
-            if(jwtTokenManagement.delete(cookie.getValue(), token.getName(), tokenName) == false){
+            if(jwtTokenManagement.delete(cookie.getValue(), tokenName) == false){
                 //log
             }
             CookieManagement.delete(response, tokenName, cookies);
