@@ -1,4 +1,4 @@
-package ml.market.cors.domain.util.map.dto;
+package ml.market.cors.domain.util.kakao.dto.map;
 
 import lombok.Data;
 

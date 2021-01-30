@@ -13,7 +13,7 @@ DEFAULT_LOGIN_REDIRECT_URL: code를 권한서버에서 redirection해줄 url 양
         public ClientRegistration.Builder getBuilder(String registrationId) {
             ClientRegistration.Builder builder = getBuilder(registrationId,
                     ClientAuthenticationMethod.POST, DEFAULT_LOGIN_REDIRECT_URL);
-            builder.scope("profile");
+            builder.scope("profile", "account_email");
             builder.authorizationUri("https://kauth.kakao.com/oauth/authorize");
             builder.tokenUri("https://kauth.kakao.com/oauth/token");
             builder.userInfoUri("https://kapi.kakao.com/v2/user/me");

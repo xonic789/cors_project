@@ -8,9 +8,9 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enu.SocialType;
 import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
-import ml.market.cors.domain.util.map.dto.MapDocumentsDTO;
-import ml.market.cors.domain.util.map.KaKaoMapManagement;
-import ml.market.cors.domain.util.map.dto.KakaoResMapDTO;
+import ml.market.cors.domain.util.kakao.dto.map.MapDocumentsDTO;
+import ml.market.cors.domain.util.kakao.KaKaoRestManagement;
+import ml.market.cors.domain.util.kakao.dto.map.KakaoResMapDTO;
 import ml.market.cors.repository.mail.EmailStateRepository;
 import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,7 +28,7 @@ public class MemberManagement {
 
     private final EmailStateRepository emailStateRepository;
 
-    private final KaKaoMapManagement kaKaoMapManagement;
+    private final KaKaoRestManagement kaKaoRestManagement;
     public boolean conditionJoin(String email, String nickname){
         boolean bResult = existNickname(nickname);
         if(bResult){
@@ -74,7 +74,10 @@ public class MemberManagement {
         double latitude = 0;
         double longitude = 0;
         String address = memberVo.getAddress();
-        KakaoResMapDTO kakaoResMapDTO = kaKaoMapManagement.search(memberVo.getAddress());
+        KakaoResMapDTO kakaoResMapDTO = kaKaoRestManagement.transAddressToCoordinate(memberVo.getAddress());
+        if(kakaoResMapDTO == null){
+            return false;
+        }
         MapDocumentsDTO mapResMapDocumentsDTO = kakaoResMapDTO.getDocuments().get(0);
         latitude = mapResMapDocumentsDTO.getY();
         longitude = mapResMapDocumentsDTO.getX();

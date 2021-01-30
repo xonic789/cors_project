@@ -1,4 +1,4 @@
-package ml.market.cors.domain.util.map.dto;
+package ml.market.cors.domain.util.kakao.dto.map;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

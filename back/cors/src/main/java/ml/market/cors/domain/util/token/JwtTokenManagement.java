@@ -292,14 +292,14 @@ public class JwtTokenManagement {
             return null;
         }
 
-        headers = setHeader();
+        headers = getHeader();
         long member_id = tokenInfoDAO.getMember_id();
         Optional<MemberDAO> optional = memberRepository.findById(member_id);
         MemberDAO memberDao = optional.get();
         MemberRole memberRole = memberDao.getRole();
         List memberRoles = new LinkedList();
         memberRoles.add(new MemberGrantAuthority(memberRole));
-        paramClaims = setClaim(member_id, memberRoles);
+        paramClaims = getClaim(member_id, memberRoles);
         expireDate = createExpireDate(TokenAttribute.REFRESH_EXPIRETIME);
         refreshToken = create(expireDate, headers, paramClaims);
         if (refreshToken == null) {
@@ -325,10 +325,10 @@ public class JwtTokenManagement {
             return null;
         }
 
-        headers = setHeader();
+        headers = getHeader();
         expireDate = createExpireDate(TokenAttribute.ACCESS_EXPIRETIME);
         memberRoles = (List) claims.get(TokenAttribute.MEMBER_ROLE);
-        paramClaims = setClaim(((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue(), memberRoles);
+        paramClaims = getClaim(((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue(), memberRoles);
         accessToken = create(expireDate, headers, paramClaims);
         if(accessToken.toString() == null){
             //log
@@ -355,7 +355,7 @@ public class JwtTokenManagement {
         return true;
     }
 
-    private Map setClaim(long id, List memberRoles){
+    public Map getClaim(long id, List memberRoles){
         Map claims = new HashMap();
         claims.put(TokenAttribute.MEMBER_ROLE, memberRoles);
         claims.put(TokenAttribute.ID_CLAIM, id);
@@ -363,7 +363,7 @@ public class JwtTokenManagement {
         return claims;
     }
 
-    private Map setHeader(){
+    public Map getHeader(){
         Map headers = new HashMap();
         headers.put(TokenAttribute.ALG_HEADER, TokenAttribute.HS256);
         headers.put(TokenAttribute.TYP_HEADER, TokenAttribute.JWT);

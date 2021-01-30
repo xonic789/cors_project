@@ -1,17 +1,14 @@
 package ml.market.cors.domain.security.oauth.service;
 
 import lombok.NonNull;
-import ml.market.cors.domain.security.member.JwtCertificationToken;
-import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
-import ml.market.cors.domain.security.member.role.MemberRole;
-import ml.market.cors.domain.security.oauth.OauthCertificationToken;
+import ml.market.cors.repository.member.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.http.OAuth2ErrorResponseErrorHandler;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -23,7 +20,6 @@ import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestOperations;
@@ -44,6 +40,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private Converter<OAuth2UserRequest, RequestEntity<?>> requestEntityConverter = new OAuth2UserRequestEntityConverter();
 
     private RestOperations restOperations;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     public CustomOAuth2UserService() {
         RestTemplate restTemplate = new RestTemplate();
@@ -104,11 +103,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Set<GrantedAuthority> authorities = new LinkedHashSet<>();
         authorities.add(new OAuth2UserAuthority(userAttributes));
         OAuth2AccessToken token = userRequest.getAccessToken();
+        userAttributes.put("access_token", token);
         for (String authority : token.getScopes()) {
             authorities.add(new SimpleGrantedAuthority("SCOPE_" + authority));
         }
 
-        SecurityContextHolder.getContext().setAuthentication(new OauthCertificationToken(userAttributes));
         return new DefaultOAuth2User(authorities, userAttributes, userNameAttributeName);
     }
 

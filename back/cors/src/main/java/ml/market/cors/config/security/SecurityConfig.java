@@ -14,6 +14,7 @@ import ml.market.cors.domain.security.member.handler.MemberLogoutHandler;
 import ml.market.cors.domain.security.member.manager.MemberProviderManager;
 import ml.market.cors.domain.security.member.provider.MemberLoginAuthProvider;
 import ml.market.cors.domain.security.member.service.MemberLoginAuthService;
+import ml.market.cors.domain.security.oauth.handler.OauthSuccessHandler;
 import ml.market.cors.domain.security.oauth.provider.CustomOAuth2Provider;
 import ml.market.cors.domain.security.oauth.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,10 @@ import java.util.stream.Collectors;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CookieSecurityContextRepository mCookieSecurityContextRepository;
 
+    private final OauthSuccessHandler oauthSuccessHandler;
+
+    private final ExceptionPoint exceptionPoint;
+
     @Override
     public void configure(WebSecurity web)  {
        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
@@ -71,19 +76,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/login").anonymous()
                     .antMatchers("/api/join").anonymous()
                     .antMatchers("/api/logout").anonymous()
-                    .antMatchers("/api/test").hasRole("ADMIN")
                     .antMatchers("/**").permitAll()
                     .and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                    .exceptionHandling().authenticationEntryPoint(new ExceptionPoint())
                     .and()
                     .oauth2Login()
                     .loginPage("/")
                     .userInfoEndpoint().userService(new CustomOAuth2UserService())
                     .and()
-                    .defaultSuccessUrl("/")
-                    .failureUrl("/")
+                    .successHandler(oauthSuccessHandler)
+                    .and()
+                    .exceptionHandling()
+                    .authenticationEntryPoint(exceptionPoint)
                     .and()
                     .formLogin()
                     .disable()
