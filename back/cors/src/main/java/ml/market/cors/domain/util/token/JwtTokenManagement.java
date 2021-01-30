@@ -57,7 +57,15 @@ public class JwtTokenManagement {
     public boolean delete(String token, String tokenType) {
         Date date = new Date();
         long expireTime = 0;
+        long token_Index = 0;
+        TokenInfoDAO tokenInfoDAO;
         if(tokenType == TokenAttribute.REFRESH_TOKEN){
+            token_Index = Long.parseLong(token);
+            tokenInfoDAO = tokenInfoRepository.findByTokenindex(token_Index);
+            if(tokenInfoDAO == null){
+                return true;
+            }
+            token = tokenInfoDAO.getHash();
             expireTime = date.getTime() + TokenAttribute.REFRESH_EXPIRETIME;
         }else if(tokenType == TokenAttribute.ACCESS_TOKEN){
             expireTime = date.getTime() + TokenAttribute.ACCESS_EXPIRETIME;
@@ -66,11 +74,6 @@ public class JwtTokenManagement {
         Blacklist_TokenDAO blacklistTokenInfoDAO = new Blacklist_TokenDAO(token, expireTime);
         blacklist_tokenRepository.save(blacklistTokenInfoDAO);
         if (tokenType.equals(TokenAttribute.REFRESH_TOKEN)) {
-            long token_Index = Long.parseLong(token);
-            TokenInfoDAO tokenInfoDAO = tokenInfoRepository.findByTokenindex(token_Index);
-            if(tokenInfoDAO == null){
-                return true;
-            }
             try{
                 tokenInfoRepository.deleteById(token_Index);
             }catch (EmptyResultDataAccessException e){

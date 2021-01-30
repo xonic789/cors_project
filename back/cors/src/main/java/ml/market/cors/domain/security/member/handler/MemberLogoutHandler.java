@@ -47,5 +47,6 @@ public class MemberLogoutHandler implements LogoutHandler {
             }
             CookieManagement.delete(response, tokenName, cookies);
         }
+        response.reset();
     }
 }

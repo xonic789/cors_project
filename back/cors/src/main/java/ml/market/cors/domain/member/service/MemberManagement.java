@@ -4,25 +4,21 @@ package ml.market.cors.domain.member.service;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.mail.entity.EmailStateDAO;
-import ml.market.cors.domain.mail.vo.MailVO;
-import ml.market.cors.domain.member.eSubscriberType;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.security.member.role.MemberRole;
+import ml.market.cors.domain.security.oauth.enu.SocialType;
 import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
-import ml.market.cors.domain.util.map.Documents;
+import ml.market.cors.domain.util.map.dto.MapDocumentsDTO;
 import ml.market.cors.domain.util.map.KaKaoMapManagement;
-import ml.market.cors.domain.util.map.KakaoResMapVO;
+import ml.market.cors.domain.util.map.dto.KakaoResMapDTO;
 import ml.market.cors.repository.mail.EmailStateRepository;
 import ml.market.cors.repository.member.MemberRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -34,12 +30,12 @@ public class MemberManagement {
 
     private final KaKaoMapManagement kaKaoMapManagement;
     public boolean conditionJoin(String email, String nickname){
-        boolean bResult = existNickname(email);
+        boolean bResult = existNickname(nickname);
         if(bResult){
             return false;
         }
 
-        bResult = existEmail(nickname);
+        bResult = existEmail(email);
         if(bResult){
             return false;
         }
@@ -72,18 +68,18 @@ public class MemberManagement {
         }
         Date date = new Date();
         if(date.after(new Date(emailStateDAO.getExpireTime()))){
-            //시간 다됨
             return false;
         }
 
         double latitude = 0;
         double longitude = 0;
-        KakaoResMapVO kakaoResMapVO = kaKaoMapManagement.search(memberVo.getAddress());
-        Documents mapResDocuments = kakaoResMapVO.getDocuments().get(0);
-        latitude = mapResDocuments.getY();
-        longitude = mapResDocuments.getX();
+        String address = memberVo.getAddress();
+        KakaoResMapDTO kakaoResMapDTO = kaKaoMapManagement.search(memberVo.getAddress());
+        MapDocumentsDTO mapResMapDocumentsDTO = kakaoResMapDTO.getDocuments().get(0);
+        latitude = mapResMapDocumentsDTO.getY();
+        longitude = mapResMapDocumentsDTO.getX();
         MemberDAO memberDAO = new MemberDAO(email, MemberRole.USER, passwd
-                ,memberVo.getAddress(), latitude, longitude, nickname, eSubscriberType.NORMAL);
+                ,address, latitude, longitude, nickname, SocialType.NORMAL);
         memberRepository.save(memberDAO);
         emailStateRepository.deleteById(email);
         return true;
