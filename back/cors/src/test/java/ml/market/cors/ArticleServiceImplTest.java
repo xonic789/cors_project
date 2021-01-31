@@ -1,7 +1,6 @@
 package ml.market.cors;
 
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
-import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.article.service.ArticleForm;
@@ -11,17 +10,13 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Image_info_Repository;
+import ml.market.cors.repository.article.query.ArticleQueryRepository;
 import ml.market.cors.repository.bookcategory.Book_Category_Repository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.annotation.Order;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -39,6 +34,7 @@ class ArticleServiceImplTest {
     @Autowired CountRepository countRepository;
     @Autowired Image_info_Repository image_info_repository;
     @Autowired Book_Category_Repository book_category_repository;
+    @Autowired ArticleQueryRepository articleQueryRepository;
 
 
     @Test
@@ -52,7 +48,7 @@ class ArticleServiceImplTest {
         book_category_repository.save(book_categoryDAO);
 
 
-        ArticleForm articleForm = getArticleForm();
+        ArticleForm articleForm = getArticleFormSales();
 
 
         //when
@@ -68,7 +64,7 @@ class ArticleServiceImplTest {
         assertEquals(articleForm.getTitle(),findArticle.getTitle());
     }
 
-    private ArticleForm getArticleForm() {
+    private ArticleForm getArticleFormSales() {
         ArticleForm articleForm = new ArticleForm();
         articleForm.setMemberId(1L);
         articleForm.setContent("내용입니다");
@@ -77,6 +73,17 @@ class ArticleServiceImplTest {
         articleForm.setRprice(10000);
         articleForm.setProgress(Progress.POSTING);
         articleForm.setDivision(Division.SALES);
+        return articleForm;
+    }
+    private ArticleForm getArticleFormPurchase() {
+        ArticleForm articleForm = new ArticleForm();
+        articleForm.setMemberId(1L);
+        articleForm.setContent("내용입니다");
+        articleForm.setTitle("제목입니다");
+        articleForm.setCid(1L);
+        articleForm.setRprice(10000);
+        articleForm.setProgress(Progress.POSTING);
+        articleForm.setDivision(Division.PURCHASE);
         return articleForm;
     }
 
@@ -90,17 +97,16 @@ class ArticleServiceImplTest {
         Book_CategoryDAO book_categoryDAO1 = new Book_CategoryDAO(1L);
         book_category_repository.save(book_categoryDAO1);
 
-        ArticleForm articleForm = getArticleForm();
+        ArticleForm articleFormSales = getArticleFormSales();
+        ArticleForm articleFormPurchase = getArticleFormPurchase();
         //when
-        articleService.saveArticle(articleForm,memberDAO);
-        articleService.saveArticle(articleForm,memberDAO);
-        articleService.saveArticle(articleForm,memberDAO);
-        articleService.saveArticle(articleForm,memberDAO);
-        articleService.saveArticle(articleForm,memberDAO);
+        for(int i=0;i<100;i++){
+            articleService.saveArticle(articleFormSales,memberDAO);
+            articleService.saveArticle(articleFormPurchase,memberDAO);
+        }
 
 
         //then
-        assertEquals(articleRepository.findAll().size(),5);
 
     }
 
@@ -114,7 +120,7 @@ class ArticleServiceImplTest {
         Book_CategoryDAO book_categoryDAO1 = new Book_CategoryDAO(1L);
         book_category_repository.save(book_categoryDAO1);
 
-        ArticleForm articleForm = getArticleForm();
+        ArticleForm articleForm = getArticleFormSales();
 
         ArticleDAO articleDAO = articleService.saveArticle(articleForm,memberDAO);
 
@@ -147,9 +153,9 @@ class ArticleServiceImplTest {
         Book_CategoryDAO book_categoryDAO1 = new Book_CategoryDAO(1L);
         book_category_repository.save(book_categoryDAO1);
 
-        ArticleForm articleForm1 = getArticleForm();
-        ArticleForm articleForm2 = getArticleForm();
-        ArticleForm articleForm3 = getArticleForm();
+        ArticleForm articleForm1 = getArticleFormSales();
+        ArticleForm articleForm2 = getArticleFormSales();
+        ArticleForm articleForm3 = getArticleFormSales();
 
         ArticleDAO.createArticleForm(articleForm1,memberDAO,book_categoryDAO1);
         ArticleDAO.createArticleForm(articleForm2,memberDAO,book_categoryDAO1);

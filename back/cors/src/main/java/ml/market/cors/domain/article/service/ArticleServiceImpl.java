@@ -7,6 +7,7 @@ import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.dto.ArticleDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
+import ml.market.cors.domain.article.entity.search.ArticleSearch;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
@@ -14,6 +15,7 @@ import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Image_info_Repository;
 import ml.market.cors.repository.article.query.ArticleQueryRepository;
 import ml.market.cors.repository.bookcategory.Book_Category_Repository;
+import ml.market.cors.repository.market.MarketRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +31,7 @@ public class ArticleServiceImpl implements ArticleService{
     private final ArticleQueryRepository articleQueryRepository;
     private final Image_info_Repository image_info_repository;
     private final Book_Category_Repository book_category_repository;
+    private final MarketRepository marketRepository;
 
 
     @Override
@@ -42,8 +45,18 @@ public class ArticleServiceImpl implements ArticleService{
     }
 
     @Override
+    @Transactional(readOnly = false)
+    public ArticleDAO saveMarketArticle(ArticleForm articleForm, MemberDAO memberDAO){
+        Book_CategoryDAO book_categoryDAO = book_category_repository.findById(articleForm.getCid()).get();
+        ArticleDAO createArticle = ArticleDAO.createArticleForm(articleForm,memberDAO,book_categoryDAO);
+        countRepository.save(createArticle.getCountDAO());
+        image_info_repository.save(createArticle.getImage_info());
+        return articleRepository.save(createArticle);
+    }
+
+    @Override
     public ArticleDAO findById(Long id){
-        return articleRepository.findById(id).get();
+        return articleQueryRepository.findById(id);
     }
 
     /**
@@ -83,8 +96,8 @@ public class ArticleServiceImpl implements ArticleService{
     }
 
     @Override
-    public List<ArticleDTO> findByDivision(Division division, Pageable pageable) {
-        return articleQueryRepository.findByDivision(division,pageable);
+    public List<ArticleDTO> findAll(Division division, Pageable pageable, ArticleSearch articleSearch) {
+        return articleQueryRepository.findByDivision(division,pageable,articleSearch);
 
     }
 
@@ -96,6 +109,4 @@ public class ArticleServiceImpl implements ArticleService{
         countRepository.deleteById(findArticle.getCountDAO().getCount_id());
         articleRepository.deleteById(findArticle.getArticle_id());
     }
-
-
 }

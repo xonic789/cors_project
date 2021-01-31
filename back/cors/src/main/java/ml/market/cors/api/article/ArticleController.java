@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
-import ml.market.cors.domain.article.entity.dto.ArticleDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.article.entity.search.ArticleSearch;
@@ -14,28 +13,21 @@ import ml.market.cors.domain.article.service.ArticleService;
 import ml.market.cors.domain.article.service.ImageInfoService;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
-import ml.market.cors.domain.security.member.service.MemberLoginAuthService;
 import ml.market.cors.domain.util.Errors;
 import ml.market.cors.domain.util.Message;
 import ml.market.cors.domain.util.ResponseEntityUtils;
-import ml.market.cors.domain.util.StatusEnum;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.upload.S3Uploader;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 
 @RestController
 @Slf4j
@@ -76,9 +68,9 @@ public class ArticleController {
             @PathVariable String division,
             Pageable pageable, @ModelAttribute ArticleSearch articleSearch){
         if(division.equals(SALES)){
-            return responseEntityUtils.getMessageResponseEntityOK(articleService.findByDivision(Division.SALES, pageable));
+            return responseEntityUtils.getMessageResponseEntityOK(articleService.findAll(Division.SALES, pageable,articleSearch));
         }else if(division.equals(PURCHASE)){
-            return responseEntityUtils.getMessageResponseEntityOK(articleService.findByDivision(Division.PURCHASE, pageable));
+            return responseEntityUtils.getMessageResponseEntityOK(articleService.findAll(Division.PURCHASE, pageable,articleSearch));
         }
         return responseEntityUtils.getMessageResponseEntityBadRequest(
                 new Errors("URI",
@@ -89,6 +81,37 @@ public class ArticleController {
 
 
 
+
+    @GetMapping("/api/article/{article_id}")
+    public ResponseEntity<Message<Object>> getArticleDetail(
+            @PathVariable String article_id){
+        try{
+            return responseEntityUtils.getMessageResponseEntityOK(articleService.findById(Long.parseLong(article_id)));
+        }catch (NumberFormatException e){
+            return responseEntityUtils.getMessageResponseEntityBadRequest(
+                    new Errors(
+                            "URI",
+                            "article_id",
+                            article_id.toString(),
+                            "number 형식으로만 요청 가능합니다"));
+        }
+
+
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class ArticleOne{
+//        private
+    }
+
+
+    /**
+     * 게시물 등록 및 파일 업로드
+     * @param articleForm
+     * @param jwtCertificationToken
+     * @return
+     */
     @PostMapping("/api/article")
     public ResponseEntity<Message<Object>> insertArticle(
             @ModelAttribute ArticleForm articleForm,
@@ -96,7 +119,6 @@ public class ArticleController {
     ) {
         String name = jwtCertificationToken.getName();
         MemberDAO findMember = memberRepository.findByEmail(name);
-
 
         ArticleDAO articleDAO = articleService.saveArticle(articleForm, findMember);
 
@@ -121,6 +143,12 @@ public class ArticleController {
         return images;
     }
 
+    /**
+     * 게시물 수정 및 파일 업로드 수정
+     * @param article_id
+     * @param articleForm
+     * @return
+     */
     @PutMapping("/api/article/{article_id}")
     public ResponseEntity<Message<Object>> updateArticle(
             @PathVariable Long article_id,@ModelAttribute ArticleForm articleForm){
@@ -139,7 +167,8 @@ public class ArticleController {
                         findArticle.getTprice(),
                         findArticle.getWrite_date(),
                         findArticle.getProgress(),
-                        findArticle.getDivision()));
+                        findArticle.getDivision(),
+                        findArticle.getMarket().getMarket_id()));
     }
 
     @Data
@@ -154,6 +183,7 @@ public class ArticleController {
         private LocalDateTime writeDate;
         private Progress progress;
         private Division division;
+        private Long marketId;
     }
 
     @DeleteMapping("/api/article/{article_id}")

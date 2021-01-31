@@ -6,6 +6,7 @@ import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.article.service.ArticleForm;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
+import ml.market.cors.domain.market.entity.MarketDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;
@@ -61,6 +62,10 @@ public class ArticleDAO {
     @JoinColumn(name = "index_id")
     private Image_infoDAO image_info;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "market_id")
+    private MarketDAO market;
+
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
                       Progress progress, int tprice, Division division,
                       Image_infoDAO image_info,String title,MemberDAO memberDAO,Book_CategoryDAO category) {
@@ -77,6 +82,22 @@ public class ArticleDAO {
         this.member=memberDAO;
         this.category=category;
     }
+    public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
+                      Progress progress, int tprice, Division division,
+                      Image_infoDAO image_info,String title,MemberDAO member,Book_CategoryDAO category,MarketDAO market) {
+        this.countDAO = countDAO;
+        this.content = content;
+        this.rprice = rprice;
+        this.write_date = write_date;
+        this.progress = progress;
+        this.tprice = tprice;
+        this.division = division;
+        this.member = member;
+        this.image_info=image_info;
+        this.title=title;
+        this.category=category;
+        this.market=market;
+    }
 
     public static ArticleDAO createArticleForm(ArticleForm articleForm, MemberDAO member,Book_CategoryDAO book_categoryDAO){
         return new ArticleDAO(
@@ -86,6 +107,17 @@ public class ArticleDAO {
                 articleForm.getDivision(),
                 new Image_infoDAO(articleForm.getImage(),articleForm.getDivision()),
                 articleForm.getTitle(),member,book_categoryDAO);
+    }
+
+
+    public static ArticleDAO createArticleMarket(ArticleForm articleForm, MemberDAO member,Book_CategoryDAO book_categoryDAO,MarketDAO market){
+        return new ArticleDAO(
+                new CountDAO(), articleForm.getContent(),
+                articleForm.getRprice(), LocalDateTime.now(),
+                articleForm.getProgress(), articleForm.getTprice(),
+                articleForm.getDivision(),
+                new Image_infoDAO(articleForm.getImage(),articleForm.getDivision()),
+                articleForm.getTitle(),member,book_categoryDAO,market);
     }
 
     public ArticleDAO updateArticle(ArticleForm articleForm,Image_infoDAO image_info,CountDAO countDAO) {
