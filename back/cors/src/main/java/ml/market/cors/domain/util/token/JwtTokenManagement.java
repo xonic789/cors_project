@@ -355,7 +355,7 @@ public class JwtTokenManagement {
         return true;
     }
 
-    public Map getClaim(long id, List memberRoles){
+    public Map<String, Object> getClaim(long id, List memberRoles){
         Map claims = new HashMap();
         claims.put(TokenAttribute.MEMBER_ROLE, memberRoles);
         claims.put(TokenAttribute.ID_CLAIM, id);
@@ -363,8 +363,8 @@ public class JwtTokenManagement {
         return claims;
     }
 
-    public Map getHeader(){
-        Map headers = new HashMap();
+    public Map<String, Object> getHeader(){
+        Map<String, Object> headers = new HashMap();
         headers.put(TokenAttribute.ALG_HEADER, TokenAttribute.HS256);
         headers.put(TokenAttribute.TYP_HEADER, TokenAttribute.JWT);
         return headers;
