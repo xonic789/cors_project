@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-
+import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import postList from './mockdata';
+import { articleInterface } from '../../interfaces/PostList.interface';
 import Header from './Header';
 
 const PostListWrapper = styled.div`
   display: flex;
   max-width: 100vw;
   flex-wrap: wrap;
-  padding-top: 150px;
+  padding-top: 200px;
 `;
 const PostListContent = styled.div`
   display: flex;
@@ -26,13 +26,14 @@ const PostListContent = styled.div`
     margin-top: 10px;
   }
 `;
-const PostList = () => {
-  const [post, setPost] = useState(postList);
+const PostList: React.FC = () => {
+  const { bookPost } = useSelector((state) => state.postSlice);
+  console.log(bookPost);
   return (
     <PostListWrapper>
       <Header />
       {
-        post.data.map((p) => (
+        bookPost.map((p:articleInterface) => (
           <PostListContent>
             <img src={p.Images.sumnail} alt="" />
             <h3>{p.title}</h3>

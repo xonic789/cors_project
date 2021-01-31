@@ -10,7 +10,7 @@ export function getBookPostPurchaseAPI():Promise<AxiosResponse> {
   return axios.get('api/articles/purchase');
 }
 // 일반사용자 판매글 리스트 불러오기
-export function getBookPostSalesAPI():Promise<AxiosResponse> {
+export function getBookPostSaleAPI():Promise<AxiosResponse> {
   return axios.get('api/articles/sales');
 }
 // 마켓리스트 불러오기
