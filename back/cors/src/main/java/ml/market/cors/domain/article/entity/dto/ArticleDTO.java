@@ -9,6 +9,8 @@ import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.market.entity.MarketDAO;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+
 @Data
 public class ArticleDTO {
 
@@ -16,16 +18,17 @@ public class ArticleDTO {
     private Long articleId;
     private CountDAO countDAO;
     private String title;
+    private LocalDateTime writeDate;
     private int tprice;
     private Progress progress;
     private Book_CategoryDAO category;
-    private Image_infoDAO image;
+    private String image;
     private String nickname;
     private MarketDAO market;
 
 
     @QueryProjection
-    public ArticleDTO(Long articleId, CountDAO countDAO, String title, int tprice, Progress progress, Book_CategoryDAO category, String nickname) {
+    public ArticleDTO(Long articleId, CountDAO countDAO, String title, int tprice, Progress progress, Book_CategoryDAO category, String nickname,LocalDateTime writeDate,String image) {
         this.articleId = articleId;
         this.countDAO = countDAO;
         this.title = title;
@@ -33,9 +36,11 @@ public class ArticleDTO {
         this.progress = progress;
         this.category = category;
         this.nickname = nickname;
+        this.writeDate=writeDate;
+        this.image=image;
     }
     @QueryProjection
-    public ArticleDTO(Long articleId, CountDAO countDAO, String title, int tprice, Progress progress, Book_CategoryDAO category, String nickname,MarketDAO market) {
+    public ArticleDTO(Long articleId, CountDAO countDAO, String title, int tprice, Progress progress, Book_CategoryDAO category, String nickname,MarketDAO market,LocalDateTime writeDate,String image) {
         this.articleId = articleId;
         this.countDAO = countDAO;
         this.title = title;
@@ -44,5 +49,7 @@ public class ArticleDTO {
         this.category = category;
         this.nickname = nickname;
         this.market=market;
+        this.writeDate=writeDate;
+        this.image=image;
     }
 }

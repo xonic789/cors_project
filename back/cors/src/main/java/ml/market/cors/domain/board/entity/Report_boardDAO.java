@@ -22,7 +22,7 @@ public class Report_boardDAO {
     @Column(name = "write_date")
     private LocalDateTime write_date;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 

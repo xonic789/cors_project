@@ -10,7 +10,7 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Image_info_Repository;
-import ml.market.cors.repository.article.query.ArticleQueryRepository;
+import ml.market.cors.repository.article.ArticleRepositoryCustom;
 import ml.market.cors.repository.bookcategory.Book_Category_Repository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,8 @@ class ArticleServiceImplTest {
     @Autowired CountRepository countRepository;
     @Autowired Image_info_Repository image_info_repository;
     @Autowired Book_Category_Repository book_category_repository;
-    @Autowired ArticleQueryRepository articleQueryRepository;
+    @Autowired
+    ArticleRepositoryCustom articleRepositoryCustom;
 
 
     @Test
@@ -157,9 +158,9 @@ class ArticleServiceImplTest {
         ArticleForm articleForm2 = getArticleFormSales();
         ArticleForm articleForm3 = getArticleFormSales();
 
-        ArticleDAO.createArticleForm(articleForm1,memberDAO,book_categoryDAO1);
-        ArticleDAO.createArticleForm(articleForm2,memberDAO,book_categoryDAO1);
-        ArticleDAO.createArticleForm(articleForm3,memberDAO,book_categoryDAO1);
+        ArticleDAO.createArticle(articleForm1,memberDAO,book_categoryDAO1);
+        ArticleDAO.createArticle(articleForm2,memberDAO,book_categoryDAO1);
+        ArticleDAO.createArticle(articleForm3,memberDAO,book_categoryDAO1);
 
         ArticleDAO articleDAO1 = articleService.saveArticle(articleForm1,memberDAO);
         ArticleDAO articleDAO2 = articleService.saveArticle(articleForm2,memberDAO);

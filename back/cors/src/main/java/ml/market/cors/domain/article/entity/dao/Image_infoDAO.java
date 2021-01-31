@@ -23,6 +23,7 @@ public class Image_infoDAO {
     @Column(name = "image3")
     private String image3;
 
+
     @Enumerated(EnumType.STRING)
     private Division image_division;
 

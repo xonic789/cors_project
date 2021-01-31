@@ -12,6 +12,7 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import javax.persistence.*;
 import java.lang.reflect.Member;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Objects;
 
 @Entity
@@ -54,7 +55,7 @@ public class ArticleDAO {
     @Enumerated(EnumType.STRING)
     private Division division;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
@@ -62,10 +63,13 @@ public class ArticleDAO {
     @JoinColumn(name = "index_id")
     private Image_infoDAO image_info;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "market_id")
     private MarketDAO market;
 
+    /**
+     * 일반 게시글
+     */
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
                       Progress progress, int tprice, Division division,
                       Image_infoDAO image_info,String title,MemberDAO memberDAO,Book_CategoryDAO category) {
@@ -82,6 +86,10 @@ public class ArticleDAO {
         this.member=memberDAO;
         this.category=category;
     }
+
+    /**
+     * 마켓 게시글
+     */
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
                       Progress progress, int tprice, Division division,
                       Image_infoDAO image_info,String title,MemberDAO member,Book_CategoryDAO category,MarketDAO market) {
@@ -99,10 +107,10 @@ public class ArticleDAO {
         this.market=market;
     }
 
-    public static ArticleDAO createArticleForm(ArticleForm articleForm, MemberDAO member,Book_CategoryDAO book_categoryDAO){
+    public static ArticleDAO createArticle(ArticleForm articleForm, MemberDAO member, Book_CategoryDAO book_categoryDAO){
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),
-                articleForm.getRprice(), LocalDateTime.now(),
+                articleForm.getRprice(), LocalDateTime.now(ZoneId.of("Asia/Seoul")),
                 articleForm.getProgress(), articleForm.getTprice(),
                 articleForm.getDivision(),
                 new Image_infoDAO(articleForm.getImage(),articleForm.getDivision()),
@@ -113,7 +121,7 @@ public class ArticleDAO {
     public static ArticleDAO createArticleMarket(ArticleForm articleForm, MemberDAO member,Book_CategoryDAO book_categoryDAO,MarketDAO market){
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),
-                articleForm.getRprice(), LocalDateTime.now(),
+                articleForm.getRprice(), LocalDateTime.now(ZoneId.of("Asia/Seoul")),
                 articleForm.getProgress(), articleForm.getTprice(),
                 articleForm.getDivision(),
                 new Image_infoDAO(articleForm.getImage(),articleForm.getDivision()),
