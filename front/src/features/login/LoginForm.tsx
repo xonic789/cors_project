@@ -55,12 +55,8 @@ const LoginForm:React.FC = () => {
     email: '',
     passwd: '',
   });
-  const [loginState, setLoginState] = useState({
-    logined: false,
-    user: {},
-  });
+
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

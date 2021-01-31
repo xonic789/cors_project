@@ -1,4 +1,4 @@
-import token from '../features/login/data/data';
+import axios from 'axios';
 
 interface tokenInterface {
     data: {
@@ -7,6 +7,15 @@ interface tokenInterface {
     }
 }
 
-const postLoginAsync = async () => token;
+function postLoginAsync(user: { email: string, passwd: string }) {
+  return axios({
+    method: 'post',
+    url: '/api/login',
+    data: {
+      email: user.email,
+      passwd: user.passwd,
+    },
+  }).then((result) => result.data);
+}
 
 export default postLoginAsync;

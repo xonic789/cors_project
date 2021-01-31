@@ -3,17 +3,34 @@ import { createSlice } from '@reduxjs/toolkit';
 const loginSlice = createSlice({
   name: 'login',
   initialState: {
-    logined: false,
-    user: {},
+    user: null,
+    loginLoading: false,
+    loginSucceed: false,
+    loginError: null,
   },
   reducers: {
-    postLogin: (state, action) => state,
+    postLogin: (state, action) => ({
+      ...state,
+      loginLoading: true,
+      loginSucceed: false,
+      loginError: null,
+    }),
     postLoginSuccess: (state, action) => {
       console.log(action.payload);
+      return {
+        ...state,
+        loginLoading: false,
+        loginSucceed: true,
+        loginError: null,
+        user: action.payload,
+      };
     },
-    postLoginError: (state, action) => {
-      console.log(action.payload);
-    },
+    postLoginError: (state, action) => ({
+      ...state,
+      loginLoading: false,
+      loginSucceed: false,
+      loginError: action.payload,
+    }),
   },
 });
 export const { postLogin, postLoginSuccess, postLoginError } = loginSlice.actions;
