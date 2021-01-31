@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import CategoryMenu from './CategoryMenu';
 
 interface PostTabItemInterface {
-  active?: boolean
+  tab: number,
+  active: number,
 }
 
 const HeaderWrapper = styled.div`
@@ -20,8 +22,10 @@ const TopWrapper = styled.div`
   margin-bottom: 10px;
   padding: 20px 30px;
 `;
-const BuggerMenu = styled.div`
+const BuggerMenu = styled.button`
   align-self: center;
+  background-color:white;
+  border: none;
   & img{
     width: 30px;
   }
@@ -70,16 +74,29 @@ const PostTabItem = styled.li<PostTabItemInterface>`
   padding: 10px 0;
   width: 100%;
   text-align: center;
-  border-bottom: ${(props) => props.active && '3px solid #3960a6'};
+  border-bottom: ${(props) => props.tab === props.active && '3px solid #3960a6'};
 `;
 
 const Header: React.FC = () => {
-  const [postType, setPostType] = useState(0);
+  const [openMenu, setOpenMenu] = useState(false);
+  const [tabIndex, setTabIndex] = useState(0);
+  const onOpenMenuHandler = (e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    setOpenMenu(true);
+  };
+  const onCloseMenuHandler = (e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+    setOpenMenu(false);
+  };
+  const onClickPostsTab = (tab:number) => {
+    setTabIndex(tab);
+  };
   return (
     <HeaderWrapper>
+      {openMenu && <CategoryMenu onMenuClose={onCloseMenuHandler} isOppend={openMenu} />}
       <TopWrapper>
-        <BuggerMenu>
-          <img src="/images/icons/category.png" alt="메뉴바" />
+        <BuggerMenu onClick={onOpenMenuHandler}>
+          <img src="/images/icons/category.png" alt="menu_icon" />
         </BuggerMenu>
         <LogoWrapper>
           <img src="/images/icons/chat_active.png" alt="logo" />
@@ -92,8 +109,8 @@ const Header: React.FC = () => {
         <img src="/images/icons/search.png" alt="search_icon" />
       </SearchInput>
       <PostTab>
-        <PostTabItem active>판매글</PostTabItem>
-        <PostTabItem>구매글</PostTabItem>
+        <PostTabItem onClick={() => onClickPostsTab(0)} tab={0} active={tabIndex}>판매글</PostTabItem>
+        <PostTabItem onClick={() => onClickPostsTab(1)} tab={1} active={tabIndex}>구매글</PostTabItem>
       </PostTab>
     </HeaderWrapper>
   );
