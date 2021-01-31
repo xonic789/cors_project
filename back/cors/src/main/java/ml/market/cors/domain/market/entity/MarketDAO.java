@@ -2,6 +2,7 @@ package ml.market.cors.domain.market.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;
@@ -16,11 +17,12 @@ public class MarketDAO {
     @Column(name = "market_id")
     private Long market_id;
 
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
+    @OneToOne(fetch = FetchType.LAZY,mappedBy = "market")
+    private ArticleDAO article;
 
     @Column(name = "name")
     private String name;

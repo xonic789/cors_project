@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: dev
+    include:
+      - aws
+      - credentials
 
   datasource:
     url: jdbc:mysql://118.67.128.36:3306/corsdb?serverTimezone=UTC&characterEncoding=UTF-8
@@ -28,6 +31,11 @@ spring:
           google:
             client-id: 494377772043-o0tfbhk9ed4cn86u0r75m8256d57cc2u.apps.googleusercontent.com
             client-secret: yoOHGlFvC_4rxSyBXSFE2VB1
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 logging.level:
   org.hibernate.SQL: debug

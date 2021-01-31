@@ -16,23 +16,24 @@ public class Image_infoDAO {
     @Column(name = "index_id")
     private Long index_id;
 
+    @Column(name = "image1")
     private String image1;
+    @Column(name = "image2")
     private String image2;
+    @Column(name = "image3")
     private String image3;
 
     @Enumerated(EnumType.STRING)
-    private Division division;
+    private Division image_division;
 
-    public Image_infoDAO(String image1, String image2, String image3, Division division) {
+    public Image_infoDAO(String image1, Division image_division) {
         this.image1 = image1;
-        this.image2 = image2;
-        this.image3 = image3;
-        this.division = division;
+        this.image_division = image_division;
     }
 
-    public void update_Image_info(String image2,String image3,Division division){
+    public void update_Image_info(String image2,String image3,Division image_division){
         this.image2=image2;
         this.image3=image3;
-        this.division=division;
+        this.image_division=image_division;
     }
 }

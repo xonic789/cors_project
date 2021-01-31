@@ -6,6 +6,7 @@ import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.article.service.ArticleForm;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
+import ml.market.cors.domain.market.entity.MarketDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;
@@ -23,7 +24,7 @@ public class ArticleDAO {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long article_id;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "count_id")
     private CountDAO countDAO;
 
@@ -57,13 +58,17 @@ public class ArticleDAO {
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "index_id")
     private Image_infoDAO image_info;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "market_id")
+    private MarketDAO market;
+
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
                       Progress progress, int tprice, Division division,
-                      Image_infoDAO image_info,String title,MemberDAO memberDAO) {
+                      Image_infoDAO image_info,String title,MemberDAO memberDAO,Book_CategoryDAO category) {
         this.countDAO = countDAO;
         this.content = content;
         this.rprice = rprice;
@@ -75,24 +80,53 @@ public class ArticleDAO {
         this.image_info=image_info;
         this.title=title;
         this.member=memberDAO;
+        this.category=category;
+    }
+    public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
+                      Progress progress, int tprice, Division division,
+                      Image_infoDAO image_info,String title,MemberDAO member,Book_CategoryDAO category,MarketDAO market) {
+        this.countDAO = countDAO;
+        this.content = content;
+        this.rprice = rprice;
+        this.write_date = write_date;
+        this.progress = progress;
+        this.tprice = tprice;
+        this.division = division;
+        this.member = member;
+        this.image_info=image_info;
+        this.title=title;
+        this.category=category;
+        this.market=market;
     }
 
-    public static ArticleDAO createArticleForm(ArticleForm articleForm, MemberDAO member){
+    public static ArticleDAO createArticleForm(ArticleForm articleForm, MemberDAO member,Book_CategoryDAO book_categoryDAO){
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),
                 articleForm.getRprice(), LocalDateTime.now(),
                 articleForm.getProgress(), articleForm.getTprice(),
                 articleForm.getDivision(),
-                new Image_infoDAO(articleForm.getImage1(), articleForm.getImage2(), articleForm.getImage3(), articleForm.getDivision()),
-                articleForm.getTitle(),member);
+                new Image_infoDAO(articleForm.getImage(),articleForm.getDivision()),
+                articleForm.getTitle(),member,book_categoryDAO);
     }
 
-    public ArticleDAO updateArticle(ArticleForm articleForm,Image_infoDAO image_info) {
+
+    public static ArticleDAO createArticleMarket(ArticleForm articleForm, MemberDAO member,Book_CategoryDAO book_categoryDAO,MarketDAO market){
+        return new ArticleDAO(
+                new CountDAO(), articleForm.getContent(),
+                articleForm.getRprice(), LocalDateTime.now(),
+                articleForm.getProgress(), articleForm.getTprice(),
+                articleForm.getDivision(),
+                new Image_infoDAO(articleForm.getImage(),articleForm.getDivision()),
+                articleForm.getTitle(),member,book_categoryDAO,market);
+    }
+
+    public ArticleDAO updateArticle(ArticleForm articleForm,Image_infoDAO image_info,CountDAO countDAO) {
         this.content = articleForm.getContent();
         this.progress = articleForm.getProgress();
         this.tprice = articleForm.getTprice();
         this.division = articleForm.getDivision();
         this.image_info=image_info;
+        this.countDAO=countDAO;
         return this;
     }
 
