@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import { articleInterface } from '../../interfaces/PostList.interface';
 import Header from './Header';
+import { loadBookPostRequest } from './postSlice';
 
 const PostListWrapper = styled.div`
   display: flex;
@@ -27,6 +28,10 @@ const PostListContent = styled.div`
   }
 `;
 const PostList: React.FC = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(loadBookPostRequest('sale'));
+  }, [dispatch]);
   const { bookPost } = useSelector((state) => state.postSlice);
   console.log(bookPost);
   return (
@@ -34,7 +39,7 @@ const PostList: React.FC = () => {
       <Header />
       {
         bookPost.map((p:articleInterface) => (
-          <PostListContent>
+          <PostListContent key={p.postId}>
             <img src={p.Images.sumnail} alt="" />
             <h3>{p.title}</h3>
             <h3>{p.rprice}원</h3>

@@ -1,72 +1,49 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import shortId from 'shortid';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
 import { addPostInterface } from '../../interfaces/PostList.interface';
+import PostList, { PurchasePostList } from './mockdata';
 
-import { addBookPostAPI, getBookPostPurchaseAPI, getBookPostSaleAPI } from '../../api/postBookApi';
+import { addBookPostAPI, getBookPostAPI } from '../../api/postBookApi';
 import { loadBookPostRequest, loadBookPostSuccess, loadBookPostError, addBookPostRequest, addBookPostError, addBookPostSuccess } from './postSlice';
 
 interface addBookPostPayloadInterface {
   data: addPostInterface
 }
-
-function* loadSaleBookPost() {
-  try {
-    const result = yield call(getBookPostSaleAPI);
-    yield put({
-      type: loadBookPostSuccess,
-      data: result,
-    });
-  } catch (err) {
-    yield put({
-      type: loadBookPostError,
-      error: err.response.data,
-    });
-  }
+interface loadSaleBookPost {
+  division: 'purchase' | 'sale',
+  categoty?: string
 }
-function* loadPurchaseBookPost() {
+function* loadBookPost(action: PayloadAction<loadSaleBookPost>) {
   try {
-    const result = yield call(getBookPostPurchaseAPI);
-    yield put({
-      type: loadBookPostSuccess,
-      data: result,
-    });
+    // const result = yield call(getBookPostAPI, action.payload.division);
+    let result = PostList;
+    if (action.payload.division === 'purchase') {
+      result = PurchasePostList;
+    }
+    yield put(loadBookPostSuccess(result));
   } catch (err) {
-    yield put({
-      type: loadBookPostError,
-      error: err.response.data,
-    });
+    yield put(loadBookPostError({ error: err.response.data }));
   }
 }
 function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {
   try {
     const result = yield call(addBookPostAPI, action.payload.data);
-    yield put({
-      type: addBookPostSuccess,
-      data: result,
-    });
+    yield put(addBookPostSuccess({ result }));
   } catch (err) {
-    yield put({
-      type: addBookPostError,
-      error: err.response.data,
-    });
+    yield put(addBookPostError({ error: err.response.data }));
   }
 }
 
-function* watchLoadSaleBookPost() {
-  yield takeLatest(loadBookPostRequest, loadSaleBookPost);
+function* watchLoadBookPost() {
+  yield takeLatest(loadBookPostRequest, loadBookPost);
 }
 function* watchAddBookPost() {
   yield takeLatest(addBookPostRequest, addBookPost);
-}
-function* watchLoadPurchaseBookPost() {
-  yield takeLatest(loadBookPostRequest, loadPurchaseBookPost);
 }
 
 export default function* postSaga():Generator {
   yield all([
     fork(watchAddBookPost),
-    fork(watchLoadPurchaseBookPost),
-    fork(watchLoadSaleBookPost),
+    fork(watchLoadBookPost),
   ]);
 }

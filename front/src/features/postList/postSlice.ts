@@ -5,7 +5,7 @@ import { articleInterface } from '../../interfaces/PostList.interface';
 const postSlice = createSlice({
   name: 'posts',
   initialState: {
-    bookPost: PostList.data,
+    bookPost: [],
     isLoadBookPostLoading: false,
     isLoadBookPostDone: false,
     isLoadBookPostError: false,
@@ -33,7 +33,7 @@ const postSlice = createSlice({
     addBookPostSuccess(state, action) {
       state.isAddBookPostLoading = false;
       state.isAddBookPostDone = true;
-      state.bookPost.unshift(dummyBookPost(action.payload));
+      // state.bookPost.unshift(dummyBookPost(action.payload));
     },
     addBookPostError(state, action) {
       state.isAddBookPostLoading = false;

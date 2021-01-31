@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import CategoryMenu from './CategoryMenu';
+import { loadBookPostRequest } from './postSlice';
 
 interface PostTabItemInterface {
   tab: number,
@@ -78,19 +80,25 @@ const PostTabItem = styled.li<PostTabItemInterface>`
 `;
 
 const Header: React.FC = () => {
+  const dispatch = useDispatch();
   const [openMenu, setOpenMenu] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const onOpenMenuHandler = (e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onOpenMenuHandler = useCallback((e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setOpenMenu(true);
-  };
-  const onCloseMenuHandler = (e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  }, []);
+  const onCloseMenuHandler = useCallback((e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setOpenMenu(false);
-  };
-  const onClickPostsTab = (tab:number) => {
-    setTabIndex(tab);
-  };
+  }, []);
+  const onClickSalePostTab = useCallback(() => {
+    setTabIndex(0);
+    dispatch(loadBookPostRequest('sales'));
+  }, [dispatch]);
+  const onClickPurchasPostTab = useCallback(() => {
+    setTabIndex(1);
+    dispatch(loadBookPostRequest({ division: 'purchase' }));
+  }, [dispatch]);
   return (
     <HeaderWrapper>
       {openMenu && <CategoryMenu onMenuClose={onCloseMenuHandler} isOppend={openMenu} />}
@@ -109,8 +117,8 @@ const Header: React.FC = () => {
         <img src="/images/icons/search.png" alt="search_icon" />
       </SearchInput>
       <PostTab>
-        <PostTabItem onClick={() => onClickPostsTab(0)} tab={0} active={tabIndex}>판매글</PostTabItem>
-        <PostTabItem onClick={() => onClickPostsTab(1)} tab={1} active={tabIndex}>구매글</PostTabItem>
+        <PostTabItem onClick={() => onClickSalePostTab()} tab={0} active={tabIndex}>판매글</PostTabItem>
+        <PostTabItem onClick={() => onClickPurchasPostTab()} tab={1} active={tabIndex}>구매글</PostTabItem>
       </PostTab>
     </HeaderWrapper>
   );

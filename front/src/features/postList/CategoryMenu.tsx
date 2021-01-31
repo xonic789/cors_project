@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import CategoryJSON from './Category.json';
 
@@ -62,9 +62,9 @@ const CloseButtton = styled.button`
 `;
 const CategoryMenu = ({ onMenuClose, isOppend }:CategoryMenuPropsInterFace):JSX.Element => {
   const [contentIndex, setContentIndex] = useState<number>(0);
-  const onChangeCategotyTab = (index: number) => {
+  const onChangeCategotyTab = useCallback((index: number) => {
     setContentIndex(index);
-  };
+  }, []);
   return (
     <BurgerMenuWrapper>
       <BurgerMenuHeader>
