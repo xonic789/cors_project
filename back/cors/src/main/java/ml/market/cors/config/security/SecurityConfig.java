@@ -1,12 +1,11 @@
 package ml.market.cors.config.security;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import ml.market.cors.domain.security.oauth.exception.ExceptionPoint;
 import ml.market.cors.domain.security.CookieSecurityContextRepository;
 import ml.market.cors.domain.security.ParentProviderManager;
 import ml.market.cors.domain.security.member.filter.MemberLoginAuthFilter;
 
-import java.lang.reflect.Member;
 import java.util.List;
 
 import ml.market.cors.domain.security.member.filter.MemberLogoutFilter;
@@ -15,30 +14,47 @@ import ml.market.cors.domain.security.member.handler.MemberLogoutHandler;
 import ml.market.cors.domain.security.member.manager.MemberProviderManager;
 import ml.market.cors.domain.security.member.provider.MemberLoginAuthProvider;
 import ml.market.cors.domain.security.member.service.MemberLoginAuthService;
+import ml.market.cors.domain.security.oauth.handler.OauthSuccessHandler;
+import ml.market.cors.domain.security.oauth.provider.CustomOAuth2Provider;
+import ml.market.cors.domain.security.oauth.service.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.oauth2.client.CommonOAuth2Provider;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 
 import java.util.LinkedList;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 @Order(SecurityProperties.BASIC_AUTH_ORDER - 10)
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CookieSecurityContextRepository mCookieSecurityContextRepository;
+
+    private final OauthSuccessHandler oauthSuccessHandler;
+
+    private final ExceptionPoint exceptionPoint;
 
     @Override
     public void configure(WebSecurity web)  {
@@ -60,17 +76,64 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/login").anonymous()
                     .antMatchers("/api/join").anonymous()
                     .antMatchers("/api/logout").anonymous()
-                    .antMatchers("/api/test").hasRole("ADMIN")
                     .antMatchers("/**").permitAll()
                     .and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .and()
+                    .oauth2Login()
+                    .loginPage("/")
+                    .userInfoEndpoint().userService(new CustomOAuth2UserService())
+                    .and()
+                    .successHandler(oauthSuccessHandler)
+                    .and()
+                    .exceptionHandling()
+                    .authenticationEntryPoint(exceptionPoint)
                     .and()
                     .formLogin()
                     .disable()
                     .addFilter(getMemberLogoutFilter())
                     .addFilter(getMemberAuthenticationFilter());
-
     }
+
+    @Bean
+    public ClientRegistrationRepository clientRegistrationRepository(
+            OAuth2ClientProperties oAuth2ClientProperties,
+            @Value("${custom.oauth2.kakao.client-id}") String kakaoClientId,
+            @Value("${custom.oauth2.kakao.client-secret}") String kakaoClientSecret,
+            @Value("${custom.oauth2.naver.client-id}") String naverClientId,
+            @Value("${custom.oauth2.naver.client-secret}") String naverClientSecret) {
+        List<ClientRegistration> registrations = oAuth2ClientProperties
+                .getRegistration().keySet().stream()
+                .map(client -> getRegistration(oAuth2ClientProperties, client))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao")
+                .clientId(kakaoClientId)
+                .clientSecret(kakaoClientSecret)
+                .jwkSetUri("temp")
+                .build());
+
+        registrations.add(CustomOAuth2Provider.NAVER.getBuilder("naver")
+                .clientId(naverClientId)
+                .clientSecret(naverClientSecret)
+                .jwkSetUri("temp")
+                .build());
+        return new InMemoryClientRegistrationRepository(registrations);
+    }
+
+    private ClientRegistration getRegistration(OAuth2ClientProperties clientProperties, String client) {
+        if("google".equals(client)) {
+            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("google");
+            return CommonOAuth2Provider.GOOGLE.getBuilder(client)
+                    .clientId(registration.getClientId())
+                    .clientSecret(registration.getClientSecret())
+                    .scope("email", "profile")
+                    .build();
+        }
+        return null;
+    }
+
     @Bean
     public MemberLogoutFilter getMemberLogoutFilter(){
         MemberLogoutFilter memberLogoutFilter = new MemberLogoutFilter("/", getMemberLogoutHandler());
