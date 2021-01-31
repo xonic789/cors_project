@@ -32,7 +32,7 @@ public class MemberController {
     public ResponseEntity<Message<Object>> existNickname(@ModelAttribute MemberVO memberVO, HttpServletResponse response){
         ResponseEntity<Message<Object>> messageResponseEntity;
         try {
-            if(memberManagement.existNickname(memberVO.getNickname()) == false){
+            if(memberManagement.existNickname(memberVO.getNickname())){
                 throw new Exception();
             }
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);

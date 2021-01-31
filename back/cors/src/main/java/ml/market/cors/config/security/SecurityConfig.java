@@ -1,6 +1,7 @@
 package ml.market.cors.config.security;
 
 import lombok.RequiredArgsConstructor;
+import ml.market.cors.domain.security.oauth.exception.AccessDeniedHandlerImpl;
 import ml.market.cors.domain.security.oauth.exception.ExceptionPoint;
 import ml.market.cors.domain.security.CookieSecurityContextRepository;
 import ml.market.cors.domain.security.ParentProviderManager;
@@ -56,6 +57,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final ExceptionPoint exceptionPoint;
 
+    private final AccessDeniedHandlerImpl accessDeniedHandler;
+
     @Override
     public void configure(WebSecurity web)  {
        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
@@ -88,6 +91,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .exceptionHandling()
                     .authenticationEntryPoint(exceptionPoint)
+                    .accessDeniedHandler(accessDeniedHandler)
                     .and()
                     .formLogin()
                     .disable()
