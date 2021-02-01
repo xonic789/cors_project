@@ -41,7 +41,7 @@ function* loginSaga(): Generator<ForkEffect<never>, void, unknown> {
 =======
 import { all, call, fork, ForkEffect, put, takeLatest } from 'redux-saga/effects';
 import { postLogin, postSocialLogin, postLoginSuccess, postLoginError } from './LoginSlice';
-import { postLoginAsync, socialLoginAsync } from '../../api/loginApi';
+import { postLoginAsync, socialLoginAsync } from '../../api/loginAPI';
 
 function* postLoginSaga(action: { payload: { email: string, passwd: string } }) {
   try {
