@@ -34,8 +34,6 @@ class ArticleServiceImplTest {
     @Autowired CountRepository countRepository;
     @Autowired Image_info_Repository image_info_repository;
     @Autowired Book_Category_Repository book_category_repository;
-    @Autowired
-    ArticleRepositoryCustom articleRepositoryCustom;
 
 
     @Test
