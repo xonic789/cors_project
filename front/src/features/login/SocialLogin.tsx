@@ -1,5 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useDispatch } from 'react-redux';
+import { postSocialLogin } from './LoginSlice';
 import kakaoLogo from './images/logo_kakao.png';
 import googleLogo from './images/logo_google.png';
 import facebookLogo from './images/logo_facebook.png';
@@ -17,17 +19,10 @@ const SocialItem = styled.img`
 `;
 
 function SocialLogin():JSX.Element {
+  const dispatch = useDispatch();
+
   const onClickLoginHandler = (social:string) => {
-    switch (social) {
-      case ('facebook'):
-        break;
-      case ('google'):
-        break;
-      case ('kakao'):
-        break;
-      default:
-        break;
-    }
+    dispatch(postSocialLogin({ social }));
   };
   return (
     <SocialLoginBox>
