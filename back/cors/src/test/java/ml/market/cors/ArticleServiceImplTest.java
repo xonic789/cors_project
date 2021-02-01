@@ -10,7 +10,6 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Image_info_Repository;
-import ml.market.cors.repository.article.ArticleRepositoryCustom;
 import ml.market.cors.repository.bookcategory.Book_Category_Repository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
