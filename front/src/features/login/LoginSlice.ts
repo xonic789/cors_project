@@ -15,6 +15,12 @@ const loginSlice = createSlice({
       loginSucceed: false,
       loginError: null,
     }),
+    postSocialLogin: (state, action) => ({
+      ...state,
+      loginLoading: true,
+      loginSucceed: false,
+      loginError: null,
+    }),
     postLoginSuccess: (state, action) => {
       console.log(action.payload);
       return {
@@ -33,5 +39,9 @@ const loginSlice = createSlice({
     }),
   },
 });
-export const { postLogin, postLoginSuccess, postLoginError } = loginSlice.actions;
+export const {
+  postLogin,
+  postSocialLogin,
+  postLoginSuccess,
+  postLoginError } = loginSlice.actions;
 export default loginSlice.reducer;
