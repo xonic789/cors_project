@@ -1,0 +1,274 @@
+{
+  "Category": [
+    {
+      "title": "국내도서",
+      "depth": [
+        {
+          "title":"소설/시/희곡",
+          "depth":[]
+        },
+        {
+          "title":"역사",
+          "depth":[]
+        },
+        {
+          "title":"경제경영",
+          "depth":[]
+        },
+        {
+          "title":"고전",
+          "depth":[]
+        },
+        {
+          "title":"자기계발",
+          "depth":[]
+        },
+        {
+          "title":"컴퓨터/모바일",
+          "depth":[]
+        },
+        {
+          "title":"예술/대중문화",
+          "depth":[]
+        },
+        {
+          "title":"인문학",
+          "depth":[]
+        },
+        {
+          "title":"사회과학",
+          "depth":[]
+        },
+        {
+          "title":"과학",
+          "depth":[]
+        },
+        {
+          "title":"어린이",
+          "depth":[]
+        },
+        {
+          "title":"청소년",
+          "depth":[]
+        },
+        {
+          "title":"여행",
+          "depth":[]
+        },
+        {
+          "title":"종교/역학",
+          "depth":[]
+        },
+        {
+          "title":"외국어",
+          "depth":[]
+        },
+        {
+          "title":"수험서/자격증",
+          "depth":[]
+        },
+        {
+          "title":"금강산 여행 가는 이에게",
+          "depth":[]
+        },
+        {
+          "title":"좋은부모",
+          "depth":[]
+        },
+        {
+          "title":"만화",
+          "depth":[]
+        },
+        {
+          "title":"잡지",
+          "depth":[]
+        },
+        {
+          "title":"유아",
+          "depth":[]
+        },
+        {
+          "title":"달력/기타",
+          "depth":[]
+        },
+        {
+          "title":"대학교재/전문서적",
+          "depth":[]
+        },
+        {
+          "title":"Gift",
+          "depth":[]
+        },
+        {
+          "title":"초등학교참고서",
+          "depth":[]
+        },
+        {
+          "title":"청소년_추천도서",
+          "depth":[]
+        },
+        {
+          "title":"전집/중고전집",
+          "depth":[]
+        },
+        {
+          "title":"일본 도서",
+          "depth":[]
+        },
+        {
+          "title":"에세이",
+          "depth":[]
+        },
+        {
+          "title":"가정/요리/뷰티",
+          "depth":[]
+        },
+        {
+          "title":"건강/취미/레저",
+          "depth":[]
+        },
+        {
+          "title":"중학교참고서",
+          "depth":[]
+        },
+        {
+          "title":"고등학교참고서",
+          "depth":[]
+        },
+        {
+          "title":"장르소설",
+          "depth":[]
+        }
+      ]
+    },
+    {
+      "title": "외국도서",
+      "depth": [
+        {
+          "title": "해외잡지",
+          "depth": []
+        },
+        {
+          "title": "스페인 도서",
+          "depth": []
+        },
+        {
+          "title": "일본 도서",
+          "depth": []
+        },
+        {
+          "title": "중국 도서",
+          "depth": []
+        },
+        {
+          "title": "대학교재",
+          "depth": []
+        },
+        {
+          "title": "가정/원예/인테리어",
+          "depth": []
+        },
+        {
+          "title": "만화",
+          "depth": []
+        },
+        {
+          "title": "법률",
+          "depth": []
+        },
+        {
+          "title": "소설/시/희곡",
+          "depth": []
+        },
+        {
+          "title": "수험서",
+          "depth": []
+        },
+        {
+          "title": "언어학",
+          "depth": []
+        },
+        {
+          "title": "에세이",
+          "depth": []
+        },
+        {
+          "title": "여행",
+          "depth": []
+        },
+        {
+          "title": "오디오북",
+          "depth": []
+        },
+        {
+          "title": "요리",
+          "depth": []
+        },
+        {
+          "title": "유머",
+          "depth": []
+        },
+        {
+          "title": "의학",
+          "depth": []
+        },
+        {
+          "title": "인문/사회",
+          "depth": []
+        },
+        {
+          "title": "자기계발",
+          "depth": []
+        },
+        {
+          "title": "자연과학",
+          "depth": []
+        },
+        {
+          "title": "전기/자서전",
+          "depth": []
+        },
+        {
+          "title": "종교/명상/점술",
+          "depth": []
+        },
+        {
+          "title": "청소년",
+          "depth": []
+        },
+        {
+          "title": "컴퓨터",
+          "depth": []
+        },
+        {
+          "title": "한국관련도서",
+          "depth": []
+        },
+        {
+          "title": "ELT/어학/사전",
+          "depth": []
+        },
+        {
+          "title": "예술/대중문화",
+          "depth": []
+        },
+        {
+          "title": "어린이",
+          "depth": []
+        },
+        {
+          "title": "문구/비도서",
+          "depth": []
+        },
+        {
+          "title": "독일 도서",
+          "depth": []
+        },
+        {
+          "title": "대만도서",
+          "depth": []
+        }
+      ]
+    }
+  ]
+}
