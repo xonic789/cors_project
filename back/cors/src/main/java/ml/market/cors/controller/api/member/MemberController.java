@@ -9,6 +9,7 @@ import ml.market.cors.domain.util.ResponseEntityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +32,7 @@ public class MemberController {
     public ResponseEntity<Message<Object>> existNickname(@ModelAttribute MemberVO memberVO, HttpServletResponse response){
         ResponseEntity<Message<Object>> messageResponseEntity;
         try {
-            if(memberManagement.existNickname(memberVO.getNickname()) == false){
+            if(memberManagement.existNickname(memberVO.getNickname())){
                 throw new Exception();
             }
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);
