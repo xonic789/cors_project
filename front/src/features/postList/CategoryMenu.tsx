@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import styled from 'styled-components';
 import CategoryJSON from './Category.json';
 
@@ -30,7 +30,6 @@ const BurgerMenuHeader = styled.div`
 `;
 const BurgerMenuBody = styled.div`
   display:flex;
-  overflow: scroll;
 `;
 const BurgerMenuList = styled.ul`
   margin-top: 80px;
@@ -48,6 +47,7 @@ const BurgerMenuListTwo = styled.ul`
   flex-direction: column;
   width: 100vw;
   min-height: 100vh;
+  overflow: scroll;
 `;
 const BurgerMenuItem = styled.li`
   padding: 10px 30px;
@@ -62,9 +62,18 @@ const CloseButtton = styled.button`
 `;
 const CategoryMenu = ({ onMenuClose, isOppend }:CategoryMenuPropsInterFace):JSX.Element => {
   const [contentIndex, setContentIndex] = useState<number>(0);
+  const [contentDetailIndex, setContentDetailIndex] = useState<number>(0);
   const onChangeCategotyTab = useCallback((index: number) => {
     setContentIndex(index);
   }, []);
+  const onChangeCategotyDetailTab = useCallback((index:number) => {
+    setContentDetailIndex(index);
+    console.log(contentIndex, contentDetailIndex);
+  }, [contentIndex, contentDetailIndex]);
+  const categoryFilter = `${CategoryJSON.Category[contentIndex].title}>${CategoryJSON.Category[contentIndex].depth[contentDetailIndex].title}`;
+  useEffect(() => {
+    console.log(categoryFilter, contentDetailIndex);
+  }, [categoryFilter, contentDetailIndex]);
   return (
     <BurgerMenuWrapper>
       <BurgerMenuHeader>
@@ -84,8 +93,8 @@ const CategoryMenu = ({ onMenuClose, isOppend }:CategoryMenuPropsInterFace):JSX.
         </BurgerMenuList>
         <BurgerMenuListTwo>
           <BurgerMenuItem>전체보기</BurgerMenuItem>
-          {CategoryJSON.Category[contentIndex].depth.map((c) => (
-            <BurgerMenuItem>
+          {CategoryJSON.Category[contentIndex].depth.map((c, i) => (
+            <BurgerMenuItem onClick={() => onChangeCategotyDetailTab(i)}>
               {c.title}
             </BurgerMenuItem>
           ))}

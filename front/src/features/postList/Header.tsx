@@ -22,7 +22,7 @@ const TopWrapper = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   margin-bottom: 10px;
-  padding: 20px 30px;
+  padding: 10px 30px;
 `;
 const BuggerMenu = styled.button`
   align-self: center;
