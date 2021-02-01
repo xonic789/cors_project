@@ -22,13 +22,6 @@ const loginSlice = createSlice({
       loginError: null,
     }),
     postLoginSuccess: (state, action) => {
-<<<<<<< HEAD
-      state.logined = true;
-    },
-    postLoginError: (state, action) => {
-      state.logined = false;
-    },
-=======
       console.log(action.payload);
       return {
         ...state,
@@ -44,7 +37,6 @@ const loginSlice = createSlice({
       loginSucceed: false,
       loginError: action.payload,
     }),
->>>>>>> e81864fa6fa2a2b3e0e5463822257c93a9ed12f9
   },
 });
 export const {
