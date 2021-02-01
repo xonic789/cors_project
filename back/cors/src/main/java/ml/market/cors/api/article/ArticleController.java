@@ -59,26 +59,26 @@ public class ArticleController {
 
     /**
      * 게시물 분류 (purchase or sales)
-     * @param division
+     * @param divisions
      * @param pageable
      * @return List.size()==0 HttpStatus.No_CONTENT
      * @return List.size()>0 HttpStatus.OK
      * @return HttpStatus.BAD_REQUEST
      */
-    @GetMapping("/api/articles/{division}")
+    @GetMapping("/api/articles/{divisions}")
     public ResponseEntity<Message<Object>> getArticleList(
-            @PathVariable String division,
+            @PathVariable String divisions,
             Pageable pageable, @ModelAttribute ArticleSearchCondition articleSearchCondition){
 
-        if(division.equals(SALES)){
+        if(divisions.equals(SALES)){
             return responseEntityUtils.getMessageResponseEntityOK(articleService.findAll(Division.SALES, pageable, articleSearchCondition));
-        }else if(division.equals(PURCHASE)){
+        }else if(divisions.equals(PURCHASE)){
             return responseEntityUtils.getMessageResponseEntityOK(articleService.findAll(Division.PURCHASE, pageable, articleSearchCondition));
         }
         return responseEntityUtils.getMessageResponseEntityBadRequest(
                 new Errors("URI",
                         "division",
-                        division,
+                        divisions,
                         "sales or purchase 만 입력해야 합니다."));
     }
 
