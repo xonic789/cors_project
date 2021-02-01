@@ -1,6 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { RootStateOrAny, useSelector } from 'react-redux';
 import LoginForm from './LoginForm';
 import SocialLogin from './SocialLogin';
 
@@ -54,6 +55,18 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
+  const {
+    loginSucceed,
+  } = useSelector((state: RootStateOrAny) => state.LoginSlice);
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (loginSucceed === true) {
+      history.push('/home');
+    }
+  }, [loginSucceed, history]);
+
   return (
     <Wrapper>
       <Layout>

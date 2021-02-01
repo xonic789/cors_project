@@ -13,10 +13,13 @@ public class Notic_boardDAO {
     @Column(name = "notice_id")
     private Long notice_id;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "content")
     private String content;
 
+    @Column(name = "write_date")
     private LocalDateTime write_date;
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -12,11 +12,11 @@ public class Wish_listDAO {
     @Column(name = "wish_id")
     private Long wish_id;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")
     private ArticleDAO article;
 }
