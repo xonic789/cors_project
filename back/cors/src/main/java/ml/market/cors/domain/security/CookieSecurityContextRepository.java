@@ -3,6 +3,7 @@ package ml.market.cors.domain.security;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
+import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
@@ -17,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -45,10 +47,16 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         }
         cook = CookieManagement.search(TokenAttribute.REFRESH_TOKEN, cookies);
         String refreshToken = null;
+        long token_index = 0;
         if (cook != null) {
-            refreshToken = cook.getValue();
+            token_index= Long.parseLong(cook.getValue());
+            TokenInfoDAO tokenInfoDAO = mJwtTokenManagement.findTokenIndex(token_index);
+            if(tokenInfoDAO != null){
+                refreshToken = tokenInfoDAO.getHash();
+            }
         }
-        mJwtTokenManagement.deleteAllTokenDB(accessToken, refreshToken);
+
+        mJwtTokenManagement.deleteAllTokenDB(accessToken, token_index ,refreshToken);
         CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
         CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
         return true;
@@ -66,20 +74,6 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         if (token != null) {
             return mJwtTokenManagement.getClaims(token);
         }
-
-        Cookie cook = CookieManagement.search(TokenAttribute.ACCESS_TOKEN, cookies);
-        String accessToken = null;
-        if (cook != null) {
-            accessToken = cook.getValue();
-        }
-        cook = CookieManagement.search(TokenAttribute.REFRESH_TOKEN, cookies);
-        String refreshToken = null;
-        if (cook != null) {
-            refreshToken = cook.getValue();
-        }
-        mJwtTokenManagement.deleteAllTokenDB(accessToken, refreshToken);
-        CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
-        CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
         return null;
     }
 
@@ -175,10 +169,17 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         }
         cook = CookieManagement.search(TokenAttribute.REFRESH_TOKEN, cookies);
         String refreshToken = null;
+        long token_index = 0;
+        TokenInfoDAO tokenInfoDAO;
         if(cook != null) {
-            refreshToken = cook.getValue();
+            token_index = Long.parseLong(cook.getValue());
+            tokenInfoDAO = mTokenInfoRepo.findByTokenindex(token_index);
+            if(tokenInfoDAO == null){
+                return;
+            }
         }
-        mJwtTokenManagement.deleteAllTokenDB(accessToken, refreshToken);
+
+        mJwtTokenManagement.deleteAllTokenDB(accessToken, token_index , refreshToken);
         CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
         CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
     }

@@ -18,12 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Member;
 import java.util.Map;
 
-@Getter
-class test{
-    private Object data;
-
-}
-
 @Data
 class LoginForm{
     private String email;
@@ -47,10 +41,9 @@ public class MemberLoginAuthFilter extends UsernamePasswordAuthenticationFilter 
         }
 
         UsernamePasswordAuthenticationToken token = null;
-
         try{
-            LoginForm wee = new LoginForm(request.getParameter("email"), request.getParameter("passwd"));
-            token = new UsernamePasswordAuthenticationToken(wee.getEmail(), wee.getPasswd());
+            LoginForm loginForm = new LoginForm(request.getParameter("email"), request.getParameter("passwd"));
+            token = new UsernamePasswordAuthenticationToken(loginForm.getEmail(), loginForm.getPasswd());
         } catch (Exception except) {
             throw new RuntimeException();
         }

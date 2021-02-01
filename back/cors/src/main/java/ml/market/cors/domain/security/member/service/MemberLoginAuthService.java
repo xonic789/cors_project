@@ -24,10 +24,10 @@ public class MemberLoginAuthService implements UserDetailsService {
     }
 
     @Override
-    public MemberDAO loadUserByUsername(String email) throws UsernameNotFoundException {
+    public MemberDAO loadUserByUsername(String email) {
         MemberDAO memberDAO = findByEmail(email);
         if(memberDAO == null){
-            throw new UsernameNotFoundException(email);
+            return null;
         }
 
         return memberDAO;

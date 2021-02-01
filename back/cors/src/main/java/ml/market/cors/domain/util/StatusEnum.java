@@ -10,6 +10,7 @@ public enum StatusEnum {
     INTERNAL_SERER_ERROR(500, "INTERNAL_SERVER_ERROR"); // 서버 에러
 
     int statusCode;
+
     String code;
 
     StatusEnum(int statusCode, String code) {

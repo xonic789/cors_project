@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository("emailStateRepo")
+@Repository
 public interface EmailStateRepository extends JpaRepository<EmailStateDAO, String>{
     @Override
     Optional<EmailStateDAO> findById(String email);

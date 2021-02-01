@@ -13,13 +13,16 @@ public class Report_boardDAO {
     @Column(name = "report_id")
     private Long report_id;
 
+    @Column(name = "title")
     private String title;
 
+    @Column(name = "content")
     private String content;
 
+    @Column(name = "write_date")
     private LocalDateTime write_date;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
