@@ -4,7 +4,7 @@ import ml.market.cors.domain.member.entity.Blacklist_TokenDAO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository("blacklistTokenRepository")
+@Repository
 public interface Blacklist_TokenRepository extends JpaRepository<Blacklist_TokenDAO, String> {
 }
 

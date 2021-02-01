@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import postList from './mockdata';
+import { articleInterface } from '../../interfaces/PostList.interface';
 import Header from './Header';
+import { loadBookPostRequest } from './postSlice';
 
 const PostListWrapper = styled.div`
   display: flex;
   max-width: 100vw;
   flex-wrap: wrap;
-  padding-top: 150px;
+  padding-top: 200px;
 `;
 const PostListContent = styled.div`
   display: flex;
@@ -26,14 +27,19 @@ const PostListContent = styled.div`
     margin-top: 10px;
   }
 `;
-const PostList = () => {
-  const [post, setPost] = useState(postList);
+const PostList: React.FC = () => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(loadBookPostRequest('sale'));
+  }, [dispatch]);
+  const { bookPost } = useSelector((state) => state.postSlice);
+  console.log(bookPost);
   return (
     <PostListWrapper>
       <Header />
       {
-        post.data.map((p) => (
-          <PostListContent>
+        bookPost.map((p:articleInterface) => (
+          <PostListContent key={p.postId}>
             <img src={p.Images.sumnail} alt="" />
             <h3>{p.title}</h3>
             <h3>{p.rprice}원</h3>

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { postLogin } from './LoginSlice';
@@ -55,12 +54,8 @@ const LoginForm:React.FC = () => {
     email: '',
     passwd: '',
   });
-  const [loginState, setLoginState] = useState({
-    logined: false,
-    user: {},
-  });
+
   const dispatch = useDispatch();
-  const history = useHistory();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;

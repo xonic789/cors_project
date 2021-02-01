@@ -5,5 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TokenInfoRepository extends JpaRepository<TokenInfoDAO, String> {
+public interface TokenInfoRepository extends JpaRepository<TokenInfoDAO, Long> {
+    public TokenInfoDAO findByTokenindex(long tokenIndex);
 }

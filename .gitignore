@@ -1,1 +1,3 @@
 /www
+back/cors/src/main/resources/application-credentials.yml
+back/cors/src/test/resources/application-credentials.yml
