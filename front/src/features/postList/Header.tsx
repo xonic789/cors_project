@@ -40,12 +40,8 @@ const LogoWrapper = styled.div`
   flex-basis: 2;
   font-size: 25px;
   & img{
-    width: 35px;
+    width: 50px;
   }
-`;
-const NotLogin = styled.div`
-  margin-top: auto;
-  font-size: 13px;
 `;
 const SearchInput = styled.div`
   display: flex;
@@ -107,10 +103,8 @@ const Header: React.FC = () => {
           <img src="/images/icons/category.png" alt="menu_icon" />
         </BuggerMenu>
         <LogoWrapper>
-          <img src="/images/icons/chat_active.png" alt="logo" />
-          <h1>코스 마켓</h1>
+          <img src="/images/icons/logo.png" alt="logo" />
         </LogoWrapper>
-        <NotLogin>로그인/회원가입</NotLogin>
       </TopWrapper>
       <SearchInput>
         <input placeholder="책 이름을 검색해보세요!" />
