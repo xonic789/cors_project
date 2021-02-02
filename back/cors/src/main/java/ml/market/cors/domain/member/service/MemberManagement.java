@@ -5,7 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.mail.entity.EmailStateDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
-import ml.market.cors.domain.member.enu.eMemberParam;
+import ml.market.cors.domain.member.map.MemberMapParam;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enu.SocialType;
 import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
@@ -38,8 +38,11 @@ public class MemberManagement {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public boolean change(@NonNull Map<eMemberParam, String> member, @NonNull long id){
-        String passwd = member.get(eMemberParam.PASSWD);
+    public boolean change(@NonNull Map<String, String> member, Long id){
+        if(id == 0){
+            return false;
+        }
+        String passwd = member.get(MemberMapParam.PASSWD);
         if(passwd == null){
             return false;
         }
@@ -53,7 +56,7 @@ public class MemberManagement {
             return false;
         }
 
-        String nickname = member.get(eMemberParam.NICKNAME);
+        String nickname = member.get(MemberMapParam.NICKNAME);
         try {
             if (!existNickname(nickname, id)) {
                 if (existNickname(nickname)) {
@@ -65,8 +68,8 @@ public class MemberManagement {
             throw new RuntimeException();
         }
 
-        String newPasswd = member.get(eMemberParam.NEWPASSWD);
-        if(newPasswd != null){
+        String newPasswd = member.get(MemberMapParam.NEWPASSWD);
+        if(newPasswd != null && !newPasswd.equals("")){
             newPasswd = bCryptPasswordEncoder.encode(newPasswd);
             memberRepository.save(memberRepository.save(new MemberDAO(id, memberDAO.getEmail(), memberDAO.getRole(), newPasswd, memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getSocialType())));
         }
@@ -91,7 +94,10 @@ public class MemberManagement {
         return memberRepository.existsByNickname(nickname);
     }
 
-    public boolean existNickname(@NonNull String nickname, @NonNull long id){
+    public boolean existNickname(@NonNull String nickname, long id){
+        if(id == 0){
+            return false;
+        }
         return memberRepository.existsByMemberIdAndNickname(id, nickname);
     }
 

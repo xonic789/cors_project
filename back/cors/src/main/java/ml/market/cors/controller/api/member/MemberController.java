@@ -3,7 +3,6 @@ package ml.market.cors.controller.api.member;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.mail.service.EmailManagement;
 import ml.market.cors.domain.mail.vo.MailVO;
-import ml.market.cors.domain.member.enu.eMemberParam;
 import ml.market.cors.domain.member.service.MemberManagement;
 import ml.market.cors.domain.member.service.MemberVO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
@@ -82,10 +81,10 @@ public class MemberController {
 
     @PostMapping("/change/profile")
     public ResponseEntity<Message<Object>> change(@AuthenticationPrincipal JwtCertificationToken memberIdentify
-                                                  ,@RequestParam Map<eMemberParam, String> member) {
+                                                  ,@RequestParam Map<String, String> member) {
         ResponseEntity<Message<Object>> messageResponseEntity;
         try {
-            if (memberManagement.change(member,(long) memberIdentify.getCredentials())) {
+            if (memberManagement.change(member,(Long) memberIdentify.getCredentials())) {
                 messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);
             } else {
                 messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 변경 실패");
