@@ -10,6 +10,7 @@ import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.article.entity.search.ArticleSearchCondition;
 import ml.market.cors.domain.article.service.ArticleForm;
 import ml.market.cors.domain.article.service.ArticleService;
+import ml.market.cors.domain.article.service.CountService;
 import ml.market.cors.domain.article.service.ImageInfoService;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
@@ -43,15 +44,17 @@ public class ArticleController {
     private final ResponseEntityUtils responseEntityUtils;
     private final MemberRepository memberRepository;
     private final ImageInfoService imageInfoService;
-
+    private final CountService countService;
 
     public ArticleController(ArticleService articleService,ResponseEntityUtils responseEntityUtils,
-                             S3Uploader s3Uploader,MemberRepository memberRepository,ImageInfoService imageInfoService) {
+                             S3Uploader s3Uploader,MemberRepository memberRepository,
+                             ImageInfoService imageInfoService,CountService countService) {
         this.articleService = articleService;
         this.responseEntityUtils= responseEntityUtils;
         this.s3Uploader=s3Uploader;
         this.memberRepository=memberRepository;
         this.imageInfoService=imageInfoService;
+        this.countService=countService;
     }
 
     //CRUD
@@ -61,14 +64,14 @@ public class ArticleController {
      * 게시물 분류 (purchase or sales)
      * @param divisions
      * @param pageable
-     * @return List.size()==0 HttpStatus.No_CONTENT
-     * @return List.size()>0 HttpStatus.OK
+     * @return HttpStatus.OK
      * @return HttpStatus.BAD_REQUEST
      */
     @GetMapping("/api/articles/{divisions}")
     public ResponseEntity<Message<Object>> getArticleList(
             @PathVariable String divisions,
             Pageable pageable, @ModelAttribute ArticleSearchCondition articleSearchCondition){
+        System.out.println(articleSearchCondition.getTitle());
 
         if(divisions.equals(SALES)){
             return responseEntityUtils.getMessageResponseEntityOK(articleService.findAll(Division.SALES, pageable, articleSearchCondition));
@@ -83,15 +86,21 @@ public class ArticleController {
     }
 
 
-
-
+    /**
+     * 게시물 디테일
+     * @param article_id
+     * @return
+     */
     @GetMapping("/api/article/{article_id}")
     public ResponseEntity<Message<Object>> getArticleDetail(
             @PathVariable String article_id){
 
         Long articleId=null;
+        ArticleDAO findArticle=null;
         try{
             articleId=Long.parseLong(article_id);
+            findArticle = articleService.findById(articleId);
+            countService.updateViewCount(findArticle.getCountDAO());
         }catch (NumberFormatException e){
             return responseEntityUtils.getMessageResponseEntityBadRequest(
                     new Errors(
@@ -99,8 +108,20 @@ public class ArticleController {
                             "article_id",
                             article_id,
                             "number 형식으로만 요청 가능합니다"));
+        }catch (NullPointerException e){
+            return responseEntityUtils.getMessageResponseEntityBadRequest(
+                    new Errors(
+                            "URI",
+                            "article_id",
+                            article_id,
+                            article_id + "에 해당하는 글이 없습니다."));
         }
-        ArticleDAO findArticle = articleService.findById(articleId);
+
+
+
+
+        String[] images = {findArticle.getImage_info().getImage2(),findArticle.getImage_info().getImage3()};
+
         return responseEntityUtils.getMessageResponseEntityOK(
                 new ArticleOne(
                         findArticle.getArticle_id(),
@@ -114,28 +135,35 @@ public class ArticleController {
                         findArticle.getProgress(),
                         findArticle.getDivision(),
                         findArticle.getImage_info().getImage1(),
-                        findArticle.getImage_info().getImage2(),
-                        findArticle.getImage_info().getImage3()
+                        images
                 )
         );
     }
 
 
-
-
-
     /**
-     * 게시물 등록 및 파일 업로드
+     *
      * @param articleForm
      * @param jwtCertificationToken
-     * @return
+     * @return HttpStatus.Unauthorized
      */
     @PostMapping("/api/article")
     public ResponseEntity<Message<Object>> insertArticle(
             @ModelAttribute ArticleForm articleForm,
             @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
     ) {
-        MemberDAO findMember = getMemberDAO(jwtCertificationToken);
+
+        MemberDAO findMember = null;
+        try{
+            findMember=getMemberDAO(jwtCertificationToken);
+        }catch (NullPointerException e){
+            return responseEntityUtils.getMessageResponseEntityUnauthorized(
+                    new Errors(
+                            "auth",
+                            "member",
+                            "member eq null",
+                            "로그인 해야 합니다."));
+        }
 
         ArticleDAO articleDAO = articleService.saveArticle(articleForm, findMember);
 
@@ -160,13 +188,32 @@ public class ArticleController {
     }
 
 
+    /**
+     *
+     * @param jwtCertificationToken
+     * @param articleForm
+     * @return
+     */
     @Secured("ROLE_CEO")
     @PostMapping("/api/market/article")
     public ResponseEntity<Message<Object>> insertMarketArticle(
             @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken,
             @ModelAttribute ArticleForm articleForm
     ) {
-        MemberDAO findMember = getMemberDAO(jwtCertificationToken);
+        MemberDAO findMember = null;
+        try{
+            findMember=getMemberDAO(jwtCertificationToken);
+            Long MemberId = getMarketId(findMember);
+        }catch (NullPointerException e){
+            return responseEntityUtils.getMessageResponseEntityUnauthorized(
+                    new Errors(
+                            "auth",
+                            "member",
+                            "member eq null",
+                            "로그인 해야 합니다."));
+        }
+
+
         ArticleDAO articleDAO = articleService.saveMarketArticle(articleForm, findMember);
 
         Object[] images = fileUploadAndUrls(articleForm, articleDAO);
@@ -190,7 +237,9 @@ public class ArticleController {
         );
     }
 
-
+    private Long getMarketId(MemberDAO findMember) {
+        return findMember.getMember_id();
+    }
 
 
     /**
@@ -204,9 +253,12 @@ public class ArticleController {
             @PathVariable String article_id,@ModelAttribute ArticleForm articleForm,
             @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
     ){
-        Long articleId;
+        Long articleId=null;
+        MemberDAO findMember = null;
+
         try{
             articleId=Long.parseLong(article_id);
+            findMember=getMemberDAO(jwtCertificationToken);
         }catch (NumberFormatException e){
             return responseEntityUtils.getMessageResponseEntityBadRequest(
                     new Errors(
@@ -214,11 +266,18 @@ public class ArticleController {
                             "article_id",
                             article_id,
                             "number 형식으로만 요청 가능합니다"));
+        }catch (NullPointerException e){
+            return responseEntityUtils.getMessageResponseEntityUnauthorized(
+                    new Errors(
+                            "auth",
+                            "member",
+                            "member eq null",
+                            "로그인 해야 합니다."));
         }
         ArticleDAO findArticle = articleService.findById(articleId);
-        MemberDAO findMember = getMemberDAO(jwtCertificationToken);
 
-        if(eqMemberId(findMember,findArticle)){
+
+        if(findArticle!=null&&eqMemberId(findMember,findArticle)){
             Object[] images = fileUploadAndUrls(articleForm, findArticle);
             ArticleDAO articleDAO = articleService.updateArticle(articleId, articleForm);
             imageInfoService.updateImage(findArticle,(String)images[0],(String)images[1]);
@@ -234,23 +293,34 @@ public class ArticleController {
                             findArticle.getWrite_date(),
                             findArticle.getProgress(),
                             findArticle.getDivision()));
-        }else {
-            return responseEntityUtils.getMessageResponseEntityBadRequest(
+        }else if (findArticle!=null){
+            return responseEntityUtils.getMessageResponseEntityForbidden(
                     new Errors(
                             "request",
                             "request user",
                             Long.valueOf(findMember.getMember_id()).toString() + " ne " + findArticle.getMember().getMember_id(),
                             "요청한 유저의 정보가 맞지 않습니다."));
         }
+        return responseEntityUtils.getMessageResponseEntityBadRequest(
+                new Errors(
+                        "URI",
+                        "article_id",
+                        article_id,
+                        article_id + "에 해당하는 글이 없습니다."));
     }
+
+
 
     @DeleteMapping("/api/article/{article_id}")
     public ResponseEntity<Message<Object>> deleteArticle(
             @PathVariable String article_id,
             @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken){
-        Long articleId;
+        Long articleId=null;
+        MemberDAO findMember = null;
+
         try{
             articleId=Long.parseLong(article_id);
+            findMember=getMemberDAO(jwtCertificationToken);
         }catch (NumberFormatException e){
             return responseEntityUtils.getMessageResponseEntityBadRequest(
                     new Errors(
@@ -258,16 +328,22 @@ public class ArticleController {
                             "article_id",
                             article_id,
                             "number 형식으로만 요청 가능합니다"));
+        }catch (NullPointerException e){
+            return responseEntityUtils.getMessageResponseEntityUnauthorized(
+                    new Errors(
+                            "auth",
+                            "member",
+                            "member eq null",
+                            "로그인 해야 합니다."));
         }
 
         ArticleDAO findArticle = articleService.findById(articleId);
-        MemberDAO findMember = getMemberDAO(jwtCertificationToken);
 
         if (eqMemberId(findMember,findArticle)) {
             articleService.deleteArticle(articleId);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } else {
-            return responseEntityUtils.getMessageResponseEntityBadRequest(
+            return responseEntityUtils.getMessageResponseEntityForbidden(
                     new Errors(
                             "request",
                             "request user",
@@ -294,7 +370,7 @@ public class ArticleController {
     }
 
 
-    private MemberDAO getMemberDAO(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken) {
+    private MemberDAO getMemberDAO(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken) throws NullPointerException{
         String email = jwtCertificationToken.getName();
         return memberRepository.findByEmail(email);
     }
@@ -365,8 +441,7 @@ public class ArticleController {
         private Progress progress;
         private Division division;
         private String thumbnail;
-        private String image1;
-        private String image2;
+        private String[] image;
     }
 
 

@@ -25,4 +25,14 @@ public class CountDAO {
     @Column(name = "wish_count")
     private int wish_count;
 
+    public void updateViewCount(int views){
+        this.views=views;
+    }
+    public void updateChatCount(int chat_count){
+        this.chat_count=chat_count;
+    }
+    public void updateWishCount(int wish_count){
+        this.wish_count=wish_count;
+    }
+
 }

@@ -14,8 +14,7 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Image_info_Repository;
-import ml.market.cors.repository.article.ArticleRepositoryCustom;
-import ml.market.cors.repository.bookcategory.Book_Category_Repository;
+import ml.market.cors.repository.bookcategory.BookCategoryRepository;
 import ml.market.cors.repository.market.MarketRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class ArticleServiceImpl implements ArticleService{
     private final ArticleRepository articleRepository;
     private final CountRepository countRepository;
     private final Image_info_Repository image_info_repository;
-    private final Book_Category_Repository book_category_repository;
+    private final BookCategoryRepository book_category_repository;
     private final MarketRepository marketRepository;
 
 
@@ -48,12 +47,17 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional(readOnly = false)
     public ArticleDAO saveMarketArticle(ArticleForm articleForm, MemberDAO memberDAO){
         Book_CategoryDAO book_categoryDAO = book_category_repository.findById(articleForm.getCid()).get();
+
         MarketDAO findMarket = marketRepository.findByMemberId(memberDAO.getMember_id());
         ArticleDAO createArticle = ArticleDAO.createArticleMarket(articleForm,memberDAO,book_categoryDAO,findMarket);
         countRepository.save(createArticle.getCountDAO());
         image_info_repository.save(createArticle.getImage_info());
         return articleRepository.save(createArticle);
     }
+
+
+
+
 
     @Override
     public ArticleDAO findById(Long id){

@@ -16,6 +16,13 @@ public interface ArticleRepositoryCustom {
 
     List<ArticleDTO> findByMarketDivision(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition);
 
+    List<ArticleDTO> findByDivisionAndUserLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition);
+
+    List<ArticleDTO> findByMarketDivisionAndUserLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition);
+
+
     ArticleDAO findByIdFetch(Long article_id);
+
+
 
 }
