@@ -124,7 +124,7 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
             logout(req, res);
             return securityContext;
         }
-        JwtCertificationToken authToken = new JwtCertificationToken(memberDAO.getEmail(), memberRoles);
+        JwtCertificationToken authToken = new JwtCertificationToken(member_id ,memberDAO.getEmail(), memberRoles);
         securityContext.setAuthentication(authToken);
         return securityContext;
     }

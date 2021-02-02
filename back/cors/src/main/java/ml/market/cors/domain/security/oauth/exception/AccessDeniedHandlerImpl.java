@@ -13,6 +13,6 @@ import java.io.IOException;
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
-        response.setStatus(411);
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     }
 }

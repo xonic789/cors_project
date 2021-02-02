@@ -56,8 +56,20 @@ public class MemberDAO implements UserDetails{
         return grants;
     }
 
-    public MemberDAO(Long member_id) {
+    public MemberDAO(long member_id, String email, MemberRole role, String password, String address, double latitude, double longitude, String nickname, SocialType socialType) {
         this.member_id = member_id;
+        this.email = email;
+        this.role = role;
+        this.password = password;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.nickname = nickname;
+        this.socialType = socialType;
+    }
+
+    public MemberDAO(Long memberId) {
+        this.member_id = memberId;
     }
 
     public MemberDAO(String email, MemberRole role, String password, String address, double latitude, double longitude, String nickname

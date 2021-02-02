@@ -79,6 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/login").anonymous()
                     .antMatchers("/api/join").anonymous()
                     .antMatchers("/api/logout").anonymous()
+                    .antMatchers("/api/change/profile").authenticated()
                     .antMatchers("/**").permitAll()
                     .and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
