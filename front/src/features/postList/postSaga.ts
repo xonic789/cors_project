@@ -15,14 +15,10 @@ interface loadSaleBookPost {
 }
 function* loadBookPost(action: PayloadAction<loadSaleBookPost>) {
   try {
-    // const result = yield call(getBookPostAPI, action.payload.division);
-    let result = PostList;
-    if (action.payload.division === 'purchase') {
-      result = PurchasePostList;
-    }
-    yield put(loadBookPostSuccess(result));
+    const result = yield call(getBookPostAPI, action.payload.division);
+    yield put(loadBookPostSuccess(result.data));
   } catch (err) {
-    yield put(loadBookPostError({ error: err.response.data }));
+    yield put(loadBookPostError({ error: err }));
   }
 }
 function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {
