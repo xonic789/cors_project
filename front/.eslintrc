@@ -47,7 +47,8 @@
     "object-curly-newline": "off",
     "linebreak-style": "off",
     "no-param-reassign": "off",
-    "max-len": "off"
+    "max-len": "off",
+    "react/jsx-props-no-spreading":"off"
   }
   /*"@typescript-eslint/ban-types": ["error",
     {
