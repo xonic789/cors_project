@@ -36,7 +36,7 @@ function* postLoginSaga(action: { payload: { email: string, passwd: string } }) 
 
       yield put({
         type: postLoginSuccess,
-        payload: action.payload,
+        payload: action.payload.email,
       });
     }
   } catch (e) {
