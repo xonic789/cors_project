@@ -1,13 +1,13 @@
 export interface chatting {
-  message_id: number;
+  messageId: number;
   message: string;
   time: Date;
-  user_id: string;
+  userId: string;
   sender: string;
   chatRoomId: string;
 }
 export interface sendData {
   chatRoomId:string,
-  user_id:string,
+  userId:string,
   receiver:string,
 }

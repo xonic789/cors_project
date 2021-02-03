@@ -83,13 +83,13 @@ const Header: React.FC = () => {
     e.preventDefault();
     setOpenMenu(true);
   }, []);
-  const onCloseMenuHandler = useCallback((e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
+  const onCloseMenuHandler = useCallback(() => {
+    setTabIndex(0);
     setOpenMenu(false);
   }, []);
   const onClickSalePostTab = useCallback(() => {
     setTabIndex(0);
-    dispatch(loadBookPostRequest('sales'));
+    dispatch(loadBookPostRequest({ division: 'sales' }));
   }, [dispatch]);
   const onClickPurchasPostTab = useCallback(() => {
     setTabIndex(1);
@@ -97,7 +97,7 @@ const Header: React.FC = () => {
   }, [dispatch]);
   return (
     <HeaderWrapper>
-      {openMenu && <CategoryMenu onMenuClose={onCloseMenuHandler} isOppend={openMenu} />}
+      {openMenu && <CategoryMenu onMenuClose={onCloseMenuHandler} />}
       <TopWrapper>
         <BuggerMenu onClick={onOpenMenuHandler}>
           <img src="/images/icons/category.png" alt="menu_icon" />

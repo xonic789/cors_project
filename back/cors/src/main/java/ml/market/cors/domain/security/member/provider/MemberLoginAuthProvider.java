@@ -40,10 +40,6 @@ public class MemberLoginAuthProvider implements AuthenticationProvider {
         String passwd = (String) authentication.getCredentials();
         MemberDAO memberDAO = null;
         memberDAO = memberLoginAuthService.loadUserByUsername(email);
-        if(memberDAO == null){
-            throw new UsernameNotFoundException(email);
-        }
-
         String orgPasswd =  memberDAO.getPassword();
 
         boolean bResult = comparePassword(passwd, orgPasswd);

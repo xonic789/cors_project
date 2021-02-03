@@ -2,9 +2,12 @@ package ml.market.cors.domain.market.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="market")
@@ -16,11 +19,12 @@ public class MarketDAO {
     @Column(name = "market_id")
     private Long market_id;
 
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
+    @OneToMany(mappedBy = "market")
+    private List<ArticleDAO> articles = new ArrayList<>();
 
     @Column(name = "name")
     private String name;
@@ -34,8 +38,8 @@ public class MarketDAO {
     @Column(name = "latitude")
     private Integer latitude;
 
-    @Column(name = "longtitude")
-    private Integer longtitude;
+    @Column(name = "longitude")
+    private Integer longitude;
 
     @Column(name = "image")
     private String image;

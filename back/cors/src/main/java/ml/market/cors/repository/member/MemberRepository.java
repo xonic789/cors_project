@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository("memberRepository")
+@Repository
 public interface MemberRepository extends JpaRepository<MemberDAO, Long> {
     public MemberDAO findByEmail(String email);
 

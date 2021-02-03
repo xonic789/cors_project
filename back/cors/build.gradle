@@ -49,12 +49,13 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.5.6'
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+	implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.1.RELEASE'
 	// https://mvnrepository.com/artifact/com.sun.mail/javax.mail
-	compile group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
-
+	implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
 	compileOnly 'org.projectlombok:lombok'
-	compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
-	compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.3.8.RELEASE'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.3.8.RELEASE'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
@@ -66,6 +67,8 @@ dependencies {
 	implementation 'com.querydsl:querydsl-apt'
 	testCompileOnly("org.projectlombok:lombok")
 	testAnnotationProcessor("org.projectlombok:lombok")
+	testCompile('org.springframework.security:spring-security-test')
+
 }
 
 test {

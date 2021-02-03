@@ -7,7 +7,7 @@ import { loadBookPostRequest } from './postSlice';
 
 const PostListWrapper = styled.div`
   display: flex;
-  max-width: 100vw;
+  max-width: 100%;
   flex-wrap: wrap;
   padding-top: 200px;
 `;
@@ -30,19 +30,18 @@ const PostListContent = styled.div`
 const PostList: React.FC = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(loadBookPostRequest('sale'));
+    dispatch(loadBookPostRequest({ division: 'sales' }));
   }, [dispatch]);
   const { bookPost } = useSelector((state) => state.postSlice);
-  console.log(bookPost);
   return (
     <PostListWrapper>
       <Header />
       {
         bookPost.map((p:articleInterface) => (
-          <PostListContent key={p.postId}>
-            <img src={p.Images.sumnail} alt="" />
+          <PostListContent key={p.articleId}>
+            <img src={p.image} alt="" />
             <h3>{p.title}</h3>
-            <h3>{p.rprice}원</h3>
+            <h3>{p.tprice}원</h3>
           </PostListContent>
         ))
       }
