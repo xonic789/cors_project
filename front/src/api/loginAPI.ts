@@ -9,10 +9,10 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
   return axios({
     method: 'post',
     url: '/api/login',
-    data: {
+    data: JSON.stringify({
       email: user.email,
       passwd: user.passwd,
-    },
+    }),
   }).then((result) => result.data);
 }
 

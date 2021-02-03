@@ -72,7 +72,7 @@ function Login():JSX.Element {
       <Layout>
         <TitleBox>
           <Logo />
-          <Title>코스마켓</Title>
+          <Title>코스마켓TEST</Title>
         </TitleBox>
         <LoginForm />
         <LinkBox>
