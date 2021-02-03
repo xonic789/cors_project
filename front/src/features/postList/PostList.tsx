@@ -27,7 +27,7 @@ const PostListContent = styled.div`
     margin-top: 10px;
   }
 `;
-const PostList: React.FC = () => {
+function PostList(): JSX.Element {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(loadBookPostRequest({ division: 'sales' }));
@@ -47,6 +47,6 @@ const PostList: React.FC = () => {
       }
     </PostListWrapper>
   );
-};
+}
 
 export default PostList;

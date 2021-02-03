@@ -78,7 +78,7 @@ const CloseButtton = styled.button`
     width: 25px;
   }
 `;
-const CategoryMenu = ({ onMenuClose }:CategoryMenuPropsInterFace):JSX.Element => {
+function CategoryMenu({ onMenuClose }:CategoryMenuPropsInterFace):JSX.Element {
   const dispatch = useDispatch();
   const [categoryTab, setCategoryTab] = useState<number>(0);
   const onHandleCategoryTab = useCallback((index: number) => {
@@ -119,6 +119,6 @@ const CategoryMenu = ({ onMenuClose }:CategoryMenuPropsInterFace):JSX.Element =>
       </BurgerMenuBody>
     </BurgerMenuWrapper>
   );
-};
+}
 
 export default CategoryMenu;

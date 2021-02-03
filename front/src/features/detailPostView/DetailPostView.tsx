@@ -1,21 +1,15 @@
 import React from 'react';
-import styled from 'styled-components';
-import Slider from 'react-slick';
+import ImageZoom from './ImageZoom';
 
-const DetailPostViewWrapper = styled.div``;
-const DetailPostView:React.FC = () => {
-  const settings = {
-    dots: true,
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-  };
+function DetailPostView():JSX.Element {
+  const images = [
+    'https://i.pinimg.com/originals/14/42/80/144280730d980a74790187079c376f0c.jpg',
+    'https://i.pinimg.com/originals/80/37/6e/80376e91064ee65b96f075438d40f104.jpg',
+    'https://i.pinimg.com/736x/a5/e6/af/a5e6af76263a0f972772afe98898c3b8.jpg',
+  ];
   return (
-    <DetailPostViewWrapper>
-      <Slider {...settings} />
-    </DetailPostViewWrapper>
+    <ImageZoom images={images} />
   );
-};
+}
 
 export default DetailPostView;

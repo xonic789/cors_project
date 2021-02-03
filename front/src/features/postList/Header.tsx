@@ -75,7 +75,7 @@ const PostTabItem = styled.li<PostTabItemInterface>`
   border-bottom: ${(props) => props.tab === props.active && '3px solid #3960a6'};
 `;
 
-const Header: React.FC = () => {
+function Header(): JSX.Element {
   const dispatch = useDispatch();
   const [openMenu, setOpenMenu] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
@@ -116,6 +116,6 @@ const Header: React.FC = () => {
       </PostTab>
     </HeaderWrapper>
   );
-};
+}
 
 export default Header;

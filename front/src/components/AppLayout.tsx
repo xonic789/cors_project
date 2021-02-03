@@ -44,7 +44,7 @@ const MenuItem = styled.li<MenuItemProps>`
   }
 `;
 
-const AppLayout: React.FC = () => {
+function AppLayout():JSX.Element {
   const [active, setActive] = useState<number>(0);
   const tabTitle = [
     ['/images/icons/home.png', '/images/icons/home_active.png', '홈'],
@@ -78,6 +78,6 @@ const AppLayout: React.FC = () => {
       </MenuWrapper>
     </AppLayoutWrapper>
   );
-};
+}
 
 export default AppLayout;
