@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import PostList from '../features/postList/PostList';
+import MyPage from '../features/mypage/MyPage';
 
 interface TabInterface {
   [key: number]: JSX.Element,
@@ -54,6 +55,7 @@ const AppLayout: React.FC = () => {
   ];
   const tab:TabInterface = {
     0: <PostList />,
+    3: <MyPage />,
   };
   const onClickMenuHandler = (id:number) => {
     setActive(id);
