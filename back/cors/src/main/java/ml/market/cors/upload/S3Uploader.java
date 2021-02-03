@@ -33,6 +33,11 @@ public class S3Uploader implements Uploader{
         return upload(convertedFile,dirName,id,dir);
     }
 
+    public String upload(MultipartFile multipartFile, String dirName,Long id,String dir, String fileName) throws IOException {
+        File convertedFile = convert(multipartFile, fileName);
+        return upload(convertedFile,dirName,id,dir);
+    }
+
     private String upload(File uploadFile, String dirName,Long id,String dir) {
         String fileName = dirName + "/" + dir + id + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
@@ -63,4 +68,17 @@ public class S3Uploader implements Uploader{
         }
         throw new IllegalArgumentException((String.format("파일 변환이 실패했습니다. 파일 이름: %s",file.getName())));
     }
+
+    private File convert(MultipartFile file, String fileName) throws IOException{
+        File convertFile = new File(fileName);
+        if(convertFile.createNewFile()){
+            try(FileOutputStream fos = new FileOutputStream(convertFile)){
+                fos.write(file.getBytes());
+            }
+            return convertFile;
+        }
+        removeNewFile(convertFile);
+        throw new IllegalArgumentException((String.format("파일 변환이 실패했습니다. 파일 이름: %s",file.getName())));
+    }
+
 }

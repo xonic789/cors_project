@@ -3,6 +3,7 @@ package ml.market.cors.controller.api.member;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.mail.service.EmailManagement;
 import ml.market.cors.domain.mail.vo.MailVO;
+import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.member.service.MemberManagement;
 import ml.market.cors.domain.member.service.MemberVO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
@@ -11,6 +12,7 @@ import ml.market.cors.domain.util.ResponseEntityUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
@@ -81,10 +83,11 @@ public class MemberController {
 
     @PostMapping("/change/profile")
     public ResponseEntity<Message<Object>> change(@AuthenticationPrincipal JwtCertificationToken memberIdentify
-                                                  ,@RequestParam Map<String, String> member) {
+                                                  , @RequestParam Map<String, Object> member
+            , @RequestPart("profile_img")MultipartFile multipartFile) {
         ResponseEntity<Message<Object>> messageResponseEntity;
         try {
-            if (memberManagement.change(member,(Long) memberIdentify.getCredentials())) {
+            if (memberManagement.change(member,(Long) memberIdentify.getCredentials(), multipartFile)) {
                 messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);
             } else {
                 messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 변경 실패");
@@ -95,4 +98,15 @@ public class MemberController {
 
         return messageResponseEntity;
     }
+/*
+    @GetMapping("/mypage")
+    public ResponseEntity<Message<Object>> getMypage(@AuthenticationPrincipal JwtCertificationToken){
+        ResponseEntity<Message<Object>> messageResponseEntity = null;
+
+
+
+        return messageResponseEntity;
+    }
+
+ */
 }

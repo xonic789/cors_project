@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
+import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enu.SocialType;
 import ml.market.cors.domain.util.cookie.CookieManagement;
@@ -105,7 +106,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         if (!bResult) {
             for(SocialType type : SocialType.values()){
                 if (type.getValue().equals(socialTypeName)) {
-                    memberRepository.save(new MemberDAO(email, MemberRole.USER, "blank", "blank", 0.0, 0.0, email, type));
+                    memberRepository.save(new MemberDAO(email, MemberParam.DEFAULT_PROFILE_IMG_DIR, MemberRole.USER, "blank", "blank", 0.0, 0.0, email, type));
                     break;
                 }
             }

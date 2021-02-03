@@ -3,9 +3,10 @@ package ml.market.cors.domain.member.service;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.mail.entity.EmailStateDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
-import ml.market.cors.domain.member.map.MemberMapParam;
+import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enu.SocialType;
 import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
@@ -14,11 +15,13 @@ import ml.market.cors.domain.util.kakao.KaKaoRestManagement;
 import ml.market.cors.domain.util.kakao.dto.map.KakaoResMapDTO;
 import ml.market.cors.repository.mail.EmailStateRepository;
 import ml.market.cors.repository.member.MemberRepository;
+import ml.market.cors.upload.S3Uploader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.Map;
@@ -26,6 +29,7 @@ import java.util.Optional;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MemberManagement {
     private final MemberRepository memberRepository;
@@ -34,15 +38,17 @@ public class MemberManagement {
 
     private final KaKaoRestManagement kaKaoRestManagement;
 
+    private final S3Uploader s3Uploader;
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public boolean change(@NonNull Map<String, String> member, Long id){
+    public boolean change(@NonNull Map<String, Object> member, Long id, MultipartFile multipartFile){
         if(id == 0){
             return false;
         }
-        String passwd = member.get(MemberMapParam.PASSWD);
+        String passwd = (String)member.get(MemberParam.PASSWD);
         if(passwd == null){
             return false;
         }
@@ -56,22 +62,36 @@ public class MemberManagement {
             return false;
         }
 
-        String nickname = member.get(MemberMapParam.NICKNAME);
-        try {
+        if(member.containsKey(MemberParam.NICKNAME)) {
+            String nickname = (String) member.get(MemberParam.NICKNAME);
+            if (nickname.equals("")) {
+                return false;
+            }
             if (!existNickname(nickname, id)) {
                 if (existNickname(nickname)) {
                     return false;
                 }
-                memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), nickname, memberDAO.getSocialType()));
+                memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), nickname, memberDAO.getSocialType()));
             }
-        }catch (RuntimeException e){
-            throw new RuntimeException();
         }
 
-        String newPasswd = member.get(MemberMapParam.NEWPASSWD);
-        if(newPasswd != null && !newPasswd.equals("")){
-            newPasswd = bCryptPasswordEncoder.encode(newPasswd);
-            memberRepository.save(memberRepository.save(new MemberDAO(id, memberDAO.getEmail(), memberDAO.getRole(), newPasswd, memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getSocialType())));
+        if(member.containsKey(MemberParam.NEWPASSWD)){
+            String newPasswd = (String) member.get(MemberParam.NEWPASSWD);
+            if(!newPasswd.equals("")){
+                newPasswd = bCryptPasswordEncoder.encode(newPasswd);
+                memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), newPasswd, memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getSocialType()));
+            }
+        }
+
+        if(!multipartFile.isEmpty()){
+            try{
+                String fileName = "src/main/resources/" + System.currentTimeMillis() + multipartFile.getOriginalFilename();
+                String fileDir = s3Uploader.upload(multipartFile, memberDAO.getEmail() ,System.currentTimeMillis(), multipartFile.getOriginalFilename(), fileName);
+                memberDAO = memberRepository.save(new MemberDAO(id, fileDir, memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getSocialType()));
+            }catch (Exception e){
+                log.debug("파일 업로드 실패");
+                throw new RuntimeException();
+            }
         }
         return true;
     }
@@ -136,7 +156,7 @@ public class MemberManagement {
         MapDocumentsDTO mapResMapDocumentsDTO = kakaoResMapDTO.getDocuments().get(0);
         double latitude = mapResMapDocumentsDTO.getY();
         double longitude = mapResMapDocumentsDTO.getX();
-        MemberDAO memberDAO = new MemberDAO(email, MemberRole.USER, passwd
+        MemberDAO memberDAO = new MemberDAO(email, MemberParam.DEFAULT_PROFILE_IMG_DIR, MemberRole.USER, passwd
                 ,address, latitude, longitude, nickname, SocialType.NORMAL);
         memberRepository.save(memberDAO);
         emailStateRepository.deleteById(email);
