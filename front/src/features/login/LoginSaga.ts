@@ -5,84 +5,29 @@ import { postLoginAsync, socialLoginAsync } from '../../api/loginAPI';
 
 function* postLoginSaga(action: { payload: { email: string, passwd: string } }) {
   try {
-    const token = yield call(postLoginAsync, action.payload);
+    yield call(postLoginAsync, action.payload);
 
-    if (token.accessToken === '' || token.refreshToken === '') {
-      console.log('로그인 실패');
-      throw new Error('유저 정보 불일치');
-    } else {
-      console.log('로그인 성공');
-      const accessExpires = new Date();
-      accessExpires.setTime(accessExpires.getTime() + 1000 * 60 * 60 * 2);
-      const refreshExpires = new Date();
-      refreshExpires.setTime(refreshExpires.getTime() + 1000 * 60 * 60 * 24);
-
-      cookie.save(
-        'access_token',
-        token.accessToken,
-        {
-          path: '/',
-          expires: accessExpires,
-        },
-      );
-      cookie.save(
-        'refresh_token',
-        token.refreshToken,
-        {
-          path: '/',
-          expires: refreshExpires,
-        },
-      );
-
-      yield put({
-        type: postLoginSuccess,
-        payload: action.payload.email,
-      });
-    }
+    yield put({
+      type: postLoginSuccess,
+      payload: action.payload.email,
+    });
   } catch (e) {
     yield put({
       type: postLoginError,
       payload: e,
     });
+    alert('로그인 정보를 확인하세요.');
   }
 }
 
 function* postSocialLoginSaga(action: { payload: { social: string } }) {
   try {
-    const token = yield call(socialLoginAsync, action.payload.social);
+    yield call(socialLoginAsync, action.payload.social);
 
-    if (token.accessToken === '' || token.refreshToken === '') {
-      console.log('로그인 실패');
-      throw new Error('유저 정보 불일치');
-    } else {
-      console.log('로그인 성공');
-      const accessExpires = new Date();
-      accessExpires.setTime(accessExpires.getTime() + 1000 * 60 * 60 * 2);
-      const refreshExpires = new Date();
-      refreshExpires.setTime(refreshExpires.getTime() + 1000 * 60 * 60 * 24);
-
-      cookie.save(
-        'access_token',
-        token.accessToken,
-        {
-          path: '/',
-          expires: accessExpires,
-        },
-      );
-      cookie.save(
-        'refresh_token',
-        token.refreshToken,
-        {
-          path: '/',
-          expires: refreshExpires,
-        },
-      );
-
-      yield put({
-        type: postLoginSuccess,
-        payload: action.payload,
-      });
-    }
+    yield put({
+      type: postLoginSuccess,
+      payload: 'social',
+    });
   } catch (e) {
     yield put({
       type: postLoginError,
