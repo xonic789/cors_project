@@ -1,4 +1,4 @@
-import { all, call, fork, ForkEffect, put, takeLatest, delay, getContext } from 'redux-saga/effects';
+import { all, call, fork, ForkEffect, put, takeLatest, delay } from 'redux-saga/effects';
 import { emailCertificationAsync, emailDuplicationAsync, nicknameDuplicationAsync, joinRequestAsync } from '../../api/joinApi';
 import {
   emailDuplicationOk,
@@ -30,14 +30,12 @@ function* nicknameDuplicateSaga(action: { payload: { nickname: string } }) {
         type: nicknameDuplicationOk,
         payload: '사용가능한 닉네임입니다..',
       });
-    } else {
-      yield put({
-        type: nicknameDuplicationFail,
-        payload: '이미 사용중인 닉네임입니다.',
-      });
     }
   } catch (e) {
-    console.log(e);
+    yield put({
+      type: nicknameDuplicationFail,
+      payload: '이미 사용중인 닉네임입니다.',
+    });
   }
 }
 
@@ -89,18 +87,16 @@ function* joinRequestSaga(action: { payload: {email: string, passwd: string, nic
       yield put({
         type: joinRequestOk,
       });
-      yield alert('회원가입이 완료 되었습니다.');
-      const history = yield getContext('history');
-      history.push('/');
+      alert('회원가입이 완료 되었습니다.');
     } else {
-      yield alert('회원가입중 오류 발생.');
+      alert('회원가입중 오류 발생.');
       yield put({
         type: joinRequestFail,
         payload: '회원가입 오류',
       });
     }
   } catch (e) {
-    yield alert('회원가입중 오류 발생.');
+    alert('회원가입중 오류 발생.');
     yield put({
       type: joinRequestFail,
       payload: e,

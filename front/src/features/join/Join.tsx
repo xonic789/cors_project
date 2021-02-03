@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import DaumPostCode, { AddressData } from 'react-daum-postcode';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
@@ -296,6 +296,7 @@ const JoinButton = styled.button`
 `;
 
 function Join():JSX.Element {
+  const history = useHistory();
   const [showsModal, setShowsModal] = useState(false);
   const dispatch = useDispatch();
   const { email,
@@ -428,6 +429,7 @@ function Join():JSX.Element {
       alert('필수 약관 항목에 동의해주세요.');
     } else {
       dispatch(joinRequest({ email: email.value, passwd: passwd.value, nickname: nickname.value, address: `${address.addressBase} ${address.addressDetail}` }));
+      history.push('/');
     }
   };
 
