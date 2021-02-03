@@ -9,6 +9,10 @@ export function addBookPostAPI(data: addPostInterface):Promise<AxiosResponse> {
 export function getBookPostAPI(division:string, categoryFilter?:string):Promise<AxiosResponse> {
   return axios.get(`http://local.corsmarket.ml/api/articles/${division}`, { params: { category: categoryFilter } });
 }
+// 일반사용자 판매/구매글 상세페이지 불러오기
+export function getBookPostDetailViewAPI(postId: number):Promise<AxiosResponse> {
+  return axios.get(`http://local.corsmarket.ml/api/article/${postId}`);
+}
 // 마켓리스트 불러오기
 export function getMarketListAPI():Promise<AxiosResponse> {
   return axios.get('api/market');
