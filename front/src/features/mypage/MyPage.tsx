@@ -18,7 +18,7 @@ const Layout = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1em 0;
+  padding: 1.3em 0;
 `;
 
 const MyInfo = styled.div`
@@ -58,15 +58,17 @@ const MyDicription = styled.p`
   font-size: 3vw;
 `;
 
-const ProfileBtn = styled.button`
+const ProfileBtn = styled(Link)`
+  display: block;
   width: 23em;
-  padding: 0.7em 0;
+  padding: 1em 0;
   font-size: 3.5vw;
   text-align: center;
   background: #fff;
   border: 1px solid rgba(158, 158, 158, 0.7);
-  outline: none;
   margin-bottom: 1em;
+  text-decoration: none;
+  color: #000;
 `;
 
 const MyMenu = styled.ul`
@@ -84,9 +86,6 @@ const MenuImg = styled.img`
 `;
 
 const MyMenuItem = styled.li`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 33.3333%;
   padding: 1.2em 0;
   &:not(:last-child):not(:first-child) {
@@ -97,6 +96,14 @@ const MyMenuItem = styled.li`
     width: 2.2em;
     height: 2.2em;
   }
+`;
+
+const MyMenuLink = styled(Link)`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
 `;
 
 const MenuImgBox = styled.div`
@@ -149,25 +156,31 @@ function MyPage():JSX.Element {
             <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>
           </ProfileText>
         </MyInfo>
-        <ProfileBtn>프로필 수정</ProfileBtn>
+        <ProfileBtn to="/mypage/modify">프로필 수정</ProfileBtn>
         <MyMenu>
           <MyMenuItem>
-            <MenuImgBox>
-              <MenuImg src={SalesIcon} />
-            </MenuImgBox>
-            <MenuText>판매내역</MenuText>
+            <MyMenuLink to="/mypage/sales">
+              <MenuImgBox>
+                <MenuImg src={SalesIcon} />
+              </MenuImgBox>
+              <MenuText>판매내역</MenuText>
+            </MyMenuLink>
           </MyMenuItem>
           <MyMenuItem>
-            <MenuImgBox>
-              <MenuImg src={PurchaseIcon} />
-            </MenuImgBox>
-            <MenuText>구매내역</MenuText>
+            <MyMenuLink to="/mypage/purchase">
+              <MenuImgBox>
+                <MenuImg src={PurchaseIcon} />
+              </MenuImgBox>
+              <MenuText>구매내역</MenuText>
+            </MyMenuLink>
           </MyMenuItem>
           <MyMenuItem>
-            <MenuImgBox>
-              <MenuImg src={HeartIcon} />
-            </MenuImgBox>
-            <MenuText>찜목록</MenuText>
+            <MyMenuLink to="/mypage/wishs">
+              <MenuImgBox>
+                <MenuImg src={HeartIcon} />
+              </MenuImgBox>
+              <MenuText>찜목록</MenuText>
+            </MyMenuLink>
           </MyMenuItem>
         </MyMenu>
         <UtilMenuList>
