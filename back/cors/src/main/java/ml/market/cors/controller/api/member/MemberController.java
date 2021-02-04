@@ -14,6 +14,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -81,7 +83,7 @@ public class MemberController {
         return messageResponseEntity;
     }
 
-    @PostMapping("/change/profile")
+    @PutMapping("/change/profile")
     public ResponseEntity<Message<Object>> change(@AuthenticationPrincipal JwtCertificationToken memberIdentify
                                                   , @RequestParam Map<String, Object> member
             , @RequestPart("profile_img")MultipartFile multipartFile) {
@@ -98,15 +100,21 @@ public class MemberController {
 
         return messageResponseEntity;
     }
-/*
+
     @GetMapping("/mypage")
-    public ResponseEntity<Message<Object>> getMypage(@AuthenticationPrincipal JwtCertificationToken){
+    public ResponseEntity<Message<Object>> getMypage(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
+    , HttpServletResponse response){
         ResponseEntity<Message<Object>> messageResponseEntity = null;
 
-
-
+        Map result = memberManagement.viewProfile(response, (long)jwtCertificationToken.getCredentials());
+        if(result == null){
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 로드 실패");
+        }
+        else{
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(result);
+        }
         return messageResponseEntity;
     }
 
- */
+
 }

@@ -24,6 +24,9 @@ public class MemberDAO implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long member_id;
 
+    @Column(name="profilekey")
+    private String profileKey;
+
     @Column(name="profileimg")
     private String profile_img;
 
@@ -59,8 +62,9 @@ public class MemberDAO implements UserDetails{
         return grants;
     }
 
-    public MemberDAO(long member_id, String profile_img, String email, MemberRole role, String password, String address, double latitude, double longitude, String nickname, SocialType socialType) {
+    public MemberDAO(String profileKey, long member_id, String profile_img, String email, MemberRole role, String password, String address, double latitude, double longitude, String nickname, SocialType socialType) {
         this.member_id = member_id;
+        this.profileKey = profileKey;
         this.profile_img = profile_img;
         this.email = email;
         this.role = role;
@@ -76,9 +80,10 @@ public class MemberDAO implements UserDetails{
         this.member_id = memberId;
     }
 
-    public MemberDAO(String email, String profile_img, MemberRole role, String password, String address, double latitude, double longitude, String nickname
+    public MemberDAO(String profileKey, String email, String profile_img, MemberRole role, String password, String address, double latitude, double longitude, String nickname
     ,SocialType socialType) {
         this.email = email;
+        this.profileKey = profileKey;
         this.profile_img = profile_img;
         this.role = role;
         this.password = password;
