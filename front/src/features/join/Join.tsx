@@ -1,23 +1,8 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import DaumPostCode, { AddressData } from 'react-daum-postcode';
-import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
-import {
-  onChangeText,
-  inputCheckOk,
-  inputCheckFail,
-  inputCheckNone,
-  nicknameDuplicateCheck,
-  emailCertificationRequest,
-  emailCertificationCheck,
-  setAddress,
-  setAddressDetail,
-  setAllAgreeClick,
-  setAllAgree,
-  setAgree,
-  joinRequest,
-} from './joinSlice';
+import { emailCertificationAsync, emailDuplicationAsync, joinRequestAsync, nicknameDuplicationAsync } from '../../api/joinApi';
 
 const Positional = styled.div`
   position: relative;
@@ -120,7 +105,7 @@ const CertificationRequest = styled.button`
 `;
 
 const CertificationBox = styled.div`
-  display: flex;
+  display: none;
   flex-direction: column;
   margin-top: 0.5em;
 `;
@@ -278,141 +263,257 @@ const JoinButton = styled.button`
 `;
 
 function Join():JSX.Element {
-  const history = useHistory();
+  const initialInputs = {
+    email: {
+      value: '',
+      state: 'none',
+      message: '',
+      color: 'red',
+      duplicationCheck: false,
+      code: '',
+      certificationCheck: false,
+    },
+    nickname: {
+      value: '',
+      state: 'none',
+      message: '',
+      color: 'red',
+    },
+    passwd: {
+      value: '',
+      state: 'none',
+      message: '',
+      color: 'red',
+    },
+    passwdCheck: {
+      value: '',
+      state: 'none',
+      message: '',
+      color: 'red',
+    },
+    address: {
+      zipcode: '',
+      baseAddress: '',
+      detailAddress: '',
+    },
+    agreement: {
+      all: false,
+      agree1: false,
+      agree2: false,
+      agree3: false,
+    },
+  };
+
   const [showsModal, setShowsModal] = useState(false);
-  const dispatch = useDispatch();
-  const { email,
-    certification,
+  const [inputs, setInputs] = useState(initialInputs);
+  const emailCertificationBox = useRef<HTMLInputElement>(null);
+  const history = useHistory();
+
+  const {
+    email,
     nickname,
     passwd,
     passwdCheck,
-    emailDuplication,
-    emailCertification,
     address,
     agreement,
-  } = useSelector((state: RootStateOrAny) => state.joinSlice);
+  } = inputs;
 
-  const onClickCertification = () => {
-    dispatch(emailCertificationRequest(email.value));
+  const inputChange = (name: 'email' | 'nickname' | 'passwd' | 'passwdCheck', value: string, state: 'check' | 'fail' | 'none', message: string, color: 'red' | 'blue') => {
+    setInputs({
+      ...inputs,
+      [name]: {
+        ...inputs[name],
+        value,
+        state,
+        message,
+        color,
+      },
+    });
   };
 
-  const onClickCertificationCheck = () => {
-    dispatch(emailCertificationCheck({ email: email.value, code: certification.value }));
-  };
+  const onChangeText = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
 
-  const onClickOpenModal = () => {
-    setShowsModal(true);
-  };
-
-  const onClickCloseModal = () => {
-    setShowsModal(false);
-  };
-
-  const OnCompleteSelectAddress = (data: AddressData) => {
-    dispatch(setAddress({ zipCode: data.zonecode, address: data.jibunAddress }));
-    setShowsModal(false);
-  };
-
-  const onChangeAddressDetail = (e: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setAddressDetail(e.target.value));
-  };
-
-  const onChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    switch (e.target.name) {
-      case ('email'):
-        if (/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i.test(e.target.value)) {
-          dispatch(inputCheckOk({ name: 'email', message: '' }));
-        } else if (e.target.value) {
-          dispatch(inputCheckFail({ name: 'email', message: '이메일 형식이 아닙니다.' }));
+    switch (name) {
+      case 'email':
+        if (/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i.test(value)) {
+          inputChange(name, value, 'check', '', 'blue');
         } else {
-          dispatch(inputCheckNone({ name: 'email', message: '' }));
+          inputChange(name, value, 'fail', '이메일 형식이 아닙니다.', 'red');
         }
         break;
-      case ('nickname'):
-        dispatch(nicknameDuplicateCheck({ nickname: e.target.value }));
-        break;
-      case ('passwd'):
-        if (/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/.test(e.target.value)) {
-          dispatch(inputCheckOk({ name: 'passwd', message: '' }));
+      case 'nickname':
+        if (value.length < 4) {
+          inputChange(name, value, 'fail', '닉네임을 4자 이상 입력해주세요.', 'red');
         } else {
-          dispatch(inputCheckFail({ name: 'passwd', message: '8~20자의 영문 대소문자, 숫자, 특수문자 조합으로 설정해주세요.' }));
-        }
-        if (passwdCheck.status === 'check') {
-          dispatch(inputCheckFail({ name: 'passwdCheck', message: '비밀번호가 일치하지 않습니다.' }));
-        }
-        if (e.target.value === passwdCheck.value) {
-          dispatch(inputCheckOk({ name: 'passwdCheck', message: '' }));
+          try {
+            await nicknameDuplicationAsync(value);
+            inputChange(name, value, 'check', '', 'blue');
+          } catch {
+            inputChange(name, value, 'fail', '이미 사용중인 닉네임입니다.', 'red');
+          }
         }
         break;
-      case ('passwdCheck'):
-        if (e.target.value === passwd.value) {
-          dispatch(inputCheckOk({ name: 'passwdCheck', message: '' }));
+      case 'passwd':
+        if (/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/.test(value)) {
+          inputChange(name, value, 'check', '', 'blue');
         } else {
-          dispatch(inputCheckFail({ name: 'passwdCheck', message: '비밀번호가 일치하지 않습니다.' }));
+          inputChange(name, value, 'fail', '8~20자의 영문 대소문자, 숫자, 특수문자 조합으로 설정해주세요.', 'red');
+        }
+        break;
+      case 'passwdCheck':
+        if (value === passwd.value) {
+          inputChange(name, value, 'check', '', 'blue');
+        } else {
+          inputChange(name, value, 'fail', '비밀번호가 일치하지 않습니다.', 'red');
         }
         break;
       default:
         break;
     }
-
-    if (e.target.name === 'email'
-      || e.target.name === 'certification'
-      || e.target.name === 'nickname'
-      || e.target.name === 'passwd'
-      || e.target.name === 'passwdCheck'
-    ) {
-      dispatch(onChangeText({ name: e.target.name, value: e.target.value }));
-    }
   };
 
-  const onClickAllAgree = () => {
-    if (agreement.all) {
-      dispatch(setAllAgreeClick(false));
-    } else {
-      dispatch(setAllAgreeClick(true));
-    }
-  };
-
-  const onClickAgree = (name: string) => {
-    const resultArr: boolean[] = [];
-
-    Object.keys(agreement).forEach((key) => {
-      if (key !== 'all') {
-        if (key === name) {
-          resultArr.push(!agreement[key]);
-        } else {
-          resultArr.push(agreement[key]);
-        }
+  const onClickEmailDuplication = async () => {
+    try {
+      await emailDuplicationAsync(email.value);
+      setInputs({
+        ...inputs,
+        email: {
+          ...email,
+          duplicationCheck: true,
+        },
+      });
+      if (emailCertificationBox.current != null) {
+        emailCertificationBox.current.style.display = 'flex';
       }
-    });
-
-    if (agreement.all) {
-      dispatch(setAllAgree(false));
-    } else if (resultArr.every((value) => value === true)) {
-      dispatch(setAllAgree(true));
-    }
-    if (name === 'agree1' || name === 'agree2' || name === 'agree3') {
-      dispatch(setAgree({ name, check: !agreement[name] }));
+    } catch {
+      setInputs({
+        ...inputs,
+        email: {
+          ...email,
+          message: '이미 사용중인 이메일입니다.',
+          color: 'red',
+          duplicationCheck: false,
+        },
+      });
     }
   };
 
-  const onSubmitJoin = (e: React.FormEvent<HTMLFormElement>) => {
+  const onChangeCode = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs({
+      ...inputs,
+      email: {
+        ...email,
+        code: e.target.value,
+      },
+    });
+  };
+
+  const onClickEmailCertification = async () => {
+    try {
+      await emailCertificationAsync(email.value, email.code);
+      setInputs({
+        ...inputs,
+        email: {
+          ...email,
+          message: '인증이 완료되었습니다.',
+          color: 'blue',
+          certificationCheck: true,
+        },
+      });
+      if (emailCertificationBox.current != null) {
+        emailCertificationBox.current.style.display = 'none';
+      }
+    } catch {
+      setInputs({
+        ...inputs,
+        email: {
+          ...email,
+          message: '코드를 확인해주세요.',
+          color: 'red',
+          certificationCheck: false,
+        },
+      });
+    }
+  };
+
+  const onCompleteAddressSelect = (data: AddressData) => {
+    setInputs({
+      ...inputs,
+      address: {
+        ...address,
+        zipcode: data.zonecode,
+        baseAddress: data.jibunAddress,
+      },
+    });
+    setShowsModal(false);
+  };
+
+  const onChangeDetailAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputs({
+      ...inputs,
+      address: {
+        ...address,
+        detailAddress: e.target.value,
+      },
+    });
+  };
+
+  const onClickAgree = (agree: 'all' | 'agree1' | 'agree2' | 'agree3') => {
+    if (agree === 'all') {
+      setInputs({
+        ...inputs,
+        agreement: {
+          all: !agreement.all,
+          agree1: !agreement.all,
+          agree2: !agreement.all,
+          agree3: !agreement.all,
+        },
+      });
+    } else {
+      const resultArr: boolean[] = [];
+
+      Object.keys(agreement).forEach((key) => {
+        if (key !== 'all' && (key === 'agree1' || key === 'agree2' || key === 'agree3')) {
+          if (key === agree) {
+            resultArr.push(!agreement[key]);
+          } else {
+            resultArr.push(agreement[key]);
+          }
+        }
+      });
+
+      if (agree === 'agree1' || agree === 'agree2' || agree === 'agree3') {
+        setInputs({
+          ...inputs,
+          agreement: {
+            ...agreement,
+            all: resultArr.every((value) => value === true),
+            [agree]: !agreement[agree],
+          },
+        });
+      }
+    }
+  };
+
+  const onsubmitJoin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!emailCertification) {
+    if (!email.certificationCheck) {
       alert('이메일 인증을 진행해주세요.');
-    } else if (nickname.status !== 'check') {
+    } else if (nickname.state !== 'check') {
       alert('닉네임이 중복되었거나 형식이 맞지 않습니다.');
-    } else if (passwd.status !== 'check') {
+    } else if (passwd.state !== 'check') {
       alert('비밀번호 형식이 맞지 않습니다.');
-    } else if (passwdCheck.status !== 'check') {
+    } else if (passwdCheck.state !== 'check') {
       alert('비밀번호가 일치하지 않습니다.');
-    } else if (address.zipCode === '') {
+    } else if (address.zipcode === '') {
       alert('주소를 입력해주세요.');
     } else if (!agreement.agree1 || !agreement.agree2) {
       alert('필수 약관 항목에 동의해주세요.');
     } else {
-      dispatch(joinRequest({ email: email.value, passwd: passwd.value, nickname: nickname.value, address: `${address.addressBase} ${address.addressDetail}` }));
+      await joinRequestAsync(email.value, nickname.value, passwd.value, `${address.baseAddress} ${address.detailAddress}`);
+      alert('회원가입이 완료되었습니다.');
       history.push('/');
     }
   };
@@ -426,18 +527,18 @@ function Join():JSX.Element {
         <h1>회원가입</h1>
       </Header>
       <Main>
-        <JoinForm method="post" onSubmit={onSubmitJoin}>
+        <JoinForm method="post" onSubmit={onsubmitJoin}>
           <JoinInputBox>
             <label htmlFor="email">이메일</label>
             <JoinInput>
-              <Input required type="email" id="email" name="email" onChange={onChangeInput} value={email.value} disabled={emailDuplication} />
-              <CheckLogo src={`/images/icons/${email.status}.png`} />
-              <CertificationRequest style={{ display: email.status === 'check' && !emailCertification ? 'block' : 'none' }} type="button" onClick={onClickCertification}>인증요청</CertificationRequest>
+              <Input required type="email" id="email" name="email" onChange={onChangeText} value={email.value} disabled={email.duplicationCheck} />
+              <CheckLogo src={`/images/icons/${email.state}.png`} />
+              <CertificationRequest style={{ display: email.state === 'check' && !email.certificationCheck ? 'block' : 'none' }} type="button" onClick={onClickEmailDuplication}>인증요청</CertificationRequest>
             </JoinInput>
-            <CertificationBox style={{ display: emailDuplication && !emailCertification ? 'flex' : 'none' }}>
+            <CertificationBox ref={emailCertificationBox}>
               <CertificationInputBox>
-                <CertificationInput name="certification" onChange={onChangeInput} value={certification.value} />
-                <CertificationButton type="button" onClick={onClickCertificationCheck}>확인</CertificationButton>
+                <CertificationInput name="certification" onChange={onChangeCode} value={email.code} />
+                <CertificationButton type="button" onClick={onClickEmailCertification}>확인</CertificationButton>
               </CertificationInputBox>
             </CertificationBox>
             <InputMessage style={{ color: email.color }}>{email.message}</InputMessage>
@@ -445,42 +546,42 @@ function Join():JSX.Element {
           <JoinInputBox>
             <label htmlFor="nickname">닉네임</label>
             <JoinInput>
-              <Input required type="text" maxLength={10} id="nickname" name="nickname" onChange={onChangeInput} value={nickname.value} />
-              <CheckLogo src={`/images/icons/${nickname.status}.png`} />
+              <Input required type="text" maxLength={10} id="nickname" name="nickname" onChange={onChangeText} value={nickname.value} />
+              <CheckLogo src={`/images/icons/${nickname.state}.png`} />
             </JoinInput>
             <InputMessage style={{ color: nickname.color }}>{nickname.message}</InputMessage>
           </JoinInputBox>
           <JoinInputBox>
             <label htmlFor="passwd">비밀번호</label>
             <JoinInput>
-              <Input maxLength={20} required type="password" id="passwd" name="passwd" onChange={onChangeInput} value={passwd.value} />
-              <CheckLogo src={`/images/icons/${passwd.status}.png`} />
+              <Input maxLength={20} required type="password" id="passwd" name="passwd" onChange={onChangeText} value={passwd.value} />
+              <CheckLogo src={`/images/icons/${passwd.state}.png`} />
             </JoinInput>
             <InputMessage style={{ color: passwd.color }}>{passwd.message}</InputMessage>
           </JoinInputBox>
           <JoinInputBox>
             <label htmlFor="passwdCheck">비밀번호 확인</label>
             <JoinInput>
-              <Input maxLength={20} required type="password" id="passwdCheck" name="passwdCheck" onChange={onChangeInput} value={passwdCheck.value} />
-              <CheckLogo src={`/images/icons/${passwdCheck.status}.png`} />
+              <Input maxLength={20} required type="password" id="passwdCheck" name="passwdCheck" onChange={onChangeText} value={passwdCheck.value} />
+              <CheckLogo src={`/images/icons/${passwdCheck.state}.png`} />
             </JoinInput>
             <InputMessage style={{ color: passwdCheck.color }}>{passwdCheck.message}</InputMessage>
           </JoinInputBox>
           <AddressFormBox>
             <label>주소</label>
             <AddressSearchBox>
-              <AddressSearchInput disabled onClick={onClickOpenModal} value={address.zipCode} />
-              <AddressSearchButton type="button" onClick={onClickOpenModal}>우편번호 검색</AddressSearchButton>
+              <AddressSearchInput disabled value={address.zipcode} />
+              <AddressSearchButton type="button" onClick={() => setShowsModal(true)}>우편번호 검색</AddressSearchButton>
             </AddressSearchBox>
             <JoinInput>
-              <Input type="text" disabled placeholder="상세 주소" value={address.addressBase} />
+              <Input type="text" disabled placeholder="상세 주소" value={address.baseAddress} />
             </JoinInput>
             <JoinInput>
-              <Input onChange={onChangeAddressDetail} type="text" placeholder="나머지 주소" value={address.addressDetail} />
+              <Input type="text" placeholder="나머지 주소" onChange={onChangeDetailAddress} value={address.detailAddress} />
             </JoinInput>
           </AddressFormBox>
           <AgreementBox>
-            <AllAgreeBox onClick={onClickAllAgree}>
+            <AllAgreeBox onClick={() => onClickAgree('all')}>
               <AgreeCheckBox src={`/images/icons/${agreement.all ? 'check' : 'check_default'}.png`} />
               <AgreeText>전체 약관에 동의합니다.</AgreeText>
             </AllAgreeBox>
@@ -506,8 +607,8 @@ function Join():JSX.Element {
         </JoinForm>
       </Main>
       <SearchModal style={{ display: showsModal ? 'flex' : 'none' }}>
-        <CloseButton src="" onClick={onClickCloseModal} />
-        <DaumPostCode onComplete={OnCompleteSelectAddress} />
+        <CloseButton src="/images/icons/x.png" onClick={() => setShowsModal(false)} />
+        <DaumPostCode onComplete={onCompleteAddressSelect} />
       </SearchModal>
     </Positional>
   );
