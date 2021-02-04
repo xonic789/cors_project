@@ -64,6 +64,8 @@ public class ArticleServiceImpl implements ArticleService{
         return articleRepository.findByIdFetch(id);
     }
 
+
+
     /**
      * 게시물 수정
      * @param article_id
@@ -71,10 +73,11 @@ public class ArticleServiceImpl implements ArticleService{
      */
 
     @Override
+    @Transactional(readOnly = false)
     public ArticleDAO updateArticle(Long article_id,ArticleForm articleForm) {
         ArticleDAO findArticle = findById(article_id);
         Image_infoDAO findImage = image_info_repository.findById(findArticle.getImage_info().getIndex_id()).get();
-        CountDAO countDAO = countRepository.findById(findArticle.getCountDAO().getCount_id()).get();
+        CountDAO countDAO = countRepository.findById(findArticle.getCountDAO().getCountId()).get();
         return findArticle.updateArticle(articleForm, findImage,countDAO);
     }
 
@@ -103,15 +106,26 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     public List<ArticleDTO> findAll(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition) {
         return articleRepository.findByDivision(division,pageable, articleSearchCondition);
-
     }
+
+    @Override
+    public List<ArticleDTO> findAllByMemberLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition, MemberDAO memberDAO) {
+        return articleRepository.findByDivisionAndUserLocation(division,pageable,articleSearchCondition,memberDAO);
+    }
+
+    @Override
+    public List<ArticleDTO> findMarketAll(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition) {
+        return articleRepository.findByMarketDivision(division,pageable, articleSearchCondition);
+    }
+
+
 
     @Override
     @Transactional(readOnly = false)
     public void deleteArticle(Long article_id) {
         ArticleDAO findArticle = articleRepository.findByIdFetch(article_id);
         image_info_repository.deleteById(findArticle.getImage_info().getIndex_id());
-        countRepository.deleteById(findArticle.getCountDAO().getCount_id());
+        countRepository.deleteById(findArticle.getCountDAO().getCountId());
         articleRepository.deleteById(article_id);
     }
 }

@@ -16,21 +16,21 @@ public class CountServiceImpl implements CountService{
     @Override
     @Transactional(readOnly = false)
     public void updateViewCount(CountDAO countDAO) {
-        CountDAO count = countRepository.findById(countDAO.getCount_id()).get();
+        CountDAO count = countRepository.findById(countDAO.getCountId()).get();
         count.updateViewCount(count.getViews()+1);
     }
 
     @Override
     @Transactional(readOnly = false)
     public void updateChatCount(CountDAO countDAO) {
-        CountDAO count = countRepository.findById(countDAO.getCount_id()).get();
-        count.updateChatCount(count.getChat_count()+1);
+        CountDAO count = countRepository.findById(countDAO.getCountId()).get();
+        count.updateChatCount(count.getChatCount()+1);
     }
 
     @Override
     @Transactional(readOnly = false)
     public void updateWishCount(CountDAO countDAO) {
-        CountDAO count = countRepository.findById(countDAO.getCount_id()).get();
-        count.updateWishCount(count.getWish_count()+1);
+        CountDAO count = countRepository.findById(countDAO.getCountId()).get();
+        count.updateWishCount(count.getWishCount()+1);
     }
 }

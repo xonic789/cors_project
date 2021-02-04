@@ -8,6 +8,7 @@ import ml.market.cors.domain.article.entity.dto.ArticleDTO;
 import ml.market.cors.domain.article.entity.dto.QArticleDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.search.ArticleSearchCondition;
+import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.bookcategory.BookCategoryRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -57,7 +58,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                     .join(articleDAO.image_info, image_infoDAO)
                     .where(
                             titleLike(articleSearchCondition.getTitle()),
-                            articleIdlt(articleSearchCondition.getLastId()),
+                            articleIdLt(articleSearchCondition.getLastId()),
                             divisionEq(division),
                             articleDAO.market.isNull(),
                             articleDAO.category.cid.in(
@@ -71,7 +72,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                                     four_depthEq(categoryList[3]),
                                                     five_depthEq(categoryList[4]))
                     ))
-                    .limit(pageable.getPageSize())
+                    .limit(10)
                     .orderBy(articleDAO.article_id.desc())
                     .fetch();
     }
@@ -92,12 +93,6 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         }
         return categories;
     }
-
-
-
-
-
-
 
     @Override
     public List<ArticleDTO> findByMarketDivision(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition){
@@ -122,7 +117,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .join(articleDAO.image_info, image_infoDAO)
                 .where(
                         titleLike(articleSearchCondition.getTitle()),
-                        articleIdlt(articleSearchCondition.getLastId()),
+                        articleIdLt(articleSearchCondition.getLastId()),
                         divisionEq(division),
                         articleDAO.market.isNotNull(),
                         articleDAO.category.cid.in(
@@ -136,7 +131,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                                 four_depthEq(categoryList[3]),
                                                 five_depthEq(categoryList[4]))
                         ))
-                .limit(pageable.getPageSize())
+                .limit(10)
                 .orderBy(articleDAO.article_id.desc())
                 .fetch();
     }
@@ -153,13 +148,50 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     }
 
     @Override
-    public List<ArticleDTO> findByDivisionAndUserLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition) {
-        return null;
-    }
+    public List<ArticleDTO> findByDivisionAndUserLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition, MemberDAO member) {
+        String[] categoryList = getCategoryList(articleSearchCondition);
+        String title = articleSearchCondition.getTitle();
+        System.out.println(title);
 
-    @Override
-    public List<ArticleDTO> findByMarketDivisionAndUserLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition) {
-        return null;
+        return query
+                .select(new QArticleDTO(
+                        articleDAO.article_id,
+                        articleDAO.countDAO,
+                        articleDAO.title,
+                        articleDAO.tprice,
+                        articleDAO.progress,
+                        articleDAO.category,
+                        articleDAO.member.nickname,
+                        articleDAO.write_date,
+                        articleDAO.image_info.image1))
+                .from(articleDAO)
+                .join(articleDAO.member, memberDAO)
+                .join(articleDAO.countDAO, countDAO)
+                .join(articleDAO.category, book_CategoryDAO)
+                .join(articleDAO.image_info, image_infoDAO)
+                .where(
+                        articleLatGoe(member),
+                        articleLatLoe(member),
+                        articleLngGoe(member),
+                        articleLngLoe(member),
+                        titleLike(articleSearchCondition.getTitle()),
+                        articleIdLt(articleSearchCondition.getLastId()),
+                        divisionEq(division),
+                        articleDAO.market.isNull(),
+                        articleDAO.category.cid.in(
+                                JPAExpressions
+                                        .select(book_CategoryDAO.cid)
+                                        .from(book_CategoryDAO)
+                                        .where(
+                                                one_depthEq(categoryList[0]),
+                                                two_depthEq(categoryList[1]),
+                                                three_depthEq(categoryList[2]),
+                                                four_depthEq(categoryList[3]),
+                                                five_depthEq(categoryList[4]))
+                        ))
+                .limit(10)
+                .orderBy(articleDAO.article_id.desc())
+                .fetch();
     }
 
     private BooleanExpression divisionEq(Division divisionCond) {
@@ -170,26 +202,44 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     }
 
     private BooleanExpression one_depthEq(String one_depth){
-        return one_depth != null ? book_CategoryDAO.one_depth.eq(one_depth) : null;
+        return one_depth != null ? book_CategoryDAO.oneDepth.eq(one_depth) : null;
     }
 
     private BooleanExpression two_depthEq(String two_depth){
-        return two_depth != null ? book_CategoryDAO.two_depth.eq(two_depth) : null;
+        return two_depth != null ? book_CategoryDAO.twoDepth.eq(two_depth) : null;
     }
     private BooleanExpression three_depthEq(String three_depth){
-        return three_depth != null ? book_CategoryDAO.three_depth.eq(three_depth) : null;
+        return three_depth != null ? book_CategoryDAO.threeDepth.eq(three_depth) : null;
     }
     private BooleanExpression four_depthEq(String four_depth){
-        return four_depth != null ? book_CategoryDAO.four_depth.eq(four_depth) : null;
+        return four_depth != null ? book_CategoryDAO.fourDepth.eq(four_depth) : null;
     }
     private BooleanExpression five_depthEq(String five_depth){
-        return five_depth != null ? book_CategoryDAO.five_depth.eq(five_depth) : null;
+        return five_depth != null ? book_CategoryDAO.fiveDepth.eq(five_depth) : null;
     }
     private BooleanExpression titleLike(String title){
         return title != null ? articleDAO.title.startsWith(title) : null;
     }
-    private BooleanExpression articleIdlt(Long articleId){
+    private BooleanExpression articleIdLt(Long articleId){
         return articleId != null ? articleDAO.article_id.lt(articleId) : null;
     }
+
+
+    private BooleanExpression articleLatGoe(MemberDAO member ){
+
+        return member.getLatitude() != 0.0d ? articleDAO.member.latitude.goe(member.getLatitude()-0.035) : null;
+    }
+    private BooleanExpression articleLatLoe(MemberDAO member){
+        return member.getLatitude() != 0.0d ? articleDAO.member.latitude.loe(member.getLatitude()+0.035) : null;
+    }
+    private BooleanExpression articleLngGoe(MemberDAO member){
+        return member.getLongitude() != 0.0d ? articleDAO.member.longitude.goe(member.getLongitude()-0.035) : null;
+    }
+    private BooleanExpression articleLngLoe(MemberDAO member){
+        return member.getLongitude() != 0.0d ?  articleDAO.member.longitude.loe(member.getLongitude()+0.035) : null;
+    }
+
+
+
 
 }

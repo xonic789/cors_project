@@ -13,13 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class S3Uploader implements Uploader{
-
-    private final static String TEMP_FILE_PATH = "src/main/resources/";
 
     private final AmazonS3Client amazonS3Client;
 
@@ -29,7 +28,8 @@ public class S3Uploader implements Uploader{
 
     @Override
     public String upload(MultipartFile multipartFile, String dirName,Long id,String dir) throws IOException {
-        File convertedFile = convert(multipartFile);
+        File convertedFile = convert(multipartFile)
+                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패하였습니다."));
         return upload(convertedFile,dirName,id,dir);
     }
 
@@ -53,14 +53,14 @@ public class S3Uploader implements Uploader{
     }
 
 
-    private File convert(MultipartFile file) throws IOException{
-        File convertFile = new File(TEMP_FILE_PATH + file.getOriginalFilename());
+    private Optional<File> convert(MultipartFile file) throws IOException{
+        File convertFile = new File(file.getOriginalFilename());
         if(convertFile.createNewFile()){
             try(FileOutputStream fos = new FileOutputStream(convertFile)){
                 fos.write(file.getBytes());
             }
-            return convertFile;
+            return Optional.of(convertFile);
         }
-        throw new IllegalArgumentException((String.format("파일 변환이 실패했습니다. 파일 이름: %s",file.getName())));
+       return Optional.empty();
     }
 }

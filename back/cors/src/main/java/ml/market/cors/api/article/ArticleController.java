@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.CountDAO;
+import ml.market.cors.domain.article.entity.dto.CountDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.article.entity.search.ArticleSearchCondition;
@@ -13,6 +15,7 @@ import ml.market.cors.domain.article.service.ArticleService;
 import ml.market.cors.domain.article.service.CountService;
 import ml.market.cors.domain.article.service.ImageInfoService;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
+import ml.market.cors.domain.bookcategory.entity.dto.BookCategoryDTO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.util.Errors;
@@ -20,6 +23,8 @@ import ml.market.cors.domain.util.Message;
 import ml.market.cors.domain.util.ResponseEntityUtils;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.upload.S3Uploader;
+import ml.market.cors.upload.Uploader;
+import org.springframework.boot.autoconfigure.websocket.servlet.WebSocketMessagingAutoConfiguration;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,14 +45,14 @@ public class ArticleController {
     private final String PURCHASE="purchase";
 
     private final ArticleService articleService;
-    private final S3Uploader s3Uploader;
+    private final Uploader s3Uploader;
     private final ResponseEntityUtils responseEntityUtils;
     private final MemberRepository memberRepository;
     private final ImageInfoService imageInfoService;
     private final CountService countService;
 
     public ArticleController(ArticleService articleService,ResponseEntityUtils responseEntityUtils,
-                             S3Uploader s3Uploader,MemberRepository memberRepository,
+                             Uploader s3Uploader,MemberRepository memberRepository,
                              ImageInfoService imageInfoService,CountService countService) {
         this.articleService = articleService;
         this.responseEntityUtils= responseEntityUtils;
@@ -71,7 +76,6 @@ public class ArticleController {
     public ResponseEntity<Message<Object>> getArticleList(
             @PathVariable String divisions,
             Pageable pageable, @ModelAttribute ArticleSearchCondition articleSearchCondition){
-        System.out.println(articleSearchCondition.getTitle());
 
         if(divisions.equals(SALES)){
             return responseEntityUtils.getMessageResponseEntityOK(articleService.findAll(Division.SALES, pageable, articleSearchCondition));
@@ -84,6 +88,54 @@ public class ArticleController {
                         divisions,
                         "sales or purchase 만 입력해야 합니다."));
     }
+
+    @GetMapping("/api/member/articles/{divisions}")
+    public ResponseEntity<Message<Object>> getMemberLocationArticleList(
+            @PathVariable String divisions,
+            Pageable pageable, @ModelAttribute ArticleSearchCondition articleSearchCondition,
+            @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken){
+        MemberDAO findMember = null;
+        try{
+            findMember=getMemberDAO(jwtCertificationToken);
+        }catch (NullPointerException e){
+            return responseEntityUtils.getMessageResponseEntityUnauthorized(
+                    new Errors(
+                            "auth",
+                            "member",
+                            "member eq null",
+                            "로그인 해야 합니다."));
+        }
+        if(divisions.equals(SALES)){
+            return responseEntityUtils.getMessageResponseEntityOK(articleService.findAllByMemberLocation(Division.SALES, pageable, articleSearchCondition,findMember));
+        }else if(divisions.equals(PURCHASE)){
+            return responseEntityUtils.getMessageResponseEntityOK(articleService.findAllByMemberLocation(Division.PURCHASE, pageable, articleSearchCondition,findMember));
+        }
+        return responseEntityUtils.getMessageResponseEntityBadRequest(
+                new Errors("URI",
+                        "division",
+                        divisions,
+                        "sales or purchase 만 입력해야 합니다."));
+    }
+
+
+    @GetMapping("/api/market/articles/{divisions}")
+    public ResponseEntity<Message<Object>> getMarketArticleList(
+            @PathVariable String divisions,
+            Pageable pageable, @ModelAttribute ArticleSearchCondition articleSearchCondition){
+
+        if(divisions.equals(SALES)){
+            return responseEntityUtils.getMessageResponseEntityOK(articleService.findMarketAll(Division.SALES, pageable, articleSearchCondition));
+        }else if(divisions.equals(PURCHASE)){
+            return responseEntityUtils.getMessageResponseEntityOK(articleService.findMarketAll(Division.PURCHASE, pageable, articleSearchCondition));
+        }
+        return responseEntityUtils.getMessageResponseEntityBadRequest(
+                new Errors("URI",
+                        "division",
+                        divisions,
+                        "sales or purchase 만 입력해야 합니다."));
+    }
+
+
 
 
     /**
@@ -116,10 +168,6 @@ public class ArticleController {
                             article_id,
                             article_id + "에 해당하는 글이 없습니다."));
         }
-
-
-
-
         String[] images = {findArticle.getImage_info().getImage2(),findArticle.getImage_info().getImage3()};
 
         return responseEntityUtils.getMessageResponseEntityOK(
@@ -134,6 +182,8 @@ public class ArticleController {
                         findArticle.getWrite_date(),
                         findArticle.getProgress(),
                         findArticle.getDivision(),
+                        new BookCategoryDTO(findArticle.getCategory()),
+                        new CountDTO(findArticle.getCountDAO()),
                         findArticle.getImage_info().getImage1(),
                         images
                 )
@@ -212,7 +262,6 @@ public class ArticleController {
                             "member eq null",
                             "로그인 해야 합니다."));
         }
-
 
         ArticleDAO articleDAO = articleService.saveMarketArticle(articleForm, findMember);
 
@@ -355,7 +404,7 @@ public class ArticleController {
 
 
 
-    private Object[] fileUploadAndUrls(ArticleForm articleForm, ArticleDAO articleDAO) {
+    private Object[] fileUploadAndUrls(ArticleForm articleForm, ArticleDAO articleDAO) throws IllegalStateException{
         MultipartFile[] files = articleForm.getFile();
 
         Object[] images = Arrays.stream(files).map(file -> {
@@ -363,6 +412,8 @@ public class ArticleController {
                 return s3Uploader.upload(file, "static", articleDAO.getArticle_id(),"article");
             } catch (IOException e) {
                 e.printStackTrace();
+            } catch (IllegalStateException e){
+                System.out.println("파일 실패");
             }
             return null;
         }).toArray();
@@ -440,6 +491,8 @@ public class ArticleController {
         private LocalDateTime writeDate;
         private Progress progress;
         private Division division;
+        private BookCategoryDTO category;
+        private CountDTO count;
         private String thumbnail;
         private String[] image;
     }
