@@ -48,7 +48,8 @@
     "linebreak-style": "off",
     "no-param-reassign": "off",
     "max-len": "off",
-    "react/jsx-props-no-spreading":"off"
+    "react/jsx-props-no-spreading":"off",
+    "camelcase": "off"
   }
   /*"@typescript-eslint/ban-types": ["error",
     {
