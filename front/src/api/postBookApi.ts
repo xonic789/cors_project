@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
-import { addPostInterface } from '../interfaces/PostList.interface';
+import { AddBookPostInterface } from '../interfaces/PostList.interface';
 
 // 일반사용자 판매/구매글 추가
-export function addBookPostAPI(data: addPostInterface):Promise<AxiosResponse> {
+export function addBookPostAPI(data: AddBookPostInterface):Promise<AxiosResponse> {
   return axios.post('api/article', data);
 }
 // 일반사용자 판매/구매글 리스트 불러오기
