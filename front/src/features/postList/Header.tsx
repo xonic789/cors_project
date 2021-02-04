@@ -15,6 +15,8 @@ const HeaderWrapper = styled.div`
   left: 0;
   right: 0;
   background-color: white;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 const TopWrapper = styled.div`
   display: flex;
@@ -49,7 +51,7 @@ const SearchInput = styled.div`
   justify-content: space-between;
   padding: 5px;
   background-color: #e9e9e9;
-  width: 85vw;
+  width: 85%;
   margin: auto;
   & input {
     color: white;

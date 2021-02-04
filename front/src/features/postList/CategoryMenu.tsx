@@ -21,6 +21,8 @@ const BurgerMenuWrapper = styled.div`
   min-height: 100vh;
   background-color: white;
   overflow: auto;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 const BurgerMenuHeader = styled.div`
   display: flex;
@@ -32,6 +34,8 @@ const BurgerMenuHeader = styled.div`
   background-color: white;
   border-bottom: 1px solid #e8e8e8;
   padding: 10px;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 const BurgerMenuBody = styled.div`
   margin-top: 80px;

@@ -14,6 +14,8 @@ const AppLayoutWrapper = styled.div`
   flex-direction: column;
   min-height: 100vh;
   padding-bottom: 100px;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 const MenuWrapper = styled.div`
   position: fixed;
@@ -21,6 +23,8 @@ const MenuWrapper = styled.div`
   right: 0;
   bottom: 0;
   background-color: white;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 const MenuList = styled.ul`
   display: flex;
