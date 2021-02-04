@@ -14,57 +14,62 @@ interface inputCheckInterface {
   };
 }
 
+const initialState = {
+  email: {
+    value: '',
+    status: 'none',
+    message: '',
+    color: 'red',
+  },
+  certification: {
+    value: '',
+    status: 'false',
+    message: '',
+  },
+  nickname: {
+    value: '',
+    status: 'none',
+    message: '',
+    color: 'red',
+  },
+  passwd: {
+    value: '',
+    status: 'none',
+    message: '',
+    color: 'red',
+  },
+  passwdCheck: {
+    value: '',
+    status: 'none',
+    message: '',
+    color: 'red',
+  },
+  emailDuplication: false,
+  emailCertification: false,
+  nicknameDuplication: false,
+  address: {
+    zipCode: '',
+    addressBase: '',
+    addressDetail: '',
+  },
+  agreement: {
+    all: false,
+    agree1: false,
+    agree2: false,
+    agree3: false,
+  },
+  joinLoading: false,
+  joinSuccess: false,
+  joinError: null,
+};
+
 const joinSlice = createSlice({
   name: 'join',
-  initialState: {
-    email: {
-      value: '',
-      status: 'none',
-      message: '',
-      color: 'red',
-    },
-    certification: {
-      value: '',
-      status: 'false',
-      message: '',
-    },
-    nickname: {
-      value: '',
-      status: 'none',
-      message: '',
-      color: 'red',
-    },
-    passwd: {
-      value: '',
-      status: 'none',
-      message: '',
-      color: 'red',
-    },
-    passwdCheck: {
-      value: '',
-      status: 'none',
-      message: '',
-      color: 'red',
-    },
-    emailDuplication: false,
-    emailCertification: false,
-    nicknameDuplication: false,
-    address: {
-      zipCode: '',
-      addressBase: '',
-      addressDetail: '',
-    },
-    agreement: {
-      all: false,
-      agree1: false,
-      agree2: false,
-      agree3: false,
-    },
-    joinLoading: false,
-    joinSuccess: false,
-    joinError: null,
-  },
+  initialState,
   reducers: {
+    resetState(state, action) {
+      state = initialState;
+    },
     onChangeText(state, action: onChangeInterface) {
       state[action.payload.name].value = action.payload.value;
     },
@@ -160,6 +165,7 @@ const joinSlice = createSlice({
 });
 
 export const {
+  resetState,
   onChangeText,
   inputCheckOk,
   inputCheckFail,
