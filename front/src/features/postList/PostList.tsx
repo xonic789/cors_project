@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
+import AppLayout from '../../components/AppLayout';
 import { articleInterface } from '../../interfaces/PostList.interface';
 import Header from './Header';
 import { loadBookPostRequest } from './postSlice';
@@ -34,9 +35,10 @@ function PostList(): JSX.Element {
   }, [dispatch]);
   const { bookPost } = useSelector((state) => state.postSlice);
   return (
-    <PostListWrapper>
-      <Header />
-      {
+    <AppLayout>
+      <PostListWrapper>
+        <Header />
+        {
         bookPost.map((p:articleInterface) => (
           <PostListContent key={p.articleId}>
             <img src={p.image} alt="" />
@@ -45,7 +47,9 @@ function PostList(): JSX.Element {
           </PostListContent>
         ))
       }
-    </PostListWrapper>
+      </PostListWrapper>
+    </AppLayout>
+
   );
 }
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import PostList from '../features/postList/PostList';
 
-interface TabInterface {
-  [key: number]: JSX.Element,
+interface AppLayoutInterface {
+  children: JSX.Element;
 }
 interface MenuItemProps {
   active: boolean,
@@ -31,6 +32,10 @@ const MenuList = styled.ul`
   justify-content: space-around;
   padding: 15px 0px;
   border-top: 1px solid #bababa;
+  & a {
+    color: inherit;
+    text-decoration: none
+  }
 `;
 const MenuItem = styled.li<MenuItemProps>`
   display: flex;
@@ -48,35 +53,33 @@ const MenuItem = styled.li<MenuItemProps>`
   }
 `;
 
-function AppLayout():JSX.Element {
+function AppLayout({ children }: AppLayoutInterface):JSX.Element {
   const [active, setActive] = useState<number>(0);
   const tabTitle = [
-    ['/images/icons/home.png', '/images/icons/home_active.png', '홈'],
-    ['/../images/icons/chat.png', '/images/icons/chat_active.png', '채팅'],
-    ['/../images/icons/market.png', '/images/icons/market_active.png', '마켓'],
-    ['/../images/icons/my.png', '/images/icons/my_active.png', 'MY'],
+    ['/images/icons/home.png', '/images/icons/home_active.png', '홈', 'home'],
+    ['/../images/icons/chat.png', '/images/icons/chat_active.png', '채팅', 'chatting'],
+    ['/../images/icons/market.png', '/images/icons/market_active.png', '마켓', 'market'],
+    ['/../images/icons/my.png', '/images/icons/my_active.png', 'MY', 'my'],
   ];
-  const tab:TabInterface = {
-    0: <PostList />,
-  };
   const onClickMenuHandler = (id:number) => {
     setActive(id);
   };
-
   return (
     <AppLayoutWrapper>
-      {tab[active]}
+      {children}
       <MenuWrapper>
         <MenuList>
           {tabTitle.map((str, index) => (
-            <MenuItem
-              key={str[2]}
-              onClick={() => onClickMenuHandler(index)}
-              active={active === index}
-            >
-              <img src={active === index ? str[1] : str[0]} alt="icon" />
-              <div>{str[2]}</div>
-            </MenuItem>
+            <NavLink to={str[3]}>
+              <MenuItem
+                key={str[2]}
+                onClick={() => onClickMenuHandler(index)}
+                active={active === index}
+              >
+                <img src={active === index ? str[1] : str[0]} alt="icon" />
+                <div>{str[2]}</div>
+              </MenuItem>
+            </NavLink>
           ))}
         </MenuList>
       </MenuWrapper>
