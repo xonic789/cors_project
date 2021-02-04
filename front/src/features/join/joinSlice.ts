@@ -1,11 +1,17 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-interface testInterface {
+interface onChangeInterface {
   payload: {
     name: 'email' | 'certification' | 'nickname' | 'passwd' | 'passwdCheck',
-    value: string
+    value: string,
   };
-  type: string;
+}
+
+interface inputCheckInterface {
+  payload: {
+    name: 'email' | 'certification' | 'nickname' | 'passwd' | 'passwdCheck',
+    message: string,
+  };
 }
 
 const joinSlice = createSlice({
@@ -59,8 +65,20 @@ const joinSlice = createSlice({
     joinError: null,
   },
   reducers: {
-    onChangeText(state, action: testInterface) {
+    onChangeText(state, action: onChangeInterface) {
       state[action.payload.name].value = action.payload.value;
+    },
+    inputCheckOk(state, action: inputCheckInterface) {
+      state[action.payload.name].status = 'check';
+      state[action.payload.name].message = action.payload.message;
+    },
+    inputCheckFail(state, action: inputCheckInterface) {
+      state[action.payload.name].status = 'fail';
+      state[action.payload.name].message = action.payload.message;
+    },
+    inputCheckNone(state, action: inputCheckInterface) {
+      state[action.payload.name].status = 'none';
+      state[action.payload.name].message = action.payload.message;
     },
     emailDuplicateCheck(state, action) {
       return { ...state };
@@ -68,18 +86,6 @@ const joinSlice = createSlice({
     emailDuplicationOk(state, action) {
       state.emailDuplication = true;
       state.email.message = '';
-    },
-    emailTypeCheckNone(state, action) {
-      state.email.status = 'none';
-      state.email.message = '';
-    },
-    emailTypeCheckOk(state, action) {
-      state.email.status = 'check';
-      state.email.message = '';
-    },
-    emailTypeCheckFail(state, action) {
-      state.email.status = 'fail';
-      state.email.message = '이메일 형식이 아닙니다.';
     },
     emailDuplicationFail(state, action) {
       state.emailDuplication = false;
@@ -115,22 +121,6 @@ const joinSlice = createSlice({
       state.nickname.status = 'fail';
       state.nickname.color = 'red';
       state.nickname.message = action.payload;
-    },
-    passwdCheckOk(state, action) {
-      state.passwd.status = 'check';
-      state.passwd.message = '';
-    },
-    passwdCheckFail(state, action) {
-      state.passwd.status = 'fail';
-      state.passwd.message = '8~20자의 영문 대소문자, 숫자, 특수문자 조합으로 설정해주세요.';
-    },
-    passwdSameOk(state, action) {
-      state.passwdCheck.status = 'check';
-      state.passwdCheck.message = '';
-    },
-    passwdSameFail(state, action) {
-      state.passwdCheck.status = 'fail';
-      state.passwdCheck.message = '비밀번호가 일치하지 않습니다.';
     },
     setAddress(state, action) {
       state.address.zipCode = action.payload.zipCode;
@@ -171,9 +161,9 @@ const joinSlice = createSlice({
 
 export const {
   onChangeText,
-  emailTypeCheckNone,
-  emailTypeCheckOk,
-  emailTypeCheckFail,
+  inputCheckOk,
+  inputCheckFail,
+  inputCheckNone,
   emailDuplicateCheck,
   emailDuplicationOk,
   emailDuplicationFail,
@@ -184,10 +174,6 @@ export const {
   nicknameDuplicateCheck,
   nicknameDuplicationOk,
   nicknameDuplicationFail,
-  passwdCheckOk,
-  passwdCheckFail,
-  passwdSameOk,
-  passwdSameFail,
   setAddress,
   setAddressDetail,
   setAllAgreeClick,

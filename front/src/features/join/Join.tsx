@@ -5,16 +5,12 @@ import DaumPostCode, { AddressData } from 'react-daum-postcode';
 import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
 import {
   onChangeText,
+  inputCheckOk,
+  inputCheckFail,
+  inputCheckNone,
   nicknameDuplicateCheck,
   emailCertificationRequest,
   emailCertificationCheck,
-  emailTypeCheckNone,
-  emailTypeCheckOk,
-  emailTypeCheckFail,
-  passwdCheckOk,
-  passwdCheckFail,
-  passwdSameOk,
-  passwdSameFail,
   setAddress,
   setAddressDetail,
   setAllAgreeClick,
@@ -22,7 +18,6 @@ import {
   setAgree,
   joinRequest,
 } from './joinSlice';
-import checkIcon from './images/check.png';
 
 const Positional = styled.div`
   position: relative;
@@ -157,11 +152,6 @@ const CertificationButton = styled.button`
   outline: none;
 `;
 
-const CerticationMessage = styled.p`
-  font-size: 2vw;
-  margin-top: 1em;
-`;
-
 const InputMessage = styled.p`
   font-size: 2vw;
   margin-top: 1em;
@@ -260,14 +250,6 @@ const SubAgreeBox = styled.div`
   align-items: center;
   font-size: 4vw;
   margin-bottom: 1em;
-  & label {
-    width: 1.5em;
-    height: 1.5em;
-    margin-right: 0.5em;
-    background: url(${checkIcon});
-    background-size: 100% 100%;
-    background-position: center center;
-  }
 `;
 
 const AgreeDetail = styled.img`
@@ -306,7 +288,6 @@ function Join():JSX.Element {
     passwdCheck,
     emailDuplication,
     emailCertification,
-    nicknameDuplication,
     address,
     agreement,
   } = useSelector((state: RootStateOrAny) => state.joinSlice);
@@ -340,11 +321,11 @@ function Join():JSX.Element {
     switch (e.target.name) {
       case ('email'):
         if (/^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i.test(e.target.value)) {
-          dispatch(emailTypeCheckOk({ type: '' }));
+          dispatch(inputCheckOk({ name: 'email', message: '' }));
         } else if (e.target.value) {
-          dispatch(emailTypeCheckFail({ type: '' }));
+          dispatch(inputCheckFail({ name: 'email', message: '이메일 형식이 아닙니다.' }));
         } else {
-          dispatch(emailTypeCheckNone({ type: '' }));
+          dispatch(inputCheckNone({ name: 'email', message: '' }));
         }
         break;
       case ('nickname'):
@@ -352,19 +333,22 @@ function Join():JSX.Element {
         break;
       case ('passwd'):
         if (/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/.test(e.target.value)) {
-          dispatch(passwdCheckOk({ type: '' }));
+          dispatch(inputCheckOk({ name: 'passwd', message: '' }));
         } else {
-          dispatch(passwdCheckFail({ type: '' }));
+          dispatch(inputCheckFail({ name: 'passwd', message: '8~20자의 영문 대소문자, 숫자, 특수문자 조합으로 설정해주세요.' }));
         }
         if (passwdCheck.status === 'check') {
-          dispatch(passwdSameFail({ type: '' }));
+          dispatch(inputCheckFail({ name: 'passwdCheck', message: '비밀번호가 일치하지 않습니다.' }));
+        }
+        if (e.target.value === passwdCheck.value) {
+          dispatch(inputCheckOk({ name: 'passwdCheck', message: '' }));
         }
         break;
       case ('passwdCheck'):
         if (e.target.value === passwd.value) {
-          dispatch(passwdSameOk({ type: '' }));
+          dispatch(inputCheckOk({ name: 'passwdCheck', message: '' }));
         } else {
-          dispatch(passwdSameFail({ type: '' }));
+          dispatch(inputCheckFail({ name: 'passwdCheck', message: '비밀번호가 일치하지 않습니다.' }));
         }
         break;
       default:
