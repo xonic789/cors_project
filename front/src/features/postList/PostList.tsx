@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import AppLayout from '../../components/AppLayout';
 import { articleInterface } from '../../interfaces/PostList.interface';
 import Header from './Header';
-import { loadBookPostRequest } from './postSlice';
+import { loadBookPostRequest, loadScrollBookPostRequest } from './postSlice';
 
 const PostListWrapper = styled.div`
   display: flex;
   max-width: 100%;
   flex-wrap: wrap;
   padding-top: 200px;
+  margin-bottom: 50px;
 `;
 const PostListContent = styled.div`
   display: flex;
@@ -25,15 +26,29 @@ const PostListContent = styled.div`
     height: 200px;
   }
   & h3 {
+    overflow:hidden;
     margin-top: 10px;
   }
 `;
 function PostList(): JSX.Element {
+  const { bookPost, filtering, hasMorePost, isLoadScrollBookPostLoading } = useSelector((state) => state.postSlice);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(loadBookPostRequest({ division: 'sales' }));
+    dispatch(loadBookPostRequest({ division: 'sales', category: '' }));
   }, [dispatch]);
-  const { bookPost } = useSelector((state) => state.postSlice);
+  useEffect(() => {
+    function onScroll() {
+      if (window.scrollY + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 300) {
+        if (hasMorePost && !isLoadScrollBookPostLoading) {
+          dispatch(loadScrollBookPostRequest({ division: filtering.division, category: filtering.category }));
+        }
+      }
+    }
+    window.addEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
+  }, [dispatch, filtering.category, filtering.division, hasMorePost, isLoadScrollBookPostLoading]);
   return (
     <AppLayout>
       <PostListWrapper>
@@ -49,7 +64,6 @@ function PostList(): JSX.Element {
       }
       </PostListWrapper>
     </AppLayout>
-
   );
 }
 

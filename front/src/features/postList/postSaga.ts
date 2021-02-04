@@ -1,24 +1,37 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
-import { addPostInterface } from '../../interfaces/PostList.interface';
-import PostList, { PurchasePostList } from './mockdata';
-
+import { all, takeLatest, put, fork, call, throttle } from 'redux-saga/effects';
+import { AddBookPostInterface } from '../../interfaces/PostList.interface';
+import { dummyBookPost, generateDummyPost } from './mockdata';
 import { addBookPostAPI, getBookPostAPI } from '../../api/postBookApi';
-import { loadBookPostRequest, loadBookPostSuccess, loadBookPostError, addBookPostRequest, addBookPostError, addBookPostSuccess } from './postSlice';
+import { loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
+  loadScrollBookPostRequest, loadScrollBookPostSuccess, loadScrollBookPostError,
+  addBookPostRequest, addBookPostError, addBookPostSuccess } from './postSlice';
 
 interface addBookPostPayloadInterface {
-  data: addPostInterface
+  data: AddBookPostInterface
 }
-interface loadSaleBookPost {
+interface loadBookPost {
   division: 'purchase' | 'sale',
   categoty?: string
 }
-function* loadBookPost(action: PayloadAction<loadSaleBookPost>) {
+function* loadBookPost(action: PayloadAction<loadBookPost>) {
   try {
-    const result = yield call(getBookPostAPI, action.payload.division);
-    yield put(loadBookPostSuccess(result.data));
+    // const result = yield call(getBookPostAPI, action.payload.division);
+    const result = generateDummyPost(10);
+    console.log(result);
+    yield put(loadBookPostSuccess(result));
   } catch (err) {
     yield put(loadBookPostError({ error: err }));
+  }
+}
+function* loadScrollBookPost(action: PayloadAction<loadBookPost>) {
+  try {
+    // const result = yield call(getBookPostAPI, action.payload.division);
+    const result = generateDummyPost(20);
+    console.log(result);
+    yield put(loadScrollBookPostSuccess(result));
+  } catch (err) {
+    yield put(loadScrollBookPostError({ error: err }));
   }
 }
 function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {
@@ -29,9 +42,11 @@ function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {
     yield put(addBookPostError({ error: err.response.data }));
   }
 }
-
 function* watchLoadBookPost() {
   yield takeLatest(loadBookPostRequest, loadBookPost);
+}
+function* watchloadScrollBookPost() {
+  yield throttle(1000, loadScrollBookPostRequest, loadScrollBookPost);
 }
 function* watchAddBookPost() {
   yield takeLatest(addBookPostRequest, addBookPost);
@@ -39,6 +54,7 @@ function* watchAddBookPost() {
 
 export default function* postSaga():Generator {
   yield all([
+    fork(watchloadScrollBookPost),
     fork(watchAddBookPost),
     fork(watchLoadBookPost),
   ]);

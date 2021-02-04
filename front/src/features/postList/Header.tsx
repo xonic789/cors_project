@@ -91,11 +91,11 @@ function Header(): JSX.Element {
   }, []);
   const onClickSalePostTab = useCallback(() => {
     setTabIndex(0);
-    dispatch(loadBookPostRequest({ division: 'sales' }));
+    dispatch(loadBookPostRequest({ division: 'sales', category: '' }));
   }, [dispatch]);
   const onClickPurchasPostTab = useCallback(() => {
     setTabIndex(1);
-    dispatch(loadBookPostRequest({ division: 'purchase' }));
+    dispatch(loadBookPostRequest({ division: 'purchase', category: '' }));
   }, [dispatch]);
   return (
     <HeaderWrapper>
