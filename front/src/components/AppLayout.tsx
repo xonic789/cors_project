@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, NavLink } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import PostList from '../features/postList/PostList';
 
 interface AppLayoutInterface {
   children: JSX.Element;
@@ -13,7 +12,6 @@ interface MenuItemProps {
 const AppLayoutWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
   padding-bottom: 100px;
   max-width: 600px;
   margin: 0 auto;
