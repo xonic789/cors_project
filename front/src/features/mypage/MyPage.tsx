@@ -1,10 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import ProfileIcon from './images/Icon_profile.png';
-import SalesIcon from './images/Icon_sales.png';
-import PurchaseIcon from './images/Icon_purchase.png';
-import HeartIcon from './images/Icon_heart.png';
 
 const Wrapper = styled.div`
   position: relative;
@@ -150,7 +146,7 @@ function MyPage():JSX.Element {
     <Wrapper>
       <Layout>
         <MyInfo>
-          <ProfileImg src={ProfileIcon} />
+          <ProfileImg src="/images/icons/my.png" />
           <ProfileText>
             <MyName>로그인/회원가입하기<SpanImg src="/images/icons/back.png" /></MyName>
             <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>
@@ -161,7 +157,7 @@ function MyPage():JSX.Element {
           <MyMenuItem>
             <MyMenuLink to="/mypage/sales">
               <MenuImgBox>
-                <MenuImg src={SalesIcon} />
+                <MenuImg src="/images/icons/sell_active.png" />
               </MenuImgBox>
               <MenuText>판매내역</MenuText>
             </MyMenuLink>
@@ -169,7 +165,7 @@ function MyPage():JSX.Element {
           <MyMenuItem>
             <MyMenuLink to="/mypage/purchase">
               <MenuImgBox>
-                <MenuImg src={PurchaseIcon} />
+                <MenuImg src="/images/icons/per_active.png" />
               </MenuImgBox>
               <MenuText>구매내역</MenuText>
             </MyMenuLink>
@@ -177,7 +173,7 @@ function MyPage():JSX.Element {
           <MyMenuItem>
             <MyMenuLink to="/mypage/wishs">
               <MenuImgBox>
-                <MenuImg src={HeartIcon} />
+                <MenuImg src="/images/icons/heart_blue.png" />
               </MenuImgBox>
               <MenuText>찜목록</MenuText>
             </MyMenuLink>
