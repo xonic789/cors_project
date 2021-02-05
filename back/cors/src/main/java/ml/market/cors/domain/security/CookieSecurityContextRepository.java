@@ -32,8 +32,6 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
 
     private final TokenInfoRepository mTokenInfoRepo;
 
-    private final Blacklist_TokenRepository mBlacklistTokenInfoRepo;
-
     private final MemberRepository memberRepository;
 
     private boolean isBlacklistToken(String token, Cookie[] cookies, HttpServletResponse res) {
