@@ -10,7 +10,6 @@ import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.util.cookie.CookieManagement;
 import ml.market.cors.domain.util.token.JwtTokenManagement;
 import ml.market.cors.domain.util.token.TokenAttribute;
-import ml.market.cors.repository.member.Blacklist_TokenRepository;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,12 +17,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+
 
 @Component
 @RequiredArgsConstructor
