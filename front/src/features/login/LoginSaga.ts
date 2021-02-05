@@ -1,7 +1,7 @@
 import cookie from 'react-cookies';
 import { all, call, fork, ForkEffect, put, takeLatest } from 'redux-saga/effects';
-import { postLogin, postSocialLogin, postLoginSuccess, postLoginError } from './LoginSlice';
-import { postLoginAsync, socialLoginAsync } from '../../api/loginAPI';
+import { postLogin, postSocialLogin, postLoginSuccess, postLoginError, postLogoutError, postLogoutSuccess, postLogout } from './LoginSlice';
+import { logoutAsync, postLoginAsync, socialLoginAsync } from '../../api/loginAPI';
 
 function* postLoginSaga(action: { payload: { email: string, passwd: string } }) {
   try {
@@ -36,9 +36,25 @@ function* postSocialLoginSaga(action: { payload: { social: string } }) {
   }
 }
 
+function* postLogoutSaga() {
+  try {
+    yield call(logoutAsync);
+
+    yield put({
+      type: postLogoutSuccess,
+    });
+  } catch (e) {
+    yield put({
+      type: postLogoutError,
+      payload: e,
+    });
+  }
+}
+
 function* watchLogin(): Generator<ForkEffect<never>, void, unknown> {
   yield takeLatest(postLogin, postLoginSaga);
   yield takeLatest(postSocialLogin, postSocialLoginSaga);
+  yield takeLatest(postLogout, postLogoutSaga);
 }
 
 export default function* loginSaga() {

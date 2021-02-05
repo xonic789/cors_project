@@ -1,11 +1,6 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
-interface tokenInterface {
-  accessToken: string;
-  refreshToken: string;
-}
-
-export function postLoginAsync(user: { email: string, passwd: string }): Promise<tokenInterface> {
+export function postLoginAsync(user: { email: string, passwd: string }): Promise<AxiosResponse> {
   return axios({
     method: 'post',
     url: '/api/login',
@@ -16,9 +11,16 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
   }).then((result) => result.data);
 }
 
-export function socialLoginAsync(social: string): Promise<tokenInterface> {
+export function socialLoginAsync(social: string): Promise<AxiosResponse> {
   return axios({
     method: 'post',
-    url: `/api/oauth2/authorization/${social}`,
+    url: `/oauth2/authorization/${social}`,
   }).then((result) => result.data);
+}
+
+export function logoutAsync(): Promise<AxiosResponse> {
+  return axios({
+    method: 'post',
+    url: '/api/logout',
+  });
 }

@@ -71,7 +71,7 @@ const LoginForm:React.FC = () => {
   };
 
   return (
-    <Form method="POST" onSubmit={onLogin}>
+    <Form method="GET" onSubmit={onLogin}>
       <InputBox>
         <Input type="email" name="email" placeholder="아이디" value={inputs.email} onChange={handleChange} required />
         <Input type="password" name="passwd" placeholder="비밀번호" value={inputs.passwd} onChange={handleChange} required />
