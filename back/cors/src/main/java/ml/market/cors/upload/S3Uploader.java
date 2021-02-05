@@ -5,15 +5,13 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ml.market.cors.domain.member.map.MemberParam;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
-import java.security.MessageDigest;
-import java.util.Base64;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -65,12 +63,10 @@ public class S3Uploader implements Uploader{
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
-    public boolean exsistObject(String key){
-        return amazonS3Client.doesObjectExist(bucket, key);
-    }
     public void deleteObject(String key){
         amazonS3Client.deleteObject(bucket, key);
     }
+
     private void removeNewFile(File targetFile) {
         if (targetFile.delete()) {
             return;
