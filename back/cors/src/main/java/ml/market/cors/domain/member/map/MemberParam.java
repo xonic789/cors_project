@@ -2,6 +2,10 @@ package ml.market.cors.domain.member.map;
 
 public class MemberParam {
     public static final String ID = "id";
+    public static final String LATITUDE = "latitude";
+    public static final String LONGITUDE = "longitude";
+    public static final String WISHLIST = "wishList";
+    public static final String ROLE = "role";
     public static final String EMAIL = "email";
     public static final String PASSWD = "passwd";
     public static final String NEWPASSWD = "newpasswd";

@@ -40,6 +40,7 @@ public class S3Uploader implements Uploader{
         File convertedFile = (File) map.get("file");
         String uploadFileKey = (String)map.get("key");
         if(key.equals(uploadFileKey)){
+            removeNewFile(convertedFile);
             return null;
         }
 

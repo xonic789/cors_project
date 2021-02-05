@@ -2,6 +2,7 @@ package ml.market.cors.domain.member.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enu.SocialType;
@@ -9,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,6 +25,10 @@ public class MemberDAO implements UserDetails{
     @Column(name = "member_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long member_id;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "wish_id")
+    private List<Wish_listDAO> wish_listDAO = new ArrayList<Wish_listDAO>();
 
     @Column(name="profilekey")
     private String profileKey;
