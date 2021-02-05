@@ -29,6 +29,8 @@ const ProfileImg = styled.img`
   width: 4em;
   height: 4em;
   margin-right: 0.4em;
+  border: 1.5px solid #000;
+  border-radius: 50%;
 `;
 
 const ProfileText = styled.div`
@@ -165,7 +167,7 @@ function MyPage():JSX.Element {
           <MyMenuItem>
             <MyMenuLink to="/mypage/purchase">
               <MenuImgBox>
-                <MenuImg src="/images/icons/per_active.png" />
+                <MenuImg src="/images/icons/pur_active.png" />
               </MenuImgBox>
               <MenuText>구매내역</MenuText>
             </MyMenuLink>
