@@ -1,6 +1,7 @@
 package ml.market.cors.controller.api.member;
 
 import lombok.RequiredArgsConstructor;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.mail.service.EmailManagement;
 import ml.market.cors.domain.mail.vo.MailVO;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
@@ -101,8 +103,20 @@ public class MemberController {
         member.put(MemberParam.EMAIL, memberDAO.getEmail());
         member.put(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
         List<Wish_listDAO> wish_listDAOList = memberDAO.getWish_listDAO();
-        if(wish_listDAOList.size() > 0){
-            member.put(MemberParam.WISHLIST,wish_listDAOList);
+        List<Long> resWishId = new ArrayList();
+        for (Wish_listDAO wish_listDAO : wish_listDAOList) {
+            resWishId.add(wish_listDAO.getWish_id());
+        }
+        if (resWishId.size() > 0) {
+            member.put(MemberParam.WISHLIST, resWishId);
+        }
+        List<ArticleDAO> articleDAOList = memberDAO.getArticleDAO();
+        List<Long> articleIdList = new ArrayList<>();
+        for (ArticleDAO articleDAO : articleDAOList) {
+            articleIdList.add(articleDAO.getArticle_id());
+        }
+        if(articleIdList.size() > 0){
+            member.put(MemberParam.ARTICLELIST, articleIdList);
         }
         return member;
     }

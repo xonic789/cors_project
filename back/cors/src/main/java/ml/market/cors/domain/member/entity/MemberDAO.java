@@ -2,6 +2,7 @@ package ml.market.cors.domain.member.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
@@ -26,9 +27,11 @@ public class MemberDAO implements UserDetails{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long member_id;
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name = "wish_id")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<Wish_listDAO> wish_listDAO = new ArrayList<Wish_listDAO>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
+    private List<ArticleDAO> articleDAO = new ArrayList<>();
 
     @Column(name="profilekey")
     private String profileKey;

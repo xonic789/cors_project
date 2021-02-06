@@ -1,5 +1,6 @@
 package ml.market.cors.domain.security.member.handler;
 
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
@@ -76,7 +77,7 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         try {
             Long expireTime = refreshTokenExpireTime.getTime();
             List<MemberDAO> memberDAOList = memberRepository.findByMemberId(member_id);
-            if(memberDAOList == null){
+            if (memberDAOList == null) {
                 throw new RuntimeException();
             }
             MemberDAO memberDAO = memberDAOList.get(0);
@@ -89,22 +90,36 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             cookAttr = eCookie.REFRESH_TOKEN;
             cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), Long.toString(tokenInfoDAO.getTokenindex()));
             response.addCookie(cookie);
-            response.setHeader(MemberParam.NICKNAME, memberDAO.getNickname());
-            response.setHeader(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
-            response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
-            response.setHeader(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
-            response.setHeader(MemberParam.ROLE, memberDAO.getRole().getRole());
-            List<Wish_listDAO> wish_listDAOList = memberDAO.getWish_listDAO();
-            if(wish_listDAOList != null){
-                if(wish_listDAOList.size() > 0){
-                    response.setHeader(MemberParam.WISHLIST, String.valueOf(wish_listDAOList));
-                }
-            }
-
+            setHeader(response, memberDAO);
         } catch(Exception e) {
             response.reset();
             response.setStatus(400);
         }
+    }
+
+    private void setHeader(HttpServletResponse response, MemberDAO memberDAO) {
+        response.setHeader(MemberParam.NICKNAME, memberDAO.getNickname());
+        response.setHeader(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
+        response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
+        response.setHeader(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
+        response.setHeader(MemberParam.ROLE, memberDAO.getRole().getRole());
+        List<Wish_listDAO> wish_listDAOList = memberDAO.getWish_listDAO();
+        List<Long> resWishId = new ArrayList();
+        for (Wish_listDAO wish_listDAO : wish_listDAOList) {
+            resWishId.add(wish_listDAO.getWish_id());
+        }
+        if (resWishId.size() > 0) {
+            response.setHeader(MemberParam.WISHLIST, String.valueOf(resWishId));
+        }
+        List<ArticleDAO> articleDAOList = memberDAO.getArticleDAO();
+        List<Long> articleIdList = new ArrayList<>();
+        for (ArticleDAO articleDAO : articleDAOList) {
+            articleIdList.add(articleDAO.getArticle_id());
+        }
+        if(articleIdList.size() > 0){
+            response.setHeader(MemberParam.ARTICLELIST, String.valueOf(articleIdList));
+        }
+
     }
 
 }
