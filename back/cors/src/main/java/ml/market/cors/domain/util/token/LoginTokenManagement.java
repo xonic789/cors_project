@@ -18,28 +18,53 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public abstract class LoginTokenManagement extends JwtTokenManagement{
+public class LoginTokenManagement extends JwtTokenManagement{
+    public static final String EMAIL = "email";
+
     private final TokenInfoRepository tokenInfoRepository;
 
     private final Blacklist_TokenRepository blacklist_tokenRepository;
-    public static final String ID_CLAIM = "id";
-    public static final String IAT_CLAIM = "iat";
-    public static final String MEMBER_ROLE_CLAIM = "member_role";
+
+    public static final String ID = "id";
+
+    public static final String IAT = "iat";
+
+    public static final String ROLE = "role";
+
     public static final String HS256 = "HS256";
+
     public static final String JWT = "JWT";
+
     public static final long ACCESS_EXPIRETIME = 1000 * 60 * 1;
-    public static final long REFRESH_EXPIRETIME = 1000 * 60 * 2;
+
+    public static final long REFRESH_EXPIRETIME = 1000 * 60 * 5;
+
     public static final String ALG_HEADER = "alg";
+
     public static final String TYP_HEADER = "typ";
+
     public static final String ACCESS_TOKEN = "ACCESS_TOKEN";
+
     public static final String REFRESH_TOKEN = "REFRESH_TOKEN";
 
+    public static final String REFRESH_TOKEN_EXPIRETIME = "refresh_token_expire_key";
+
+    public static final String REFRESH_TOKEN_INDEX = "refresh_token_index";
+
     private final long AUTO_REFRESH_INTERVAL = 1000 * 60 * 5;
+
+    public String create(Long refreshTokenIndex){
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(REFRESH_TOKEN_INDEX, refreshTokenIndex);
+        Date expireDate = createExpireDate(REFRESH_EXPIRETIME);
+        return create(expireDate, setHeaders(), claims);
+    }
 
     @Scheduled(fixedDelay = 1000 * 60 * 20)
     protected void cleaner(){
@@ -77,11 +102,8 @@ public abstract class LoginTokenManagement extends JwtTokenManagement{
         blacklist_tokenRepository.save(blacklistTokenInfoDAO);
     }
 
-    public boolean isBlackList(String token) {
-        if(blacklist_tokenRepository.findByHash(token) != null){
-            return false;
-        }
-        return true;
+    public boolean isBlackList(@NonNull String token) {
+        return blacklist_tokenRepository.existsById(token);
     }
 
     private boolean isAvailRefresh(long refreshTokenIndex) {
@@ -104,6 +126,59 @@ public abstract class LoginTokenManagement extends JwtTokenManagement{
         return true;
     }
 
+    public Map<String, Object> createTokenPair(@NonNull Map<String, Object> claims){
+        Date expireDate = createExpireDate(LoginTokenManagement.ACCESS_EXPIRETIME);
+        Map<String, Object> result = new HashMap<>();
+        Map<String, Object> headers = setHeaders();
+        StringBuilder tokenBuilder = new StringBuilder(create(expireDate, headers, claims));
+        if(tokenBuilder.length() == 0){
+            return null;
+        }
+        result.put(ACCESS_TOKEN, tokenBuilder.toString());
+
+        tokenBuilder.delete(0, tokenBuilder.length());
+        expireDate = createExpireDate(LoginTokenManagement.REFRESH_EXPIRETIME);
+        tokenBuilder.append(create(expireDate, headers, claims));
+        if(tokenBuilder.length() == 0){
+            return null;
+        }
+        result.put(REFRESH_TOKEN, tokenBuilder.toString());
+        result.put(REFRESH_TOKEN_EXPIRETIME, expireDate.getTime());
+        return result;
+    }
+
+    public void logout(HttpServletRequest request, HttpServletResponse response){
+        Cookie[] cookies = request.getCookies();
+        Cookie cook = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), cookies);
+        StringBuilder tokenBuilder = new StringBuilder();
+        Map<String, Object> claims = null;
+        long expireTime;
+        if(cook != null){
+            tokenBuilder.append(cook.getValue());
+            if(tokenBuilder.length() > 0){
+                if(isVerify(tokenBuilder.toString())){
+                    expireTime = System.currentTimeMillis() + ACCESS_EXPIRETIME;
+                    blacklist_tokenRepository.save(new Blacklist_TokenDAO(tokenBuilder.toString(), expireTime));
+                }
+            }
+            CookieManagement.delete(response, eCookie.ACCESS_TOKEN.getName(), cookies);
+        }
+
+        cook = CookieManagement.search(eCookie.REFRESH_TOKEN.getName(), cookies);
+        if(cook != null) {
+            claims = getClaims(cook.getValue());
+            if(claims != null){
+                long index = ((Number)claims.get(REFRESH_TOKEN_INDEX)).longValue();
+                TokenInfoDAO tokenInfoDAO = tokenInfoRepository.findByTokenindex(index);
+                if(tokenInfoDAO != null){
+                    tokenInfoRepository.deleteById(index);
+                    blacklist_tokenRepository.save(new Blacklist_TokenDAO(tokenInfoDAO.getHash(), index));
+                }
+            }
+            CookieManagement.delete(response, eCookie.REFRESH_TOKEN.getName(), cookies);
+        }
+    }
+
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public String refresh(long refreshTokenIndex) {
         if(!isAvailRefresh(refreshTokenIndex)){
@@ -111,35 +186,28 @@ public abstract class LoginTokenManagement extends JwtTokenManagement{
         }
 
         TokenInfoDAO tokenInfoDAO = tokenInfoRepository.findByTokenindex(refreshTokenIndex);
-        Map claimsValue = super.getClaims(tokenInfoDAO.getHash());
-        if(claimsValue == null) {
+        Map<String, Object> claims = super.getClaims(tokenInfoDAO.getHash());
+        if(claims == null) {
             return null;
         }
 
-        long prevExpireTime = tokenInfoDAO.getExpire_date();
-        long remainTime = prevExpireTime - System.currentTimeMillis();
+        long refreshTokenExpireTime = tokenInfoDAO.getExpire_date();
         Map<String, Object> headers = this.setHeaders();
-        Map<String, Object> claims = this.setClaims(claimsValue);
         Date expireDate = null;
+        Map<String, Object> result = new HashMap<>();
+        long remainTime = refreshTokenExpireTime - System.currentTimeMillis();
         if(remainTime < 0 || remainTime < AUTO_REFRESH_INTERVAL){
             expireDate = createExpireDate(REFRESH_EXPIRETIME);
             String refreshToken = super.create(expireDate, headers, claims);
             if(refreshToken == null){
                 return null;
             }
-            tokenInfoRepository.save(new TokenInfoDAO(refreshTokenIndex, refreshToken, tokenInfoDAO.getMember_id(), expireDate.getTime()));
+            tokenInfoDAO = tokenInfoRepository.save(new TokenInfoDAO(refreshTokenIndex, refreshToken, tokenInfoDAO.getMember_id(), expireDate.getTime()));
+            result.put(REFRESH_TOKEN, tokenInfoDAO.getTokenindex());
         }
-        expireDate = createExpireDate(ACCESS_EXPIRETIME);
-        return super.create(expireDate, headers, claims);
-    }
 
-    @Override
-    public Map<String, Object> setClaims(@NonNull Map<String, Object> claimValue){
-        Map<String, Object> claims = new HashMap<>();
-        claims.put(MEMBER_ROLE_CLAIM, claimValue.get(MEMBER_ROLE_CLAIM));
-        claims.put(ID_CLAIM, claimValue.get(ID_CLAIM));
-        claims.put(IAT_CLAIM, System.currentTimeMillis());
-        return claims;
+        expireDate = createExpireDate(ACCESS_EXPIRETIME);
+        return create(expireDate, headers, claims);
     }
 
     @Override

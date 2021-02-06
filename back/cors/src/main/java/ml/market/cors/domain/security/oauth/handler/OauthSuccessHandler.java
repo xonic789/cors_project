@@ -11,7 +11,7 @@ import ml.market.cors.domain.security.oauth.enu.SocialType;
 import ml.market.cors.domain.util.cookie.CookieManagement;
 import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.domain.util.token.JwtTokenManagement;
-import ml.market.cors.domain.util.token.TokenAttribute;
+import ml.market.cors.domain.util.token.LoginTokenManagement;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.security.core.Authentication;
@@ -35,7 +35,7 @@ import java.io.IOException;
 public class OauthSuccessHandler implements AuthenticationSuccessHandler {
     private final MemberRepository memberRepository;
 
-    private final JwtTokenManagement jwtTokenManagement;
+    private final LoginTokenManagement loginTokenManagement;
 
     private final TokenInfoRepository tokenInfoRepository;
 
@@ -63,35 +63,6 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         return email;
     }
 
-    private Map<String, String> createToken(@NonNull MemberDAO memberDAO){
-        Map<String, String> tokenPair = new HashMap<>();
-        Date expireDate = jwtTokenManagement.createExpireDate(TokenAttribute.ACCESS_EXPIRETIME);
-        Map<String, Object> header = jwtTokenManagement.getHeader();
-        List<MemberRole> grantAuthorityRoles = new LinkedList<>();
-        long id = memberDAO.getMember_id();
-        MemberRole memberRole = memberDAO.getRole();
-        grantAuthorityRoles.add(memberRole);
-
-
-        Map<String, Object> claims = jwtTokenManagement.getClaim(id, grantAuthorityRoles);
-        String token = jwtTokenManagement.create(expireDate, header, claims);
-        if(token == null){
-            return null;
-        }
-        tokenPair.put(TokenAttribute.ACCESS_TOKEN, token);
-
-        expireDate = jwtTokenManagement.createExpireDate(TokenAttribute.REFRESH_EXPIRETIME);
-        claims = jwtTokenManagement.getClaim(id, grantAuthorityRoles);
-        token = jwtTokenManagement.create(expireDate, header, claims);
-        if(token == null){
-            return null;
-        }
-        String refreshToken = tokenPair.get(TokenAttribute.REFRESH_TOKEN);
-        tokenInfoRepository.save(new TokenInfoDAO(refreshToken, id, expireDate.getTime()));
-        tokenPair.put(TokenAttribute.REFRESH_TOKEN, token);
-        return tokenPair;
-    }
-
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
@@ -113,45 +84,31 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         }
 
         MemberDAO memberDAO = memberRepository.findByEmail(email);
-        Map<String, String> tokenPair = createToken(memberDAO);
-        if (tokenPair == null) {
+        loginTokenManagement.logout(request, response);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put(LoginTokenManagement.ID, memberDAO.getMember_id());
+        claims.put(LoginTokenManagement.EMAIL, memberDAO.getEmail());
+        claims.put(LoginTokenManagement.IAT, System.currentTimeMillis());
+        claims.put(LoginTokenManagement.ROLE, memberDAO.getRole());
+        Map<String, Object> tokenPair = loginTokenManagement.createTokenPair(claims);
+        if(tokenPair == null){
             throw new RuntimeException();
         }
-        deleteTokenPair(request, response);
-        StringBuilder tokenBuilder = new StringBuilder(tokenPair.get(TokenAttribute.ACCESS_TOKEN));
-        eCookie cookieAttributes = eCookie.ACCESS_TOKEN;
-        CookieManagement.add(cookieAttributes.getName(), cookieAttributes.getMaxAge(), cookieAttributes.getPath(), tokenBuilder.toString());
-        cookieAttributes = eCookie.REFRESH_TOKEN;
-        tokenBuilder.delete(0, tokenBuilder.length());
-        tokenBuilder.append(tokenPair.get(TokenAttribute.ACCESS_TOKEN));
-        CookieManagement.add(cookieAttributes.getName(), cookieAttributes.getMaxAge(), cookieAttributes.getPath(), tokenBuilder.toString());
-    }
-
-    private void deleteTokenPair(HttpServletRequest request, HttpServletResponse response) {
-        String refreshTokenSearchCookNm = eCookie.REFRESH_TOKEN.getName();
-        String accessTokenSearchCookNm = eCookie.ACCESS_TOKEN.getName();
-        Cookie tokenCookie = CookieManagement.search(accessTokenSearchCookNm, request.getCookies());
-        String accessToken = null;
-        if(tokenCookie != null){
-            accessToken = tokenCookie.getValue();
+        try {
+            response.setContentType("application/json");
+            eCookie cookAttr = eCookie.ACCESS_TOKEN;
+            String accessToken = (String)tokenPair.get(LoginTokenManagement.ACCESS_TOKEN);
+            Cookie cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), accessToken);
+            response.addCookie(cookie);
+            cookAttr = eCookie.REFRESH_TOKEN;
+            TokenInfoDAO tokenInfoDAO = tokenInfoRepository.save(new TokenInfoDAO((String)tokenPair.get(LoginTokenManagement.REFRESH_TOKEN), memberDAO.getMember_id(), (long)tokenPair.get(LoginTokenManagement.REFRESH_TOKEN_EXPIRETIME)));
+            long index = tokenInfoDAO.getTokenindex();
+            String refreshTokenIndexToken = loginTokenManagement.create(index);
+            cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), refreshTokenIndexToken);
+            response.addCookie(cookie);
+        } catch(Exception e) {
+            response.reset();
+            throw new RuntimeException();
         }
-
-        tokenCookie = CookieManagement.search(refreshTokenSearchCookNm, request.getCookies());
-        String refreshToken = null;
-        long refreshTokenIndex = 0;
-        if(tokenCookie != null){
-            refreshToken = tokenCookie.getValue();
-            refreshTokenIndex = Long.parseLong(refreshToken);
-            TokenInfoDAO tokenInfoDAO = tokenInfoRepository.findByTokenindex(refreshTokenIndex);
-            if(tokenInfoDAO != null){
-                refreshToken = tokenInfoDAO.getHash();
-            }else{
-                refreshToken = null;
-            }
-        }
-
-        jwtTokenManagement.deleteAllTokenDB(accessToken, refreshTokenIndex, refreshToken);
-        CookieManagement.delete(response, accessTokenSearchCookNm, request.getCookies());
-        CookieManagement.delete(response, refreshTokenSearchCookNm, request.getCookies());
     }
 }

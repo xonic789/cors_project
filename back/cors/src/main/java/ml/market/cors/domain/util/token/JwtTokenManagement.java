@@ -73,7 +73,7 @@ public abstract class JwtTokenManagement {
     }
 
     public boolean isVerify(String token) {
-        boolean bResult = false;
+        boolean bResult = true;
         try {
             Jwts.parser()
                     .setSigningKey(SECRETKEY.getBytes(CHARSET))
@@ -100,8 +100,6 @@ public abstract class JwtTokenManagement {
         }
         return claims;
     }
-
-    public abstract Map<String, Object> setClaims(@NonNull Map<String, Object> claimValue);
 
     public abstract Map<String, Object> setHeaders();
 

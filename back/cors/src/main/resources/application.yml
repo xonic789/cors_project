@@ -5,12 +5,9 @@ spring:
       - credentials
 
   datasource:
-    #url: jdbc:mysql://118.67.128.36:3306/corsdb?serverTimezone=UTC&characterEncoding=UTF-8
-    url: jdbc:mysql://localhost:3306/test?serverTimezone=UTC&characterEncoding=UTF-8
-    #username: cors
-    #password: Dd3552468!
-    username: test
-    password: 1234
+    url: jdbc:mysql://118.67.128.36:3306/corsdb?serverTimezone=UTC&characterEncoding=UTF-8
+    username: cors
+    password: Dd3552468!
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   devtools:
