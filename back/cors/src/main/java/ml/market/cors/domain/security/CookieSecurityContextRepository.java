@@ -2,15 +2,16 @@ package ml.market.cors.domain.security;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.util.cookie.CookieManagement;
+import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.domain.util.token.JwtTokenManagement;
-import ml.market.cors.domain.util.token.TokenAttribute;
-import ml.market.cors.repository.member.Blacklist_TokenRepository;
+import ml.market.cors.domain.util.token.LoginTokenManagement;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,113 +19,107 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
+
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CookieSecurityContextRepository implements SecurityContextRepository {
-    private final JwtTokenManagement mJwtTokenManagement;
+    private final LoginTokenManagement loginTokenManagement;
 
-    private final TokenInfoRepository mTokenInfoRepo;
-
-    private final Blacklist_TokenRepository mBlacklistTokenInfoRepo;
-
-    private final MemberRepository memberRepository;
-
-    private boolean isBlacklistToken(String token, Cookie[] cookies, HttpServletResponse res) {
-        if (mJwtTokenManagement.isBlackList(token.toString()) == false) {
-            return false;
+    private String notFoundAccessTokenCookie(@NonNull HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        Cookie cook = CookieManagement.search(eCookie.REFRESH_TOKEN.getName(), cookies);
+        if(cook == null){
+            return null;
         }
-        Cookie cook = CookieManagement.search(TokenAttribute.ACCESS_TOKEN, cookies);
-        String accessToken = null;
-        if (cook != null) {
-            accessToken = cook.getValue();
+        String refreshTokenIndexToken = cook.getValue();
+        Map<String, Object> claims = loginTokenManagement.getClaims(refreshTokenIndexToken);
+        if(claims == null){
+            return null;
         }
-        cook = CookieManagement.search(TokenAttribute.REFRESH_TOKEN, cookies);
-        String refreshToken = null;
-        long token_index = 0;
-        if (cook != null) {
-            token_index= Long.parseLong(cook.getValue());
-            TokenInfoDAO tokenInfoDAO = mJwtTokenManagement.findTokenIndex(token_index);
-            if(tokenInfoDAO != null){
-                refreshToken = tokenInfoDAO.getHash();
+        long refreshTokenIndex = ((Number)claims.get(LoginTokenManagement.REFRESH_TOKEN_INDEX)).longValue();
+        String accessToken = loginTokenManagement.refresh(refreshTokenIndex);
+        if(accessToken == null){
+            log.debug("재발급 실패");
+            return null;
+        }
+        return accessToken;
+    }
+
+    private Map<String, Object> exsistAccessToken(@NonNull HttpServletResponse response, @NonNull HttpServletRequest request){
+        Cookie[] cookies = request.getCookies();
+        Cookie cook = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), cookies);
+        if (!loginTokenManagement.isVerify(cook.getValue())) {
+            return null;
+        }
+        Map<String, Object> claims = loginTokenManagement.getClaims(cook.getValue());
+        if (claims == null) {
+            cook = CookieManagement.search(eCookie.REFRESH_TOKEN.getName(), cookies);
+            if(cook == null){
+                return null;
             }
+            claims = loginTokenManagement.getClaims(cook.getValue());
+            if(claims == null){
+                return null;
+            }
+            Long index = ((Number)claims.get(LoginTokenManagement.REFRESH_TOKEN_INDEX)).longValue();
+            String accessToken = loginTokenManagement.refresh(index);
+            if (accessToken == null) {
+                return null;
+            }
+            claims = loginTokenManagement.getClaims(accessToken);
         }
-
-        mJwtTokenManagement.deleteAllTokenDB(accessToken, token_index ,refreshToken);
-        CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
-        CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
-        return true;
-    }
-
-    private boolean isVerify(String token, Cookie[] cookies, HttpServletResponse res) {
-        if (mJwtTokenManagement.isVerify(token)) {
-            return true;
-        }
-        return false;
-    }
-
-    private Map refresh(Cookie[] cookies, HttpServletResponse res) {
-        String token = mJwtTokenManagement.refresh(cookies, res);
-        if (token != null) {
-            return mJwtTokenManagement.getClaims(token);
-        }
-        return null;
+        return claims;
     }
 
     @Override
     public SecurityContext loadContext(HttpRequestResponseHolder httpRequestResponseHolder) {
-        HttpServletRequest req = httpRequestResponseHolder.getRequest();
-        HttpServletResponse res = httpRequestResponseHolder.getResponse();
+        HttpServletRequest request = httpRequestResponseHolder.getRequest();
+        HttpServletResponse response = httpRequestResponseHolder.getResponse();
         SecurityContext securityContext = SecurityContextHolder.getContext();
-        Cookie[] cookies = req.getCookies();
-
-        Cookie cook = CookieManagement.search(TokenAttribute.ACCESS_TOKEN, cookies);
-        Map claims = null;
+        Cookie cook = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), request.getCookies());
+        Map<String, Object> claims = null;
         if (cook == null) {
-            if (mJwtTokenManagement.isAvailRefresh(cookies) == false) {
-                CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
-                CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
+            String accessToken = notFoundAccessTokenCookie(request);
+            if(accessToken == null){
+                loginTokenManagement.logout(request, response);
                 return securityContext;
             }
-            String token = mJwtTokenManagement.refresh(cookies, res);
-            if (token == null) {
+            claims = loginTokenManagement.getClaims(accessToken);
+            if(claims == null){
+                loginTokenManagement.logout(request, response);
                 return securityContext;
             }
-            claims = mJwtTokenManagement.getClaims(token);
-        } else if (isBlacklistToken(cook.getValue(), cookies, res)) {
+            eCookie accessTokenCookParam = eCookie.ACCESS_TOKEN;
+            cook = CookieManagement.add(accessTokenCookParam.getName(),accessTokenCookParam.getMaxAge(), accessTokenCookParam.getPath(), accessToken);
+            response.addCookie(cook);
+        } else if (loginTokenManagement.isBlackList(cook.getValue())) {
+            loginTokenManagement.logout(request, response);
             return securityContext;
         } else {
-            if (isVerify(cook.getValue(), cookies, res)) {
-                claims = mJwtTokenManagement.getClaims(cook.getValue());
-                if (claims == null) {
-                    claims = refresh(cookies, res);
-                    if (claims == null) {
-                        return securityContext;
-                    }
-                }
-            } else {
-                logout(req, res);
+            claims = exsistAccessToken(response, request);
+            if(claims == null){
+                loginTokenManagement.logout(request, response);
                 return securityContext;
             }
         }
 
-        Long member_id = ((Number) claims.get(TokenAttribute.ID_CLAIM)).longValue();
-        Optional<MemberDAO> optional = memberRepository.findById(member_id);
-        MemberDAO memberDAO = optional.get();
-        List memberRoles = (List) claims.get(TokenAttribute.MEMBER_ROLE);
+        Long member_id = ((Number) claims.get(LoginTokenManagement.ID)).longValue();
+        String email =(String) claims.get(LoginTokenManagement.EMAIL);
+        List memberRoles = (List) claims.get(LoginTokenManagement.ROLE);
         try{
             memberRoles = TransListMemberAuthority(memberRoles);
         }catch (Exception e){
-            logout(req, res);
+            loginTokenManagement.logout(request, response);
             return securityContext;
         }
-        JwtCertificationToken authToken = new JwtCertificationToken(member_id ,memberDAO.getEmail(), memberRoles);
+        JwtCertificationToken authToken = new JwtCertificationToken(member_id ,email, memberRoles);
         securityContext.setAuthentication(authToken);
         return securityContext;
     }
@@ -155,34 +150,11 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
                 default:
                     throw new RuntimeException();
             }
-
         }
         return memberRoles;
     }
 
-    private void logout(HttpServletRequest req, HttpServletResponse res){
-        Cookie[] cookies = req.getCookies();
-        Cookie cook = CookieManagement.search(TokenAttribute.ACCESS_TOKEN, cookies);
-        String accessToken = null;
-        if(cook != null){
-            accessToken = cook.getValue();
-        }
-        cook = CookieManagement.search(TokenAttribute.REFRESH_TOKEN, cookies);
-        String refreshToken = null;
-        long token_index = 0;
-        TokenInfoDAO tokenInfoDAO;
-        if(cook != null) {
-            token_index = Long.parseLong(cook.getValue());
-            tokenInfoDAO = mTokenInfoRepo.findByTokenindex(token_index);
-            if(tokenInfoDAO == null){
-                return;
-            }
-        }
 
-        mJwtTokenManagement.deleteAllTokenDB(accessToken, token_index , refreshToken);
-        CookieManagement.delete(res, TokenAttribute.ACCESS_TOKEN, cookies);
-        CookieManagement.delete(res, TokenAttribute.REFRESH_TOKEN, cookies);
-    }
 
     @Override
     public void saveContext(SecurityContext securityContext, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
