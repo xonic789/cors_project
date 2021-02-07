@@ -1,16 +1,12 @@
 package ml.market.cors.domain.security.member.handler;
 
-import lombok.RequiredArgsConstructor;
-import ml.market.cors.domain.article.entity.dao.ArticleDAO;
-import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.member.map.MemberParam;
+import ml.market.cors.domain.member.query.MemberQuerys;
 import ml.market.cors.domain.util.cookie.CookieManagement;
-import ml.market.cors.domain.util.token.JwtTokenManagement;
 import ml.market.cors.domain.util.token.LoginTokenManagement;
 import ml.market.cors.domain.util.cookie.eCookie;
-import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -30,6 +26,9 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 
     @Autowired
     private LoginTokenManagement loginTokenManagement;
+
+    @Autowired
+    private MemberQuerys memberQuerys;
 
     private Map<String, Object> setClaims(long member_id, List memberRoles, String email){
         Map<String, Object> claims = new HashMap();
@@ -54,15 +53,8 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             return;
         }
 
+
         try {
-            Long expireTime = refreshTokenExpireTime.getTime();
-            List<MemberDAO> memberDAOList = memberRepository.findByMemberId(member_id);
-            if (memberDAOList == null) {
-                throw new RuntimeException();
-            }
-            MemberDAO memberDAO = memberDAOList.get(0);
-            TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(refreshToken, memberDAO.getMember_id(), expireTime);
-            tokenInfoDAO = tokenInfoRepository.save(tokenInfoDAO);
             response.setContentType("application/json");
             eCookie cookAttr = eCookie.ACCESS_TOKEN;
             String accessToken = (String)tokenPair.get(LoginTokenManagement.ACCESS_TOKEN);
@@ -91,19 +83,11 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
         response.setHeader(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
         response.setHeader(MemberParam.ROLE, memberDAO.getRole().getRole());
-        List<Wish_listDAO> wish_listDAOList = memberDAO.getWish_listDAO();
-        List<Long> resWishId = new ArrayList();
-        for (Wish_listDAO wish_listDAO : wish_listDAOList) {
-            resWishId.add(wish_listDAO.getWish_id());
+        List<Object> wishIdList = memberQuerys.searchMemberWishIdList(memberDAO.getMember_id());
+        if (wishIdList.size() > 0) {
+            response.setHeader(MemberParam.WISHLIST, String.valueOf(wishIdList));
         }
-        if (resWishId.size() > 0) {
-            response.setHeader(MemberParam.WISHLIST, String.valueOf(resWishId));
-        }
-        List<ArticleDAO> articleDAOList = memberDAO.getArticleDAO();
-        List<Long> articleIdList = new ArrayList<>();
-        for (ArticleDAO articleDAO : articleDAOList) {
-            articleIdList.add(articleDAO.getArticle_id());
-        }
+        List<Object> articleIdList = memberQuerys.searchMemberArticleIdList(memberDAO.getMember_id());
         if(articleIdList.size() > 0){
             response.setHeader(MemberParam.ARTICLELIST, String.valueOf(articleIdList));
         }

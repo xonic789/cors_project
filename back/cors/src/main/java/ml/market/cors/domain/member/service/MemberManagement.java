@@ -1,10 +1,11 @@
 package ml.market.cors.domain.member.service;
 
 
-import com.google.common.io.ByteStreams;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.mail.entity.EmailStateDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.map.MemberParam;
@@ -25,9 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.net.URLEncoder;
 import java.util.*;
 
 @Service
@@ -44,6 +42,34 @@ public class MemberManagement {
 
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public Map<String, Object> setMember(long memberId){
+        Map<String, Object> member = new HashMap<>();
+        MemberDAO memberDAO = memberRepository.findByMemberId(memberId).get(0);
+        member.put(MemberParam.LATITUDE, memberDAO.getLatitude());
+        member.put(MemberParam.LONGITUDE, memberDAO.getLongitude());
+        member.put(MemberParam.ROLE, memberDAO.getRole());
+        member.put(MemberParam.NICKNAME, memberDAO.getNickname());
+        member.put(MemberParam.EMAIL, memberDAO.getEmail());
+        member.put(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
+        List<Wish_listDAO> wishList = memberDAO.getWish_listDAO();
+        List<Long> wishIdList = new ArrayList();
+        for (Wish_listDAO wishItem : wishList) {
+            wishIdList.add(wishItem.getWish_id());
+        }
+        if (wishIdList.size() > 0) {
+            member.put(MemberParam.WISHLIST, wishIdList);
+        }
+        List<ArticleDAO> articleList = memberDAO.getArticleDAO();
+        List<Long> articleIdList = new ArrayList<>();
+        for (ArticleDAO articleItem : articleList) {
+            articleIdList.add(articleItem.getArticle_id());
+        }
+        if(articleIdList.size() > 0){
+            member.put(MemberParam.ARTICLELIST, articleIdList);
+        }
+        return member;
+    }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean change(@NonNull Map<String, Object> member, Long id, MultipartFile multipartFile){

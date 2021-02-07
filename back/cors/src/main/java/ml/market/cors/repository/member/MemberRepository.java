@@ -11,6 +11,8 @@ import java.util.List;
 public interface MemberRepository extends JpaRepository<MemberDAO, Long> {
     MemberDAO findByEmail(String email);
 
+    MemberDAO findById(long memberId);
+
     @Query("select memberTb from MemberDAO memberTb where memberTb.member_id=:member_id")
     List<MemberDAO> findByMemberId(@Param("member_id")long memberId);
 

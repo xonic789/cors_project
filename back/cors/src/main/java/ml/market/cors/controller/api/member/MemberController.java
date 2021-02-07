@@ -35,10 +35,6 @@ public class MemberController {
 
     private final ResponseEntityUtils responseEntityUtils;
 
-    private final MemberRepository memberRepository;
-
-    private final Wish_list_Repository wish_list_repository;
-
     @PostMapping("/check/nickname")
     public ResponseEntity<Message<Object>> existNickname(@ModelAttribute MemberVO memberVO){
         ResponseEntity<Message<Object>> messageResponseEntity;
@@ -93,34 +89,6 @@ public class MemberController {
         return messageResponseEntity;
     }
 
-    private Map<String, Object> setMember(long memberId){
-        Map<String, Object> member = new HashMap<>();
-        MemberDAO memberDAO = memberRepository.findByMemberId(memberId).get(0);
-        member.put(MemberParam.LATITUDE, memberDAO.getLatitude());
-        member.put(MemberParam.LONGITUDE, memberDAO.getLongitude());
-        member.put(MemberParam.ROLE, memberDAO.getRole());
-        member.put(MemberParam.NICKNAME, memberDAO.getNickname());
-        member.put(MemberParam.EMAIL, memberDAO.getEmail());
-        member.put(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
-        List<Wish_listDAO> wish_listDAOList = memberDAO.getWish_listDAO();
-        List<Long> resWishId = new ArrayList();
-        for (Wish_listDAO wish_listDAO : wish_listDAOList) {
-            resWishId.add(wish_listDAO.getWish_id());
-        }
-        if (resWishId.size() > 0) {
-            member.put(MemberParam.WISHLIST, resWishId);
-        }
-        List<ArticleDAO> articleDAOList = memberDAO.getArticleDAO();
-        List<Long> articleIdList = new ArrayList<>();
-        for (ArticleDAO articleDAO : articleDAOList) {
-            articleIdList.add(articleDAO.getArticle_id());
-        }
-        if(articleIdList.size() > 0){
-            member.put(MemberParam.ARTICLELIST, articleIdList);
-        }
-        return member;
-    }
-
     @PutMapping("/change/profile")
     public ResponseEntity<Message<Object>> change(@AuthenticationPrincipal JwtCertificationToken memberIdentify
                                                   , @RequestParam Map<String, Object> member
@@ -129,7 +97,7 @@ public class MemberController {
         try {
             long memberId = (Long) memberIdentify.getCredentials();
             if (memberManagement.change(member, memberId, multipartFile)) {
-                messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(setMember(memberId));
+                messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(memberManagement.setMember(memberId));
             } else {
                 messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 변경 실패");
             }
