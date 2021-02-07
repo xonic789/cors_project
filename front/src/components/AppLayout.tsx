@@ -68,7 +68,7 @@ function AppLayout({ children }: AppLayoutInterface):JSX.Element {
       <MenuWrapper>
         <MenuList>
           {tabTitle.map((str, index) => (
-            <NavLink to={str[3]}>
+            <NavLink to={str[3]} key={str[2]}>
               <MenuItem
                 key={str[2]}
                 onClick={() => onClickMenuHandler(index)}
