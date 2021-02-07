@@ -1,5 +1,5 @@
 import faker from 'faker';
-import { AddBookPostInterface, PostListInterface } from '../../interfaces/PostList.interface';
+import { AddBookPostInterface, PostListInterface, articleDetailInterface } from '../../interfaces/PostList.interface';
 
 export const dummyAddBookPost = (data: AddBookPostInterface) => ({
   articleId: faker.random.number(),
@@ -18,6 +18,27 @@ export const dummyAddBookPost = (data: AddBookPostInterface) => ({
 
 export const dummyBookPost: PostListInterface = {
   data: [],
+};
+export const dummyDetailBookPost: articleDetailInterface = {
+  articleId: 1,
+  memberId: 2,
+  countDAO: {
+    chatCount: 10,
+    countId: 2,
+    views: 3,
+    wishCount: 5,
+  },
+  title: '흥부와 놀부',
+  writeDate: new Date('2020-10-11'),
+  rprice: 13000,
+  tprice: 13000,
+  progress: 'POSTING',
+  category: {
+    cid: 2435, oneDepth: '외국도서', twoDepth: '요리', threeDepth: '가정요리', fourDepth: '', fiveDepth: '',
+  },
+  division: 'SALE',
+  thumbnail: faker.random.image(),
+  image: [faker.random.image(), faker.random.image(), faker.random.image()],
 };
 export const generateDummyPost = (Postnumber: number) => Array(Postnumber).fill(0).map(() => (
   {
