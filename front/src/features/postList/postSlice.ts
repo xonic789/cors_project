@@ -4,14 +4,22 @@ const postSlice = createSlice({
   name: 'posts',
   initialState: {
     bookPost: [],
+    detailBookPost: {},
     hasMorePost: true,
     filtering: { division: 'sales', category: '' },
+
     isLoadBookPostLoading: false,
     isLoadBookPostDone: false,
     isLoadBookPostError: false,
+
     isLoadScrollBookPostLoading: false,
     isLoadScrollPostDone: false,
-    isLoadScrollPostError: false,
+    isLoadScrollPostError: null,
+
+    isLoadDetailBookPostLoading: false,
+    isLoadDetailBookPostDone: false,
+    isLoadDetailBookPostError: null,
+
     isAddBookPostLoading: false,
     isAddBookPostDone: false,
     isAddBookPostError: null,
@@ -35,8 +43,6 @@ const postSlice = createSlice({
     },
     loadScrollBookPostRequest(state, action) {
       state.isLoadScrollBookPostLoading = true;
-      state.filtering.division = action.payload.division;
-      state.filtering.category = action.payload.category;
     },
     loadScrollBookPostSuccess(state, action) {
       state.isLoadScrollBookPostLoading = false;
@@ -47,6 +53,18 @@ const postSlice = createSlice({
     loadScrollBookPostError(state, action) {
       state.isLoadScrollBookPostLoading = false;
       state.isLoadScrollPostError = action.payload.error;
+    },
+    loadDetailBookPostRequest(state, action) {
+      state.isLoadDetailBookPostLoading = true;
+    },
+    loadDetailBookPostSuccess(state, action) {
+      state.isLoadDetailBookPostLoading = false;
+      state.isLoadDetailBookPostDone = true;
+      state.detailBookPost = action.payload;
+    },
+    loadDetailBookPostError(state, action) {
+      state.isLoadDetailBookPostLoading = false;
+      state.isLoadDetailBookPostError = action.payload.error;
     },
     addBookPostRequest(state, action) {
       state.isAddBookPostLoading = true;
@@ -72,6 +90,9 @@ export const {
   loadScrollBookPostRequest,
   loadScrollBookPostSuccess,
   loadScrollBookPostError,
+  loadDetailBookPostRequest,
+  loadDetailBookPostSuccess,
+  loadDetailBookPostError,
   addBookPostRequest,
   addBookPostError,
   addBookPostSuccess,
