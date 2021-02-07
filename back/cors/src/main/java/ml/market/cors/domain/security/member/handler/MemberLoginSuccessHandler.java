@@ -1,8 +1,11 @@
 package ml.market.cors.domain.security.member.handler;
 
 import lombok.RequiredArgsConstructor;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
+import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.util.cookie.CookieManagement;
 import ml.market.cors.domain.util.token.JwtTokenManagement;
 import ml.market.cors.domain.util.token.LoginTokenManagement;
@@ -52,6 +55,14 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         }
 
         try {
+            Long expireTime = refreshTokenExpireTime.getTime();
+            List<MemberDAO> memberDAOList = memberRepository.findByMemberId(member_id);
+            if (memberDAOList == null) {
+                throw new RuntimeException();
+            }
+            MemberDAO memberDAO = memberDAOList.get(0);
+            TokenInfoDAO tokenInfoDAO = new TokenInfoDAO(refreshToken, memberDAO.getMember_id(), expireTime);
+            tokenInfoDAO = tokenInfoRepository.save(tokenInfoDAO);
             response.setContentType("application/json");
             eCookie cookAttr = eCookie.ACCESS_TOKEN;
             String accessToken = (String)tokenPair.get(LoginTokenManagement.ACCESS_TOKEN);
@@ -66,12 +77,37 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
             }
             cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), refreshTokenIndexToken);
             response.addCookie(cookie);
+            setHeader(response, memberDAO);
         } catch(Exception e) {
-            response.setStatus(400);
             response.reset();
             throw new RuntimeException();
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private void setHeader(HttpServletResponse response, MemberDAO memberDAO) {
+        response.setHeader(MemberParam.NICKNAME, memberDAO.getNickname());
+        response.setHeader(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
+        response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
+        response.setHeader(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
+        response.setHeader(MemberParam.ROLE, memberDAO.getRole().getRole());
+        List<Wish_listDAO> wish_listDAOList = memberDAO.getWish_listDAO();
+        List<Long> resWishId = new ArrayList();
+        for (Wish_listDAO wish_listDAO : wish_listDAOList) {
+            resWishId.add(wish_listDAO.getWish_id());
+        }
+        if (resWishId.size() > 0) {
+            response.setHeader(MemberParam.WISHLIST, String.valueOf(resWishId));
+        }
+        List<ArticleDAO> articleDAOList = memberDAO.getArticleDAO();
+        List<Long> articleIdList = new ArrayList<>();
+        for (ArticleDAO articleDAO : articleDAOList) {
+            articleIdList.add(articleDAO.getArticle_id());
+        }
+        if(articleIdList.size() > 0){
+            response.setHeader(MemberParam.ARTICLELIST, String.valueOf(articleIdList));
+        }
+
     }
 
 }
