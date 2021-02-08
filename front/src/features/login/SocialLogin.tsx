@@ -13,6 +13,7 @@ const SocialLoginBox = styled.div`
 const SocialItem = styled.img`
   width: 2.5em;
   height: 2.5em;
+  border-radius: 10px;
 `;
 
 function SocialLogin():JSX.Element {

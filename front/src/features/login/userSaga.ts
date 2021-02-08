@@ -1,5 +1,5 @@
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
-import { push } from 'connected-react-router';
+
 import {
   logoutAsync,
   modifyProfileAsync,
@@ -33,7 +33,6 @@ function* postLoginRequestSaga(action: { payload: { email: string, passwd: strin
       type: postLoginRequestSuccess,
       payload: loginUser,
     });
-    yield put(push('/home'));
   } catch (error) {
     yield put({
       type: postLoginRequestError,

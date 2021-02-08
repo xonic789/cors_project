@@ -29,8 +29,9 @@ const TitleBox = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 10vw;
+  width: auto;
   height: 10vw;
+  margin-right: 0.5em;
 `;
 
 const Title = styled.h1`
@@ -58,8 +59,8 @@ function Login():JSX.Element {
     <Wrapper>
       <Layout>
         <TitleBox>
-          <Logo />
-          <Title>코스마켓TEST</Title>
+          <Logo src="/images/icons/logo.jpg" />
+          <Title>코스마켓</Title>
         </TitleBox>
         <LoginForm />
         <LinkBox>
