@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
-import { postLogin } from './LoginSlice';
+import { RootStateOrAny, useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { postLoginRequest } from './userSlice';
+
+interface inputFormInterface {
+  email: string,
+  passwd: string
+}
 
 const Form = styled.form`
   width: 90vw;
@@ -44,13 +50,8 @@ const Button = styled.button`
   margin-bottom: 1.2em;
 `;
 
-interface inputForm {
-  email: string,
-  passwd: string
-}
-
-const LoginForm:React.FC = () => {
-  const [inputs, setInputs] = useState<inputForm>({
+function LoginForm(): JSX.Element {
+  const [inputs, setInputs] = useState<inputFormInterface>({
     email: '',
     passwd: '',
   });
@@ -67,7 +68,7 @@ const LoginForm:React.FC = () => {
 
   const onLogin = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(postLogin({ email: inputs.email, passwd: inputs.passwd }));
+    dispatch(postLoginRequest({ email: inputs.email, passwd: inputs.passwd }));
   };
 
   return (
@@ -79,6 +80,6 @@ const LoginForm:React.FC = () => {
       <Button type="submit">로그인</Button>
     </Form>
   );
-};
+}
 
 export default LoginForm;

@@ -23,6 +23,7 @@
     "@types/sockjs-client": "^1.5.0",
     "@types/styled-components": "^5.1.7",
     "axios": "^0.21.1",
+    "connected-react-router": "^6.8.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "react": "^17.0.1",

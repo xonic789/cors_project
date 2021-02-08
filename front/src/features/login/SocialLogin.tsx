@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { postSocialLogin } from './LoginSlice';
+import { postSocialLoginRequest } from './userSlice';
 
 const SocialLoginBox = styled.div`
   width: 11em;
@@ -19,7 +19,7 @@ function SocialLogin():JSX.Element {
   const dispatch = useDispatch();
 
   const onClickLoginHandler = (social:string) => {
-    dispatch(postSocialLogin({ social }));
+    dispatch(postSocialLoginRequest({ social }));
   };
   return (
     <SocialLoginBox>
