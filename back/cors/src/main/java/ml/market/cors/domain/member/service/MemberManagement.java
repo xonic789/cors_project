@@ -10,7 +10,7 @@ import ml.market.cors.domain.mail.entity.EmailStateDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.role.MemberRole;
-import ml.market.cors.domain.security.oauth.enu.SocialType;
+import ml.market.cors.domain.security.oauth.enums.eSocialType;
 import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
 import ml.market.cors.domain.util.kakao.dto.map.MapDocumentsDTO;
 import ml.market.cors.domain.util.kakao.KaKaoRestManagement;
@@ -99,7 +99,7 @@ public class MemberManagement {
                 if (existNickname(nickname)) {
                     return false;
                 }
-                memberDAO = memberRepository.save(new MemberDAO(memberDAO.getProfileKey(), id, memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), nickname, memberDAO.getSocialType()));
+                memberDAO = memberRepository.save(new MemberDAO(memberDAO.getProfileKey(), id, memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), nickname, memberDAO.getESocialType()));
             }
         }
 
@@ -107,7 +107,7 @@ public class MemberManagement {
             String newPasswd = (String) member.get(MemberParam.NEWPASSWD);
             if(!newPasswd.equals("")){
                 newPasswd = bCryptPasswordEncoder.encode(newPasswd);
-                memberDAO = memberRepository.save(new MemberDAO(memberDAO.getProfileKey(), id, memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), newPasswd, memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getSocialType()));
+                memberDAO = memberRepository.save(new MemberDAO(memberDAO.getProfileKey(), id, memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), newPasswd, memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType()));
             }
         }
 
@@ -119,7 +119,7 @@ public class MemberManagement {
                     return true;
                 }
                 s3Uploader.deleteObject(memberDAO.getProfileKey());
-                memberDAO = memberRepository.save(new MemberDAO(result.get("key"), id, result.get("url"), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getSocialType()));
+                memberDAO = memberRepository.save(new MemberDAO(result.get("key"), id, result.get("url"), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType()));
             }catch (Exception e){
                 log.debug("파일 업로드 실패");
                 throw new RuntimeException();
@@ -189,7 +189,7 @@ public class MemberManagement {
         double latitude = mapResMapDocumentsDTO.getY();
         double longitude = mapResMapDocumentsDTO.getX();
         MemberDAO memberDAO = new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, email, MemberParam.DEFAULT_PROFILE_IMG_DIR, MemberRole.USER, passwd
-                ,address, latitude, longitude, nickname, SocialType.NORMAL);
+                ,address, latitude, longitude, nickname, eSocialType.NORMAL);
         memberRepository.save(memberDAO);
         emailStateRepository.deleteById(email);
         return true;

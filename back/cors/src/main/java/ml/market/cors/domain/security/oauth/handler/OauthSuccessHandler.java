@@ -1,16 +1,14 @@
 package ml.market.cors.domain.security.oauth.handler;
 
 
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.role.MemberRole;
-import ml.market.cors.domain.security.oauth.enu.SocialType;
+import ml.market.cors.domain.security.oauth.enums.eSocialType;
 import ml.market.cors.domain.util.cookie.CookieManagement;
 import ml.market.cors.domain.util.cookie.eCookie;
-import ml.market.cors.domain.util.token.JwtTokenManagement;
 import ml.market.cors.domain.util.token.LoginTokenManagement;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
@@ -75,7 +73,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         String socialTypeName = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
         boolean bResult = memberRepository.existsByEmail(email);
         if (!bResult) {
-            for(SocialType type : SocialType.values()){
+            for(eSocialType type : eSocialType.values()){
                 if (type.getValue().equals(socialTypeName)) {
                     memberRepository.save(new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, email, MemberParam.DEFAULT_PROFILE_IMG_DIR, MemberRole.USER, "blank", "blank", 0.0, 0.0, email, type));
                     break;

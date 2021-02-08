@@ -1,6 +1,6 @@
-package ml.market.cors.domain.security.oauth.enu;
+package ml.market.cors.domain.security.oauth.enums;
 
-public enum SocialType {
+public enum eSocialType {
     NORMAL("normal"),
     GOOGLE("google"),
     KAKAO("kakao"),
@@ -9,7 +9,7 @@ public enum SocialType {
     private final String ROLE_PREFIX = "ROLE_";
     private String name;
 
-    SocialType(String name) { this.name = name; }
+    eSocialType(String name) { this.name = name; }
 
     public String getRoleType() { return ROLE_PREFIX + name.toUpperCase(); }
 
