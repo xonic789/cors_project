@@ -1,12 +1,11 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call, throttle, select } from 'redux-saga/effects';
 import { AddBookPostInterface } from '../../interfaces/PostList.interface';
-import { dummyBookPost, dummyDetailBookPost, generateDummyPost } from './mockdata';
+import { generateDummyPost } from '../../interfaces/mockdata';
 import { addBookPostAPI, getBookPostAPI, getBookPostDetailViewAPI } from '../../api/postBookApi';
-import postSlice, { loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
+import { loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
   loadScrollBookPostRequest, loadScrollBookPostSuccess, loadScrollBookPostError,
-  addBookPostRequest, addBookPostError, addBookPostSuccess,
-  loadDetailBookPostSuccess } from './postSlice';
+  addBookPostRequest, addBookPostError, addBookPostSuccess } from './postSlice';
 
 interface addBookPostPayloadInterface {
   data: AddBookPostInterface
@@ -35,15 +34,6 @@ function* loadScrollBookPost() {
     yield put(loadScrollBookPostSuccess(result));
   } catch (error) {
     yield put(loadScrollBookPostError({ error: error.response.data }));
-  }
-}
-function* loadDetailBookPost(action: PayloadAction<number>) {
-  try {
-    // const result = yield call(getBookPostDetailViewAPI, action.payload);
-    const result = dummyDetailBookPost;
-    yield put(loadDetailBookPostSuccess(result));
-  } catch (error) {
-    yield put(addBookPostError({ error: error.response.data }));
   }
 }
 function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {

@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import CategoryJSON from './Category.json';
+import CategoryJSON from './category.json';
 import { loadBookPostRequest } from './postSlice';
 
 interface CategoryMenuPropsInterFace {

@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
-import { List } from 'react-virtualized';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import AppLayout from '../../components/AppLayout';
-import { articleInterface } from '../../interfaces/PostList.interface';
 import Header from './Header';
-import { loadBookPostRequest, loadScrollBookPostRequest } from './postSlice';
+import { loadBookPostRequest } from './postSlice';
 import InfiniteScrollList from './InfiniteScrollList';
 
 const PostListWrapper = styled.div`
