@@ -49,7 +49,8 @@
     "no-param-reassign": "off",
     "max-len": "off",
     "react/jsx-props-no-spreading":"off",
-    "camelcase": "off"
+    "camelcase": "off",
+    "no-plusplus": "off"
   }
   /*"@typescript-eslint/ban-types": ["error",
     {
