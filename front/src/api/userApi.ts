@@ -18,8 +18,8 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       latitude,
       longitude,
       role,
-      articles: JSON.parse(articlelist) || [],
-      wishList: JSON.parse(wishlist) || [],
+      articles: articlelist === undefined ? [] : JSON.parse(articlelist),
+      wishList: wishlist === undefined ? [] : JSON.parse(wishlist),
     };
     return loginUser;
   });
