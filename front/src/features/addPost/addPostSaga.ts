@@ -1,7 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import { all, takeLatest, put, fork, call, throttle, select } from 'redux-saga/effects';
+import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
 import { AddBookPostInterface } from '../../interfaces/PostList.interface';
-import { generateDummyPost } from '../../interfaces/mockdata';
 import { addBookPostAPI } from '../../api/postBookApi';
 import { addBookPostRequest, addBookPostSuccess, addBookPostError } from './addPostSlice';
 
