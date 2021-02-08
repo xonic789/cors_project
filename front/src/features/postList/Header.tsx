@@ -107,7 +107,7 @@ function Header(): JSX.Element {
           <img src="/images/icons/category.png" alt="menu_icon" />
         </BuggerMenu>
         <LogoWrapper>
-          <img src="/images/icons/logo.png" alt="logo" />
+          <img src="/images/icons/logo.jpeg" alt="logo" />
         </LogoWrapper>
       </TopWrapper>
       <SearchInput>
