@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const detailViewSlice = createSlice({
   name: 'detailView',
   initialState: {
-    detailBookPost: {},
+    detailBookPost: null,
     isLoadDetailBookPostLoading: false,
     isLoadDetailBookPostDone: false,
     isLoadDetailBookPostError: null,
