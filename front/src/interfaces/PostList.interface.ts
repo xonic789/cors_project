@@ -26,6 +26,7 @@ export interface articleDetailInterface {
     views: number,
     wishCount: number,
   },
+  content: string,
   title: string,
   writeDate: Date,
   rprice: number,
@@ -47,7 +48,7 @@ export interface AddBookPostInterface {
   memberId: number, // 작성자
   rprice: number, // 판매가격
   tprice: number, // 원래가격
-  contens: string, // 내용
+  content: string, // 내용
   progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING', // 게시글 상태
   title: string, // 책제목
   thumnail: string,
