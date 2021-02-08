@@ -1,7 +1,8 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
-import { dummyDetailBookPost } from '../../interfaces/mockdata';
 import { loadDetailBookPostRequest, loadDetailBookPostSuccess, loadDetailBookPostError } from './detailViewSlice';
+
+import { dummyDetailBookPost } from '../../interfaces/mockdata';
 
 function* loadDetailBookPost(action: PayloadAction<number>) {
   try {

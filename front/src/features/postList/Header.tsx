@@ -43,7 +43,7 @@ const LogoWrapper = styled.div`
   flex-basis: 2;
   font-size: 25px;
   & img{
-    width: 50px;
+    height: 40px;
   }
 `;
 const SearchInput = styled.div`

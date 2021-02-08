@@ -11,9 +11,11 @@ const PostListWrapper = styled.div`
 `;
 function PostList(): JSX.Element {
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(loadBookPostRequest({ division: 'sales', category: '' }));
   }, [dispatch]);
+
   return (
     <AppLayout>
       <PostListWrapper>
