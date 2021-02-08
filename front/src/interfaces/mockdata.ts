@@ -16,6 +16,19 @@ export const dummyAddBookPost = (data: AddBookPostInterface) => ({
   division: data.division, // 내가 넣어줄 값
 });
 
+export const dummyPost: AddBookPostInterface = {
+  memberId: 3, // 작성자
+  rprice: 13000, // 판매가격
+  tprice: 16000, // 원래가격
+  content: '두번만 읽은 책입니다', // 내용
+  progress: 'POSTING', // 게시글 상태
+  title: '진격의거인', // 책제목
+  thumnail: 'http://image.yes24.com/momo/TopCate3025/MidCate007/302460746.jpg',
+  images: ['https://blog.kakaocdn.net/dn/28NKv/btqFjFQr9pe/n0TKtuuV3zmBSTF1olKqIK/img.jpg', 'https://www.hanbit.co.kr/data/editor/20200706083421_vfsgqsvu.jpg', 'https://www.hanbit.co.kr/data/editor/20200705234134_skcbzgms.jpg'],
+  category: '국내도서>자기계발', // 카테고리 키
+  division: 'SALE', // 구매 판매 구분
+};
+
 export const dummyBookPost: PostListInterface = {
   data: [],
 };

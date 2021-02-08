@@ -40,7 +40,7 @@ function DetailPostView({ history }: RouteComponentProps):JSX.Element {
           <img src="/images/icons/back.png" alt="back_icon" />
         </Header>
       </NavLink>
-      {detailBookPost !== null ? <DetailPostContent /> : <div>Loading...</div>}
+      {detailBookPost !== null ? <DetailPostContent id={detailBookPost.articleId} /> : <div>Loading...</div>}
     </DetailPostViewContainer>
   );
 }

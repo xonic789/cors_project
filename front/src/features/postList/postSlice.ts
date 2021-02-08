@@ -1,4 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { articleInterface } from '../../interfaces/PostList.interface';
 
 const postSlice = createSlice({
   name: 'posts',
@@ -15,9 +16,9 @@ const postSlice = createSlice({
     isLoadScrollPostDone: false,
     isLoadScrollPostError: null,
 
-    isAddBookPostLoading: false,
-    isAddBookPostDone: false,
-    isAddBookPostError: null,
+    isDeleteBookPostLoading: false,
+    isDeleteBookPostDone: false,
+    isDeleteBookPostError: null,
   },
   reducers: {
     loadBookPostRequest(state, action) {
@@ -49,19 +50,17 @@ const postSlice = createSlice({
       state.isLoadScrollBookPostLoading = false;
       state.isLoadScrollPostError = action.payload.error;
     },
-    addBookPostRequest(state, action) {
-      state.isAddBookPostLoading = true;
-      state.isAddBookPostDone = false;
+    deleteBookPostRequest(state, action) {
+      state.isDeleteBookPostLoading = true;
     },
-    addBookPostSuccess(state, action) {
-      state.isAddBookPostLoading = false;
-      state.isAddBookPostDone = true;
-      // state.bookPost.unshift(dummyBookPost(action.payload));
+    deleteBookPostSuccess(state, action) {
+      state.isDeleteBookPostLoading = false;
+      state.isDeleteBookPostDone = true;
+      state.bookPost.filter((post:articleInterface) => post.articleId !== action.payload);
     },
-    addBookPostError(state, action) {
-      state.isAddBookPostLoading = false;
-      state.isAddBookPostDone = false;
-      state.isAddBookPostError = action.payload.error;
+    deleteBookPostError(state, action) {
+      state.isDeleteBookPostLoading = false;
+      state.isDeleteBookPostError = action.payload.error;
     },
   },
 });
@@ -73,9 +72,9 @@ export const {
   loadScrollBookPostRequest,
   loadScrollBookPostSuccess,
   loadScrollBookPostError,
-  addBookPostRequest,
-  addBookPostError,
-  addBookPostSuccess,
+  deleteBookPostRequest,
+  deleteBookPostSuccess,
+  deleteBookPostError,
 } = postSlice.actions;
 
 export default postSlice.reducer;

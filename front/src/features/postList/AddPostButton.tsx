@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 
 interface BoxInterface {
@@ -45,8 +46,8 @@ const AddPostButton = ():JSX.Element => {
   }, [showBox]);
   return (
     <ButtonWrapper>
-      <Box show={showBox}>구매글 작성하러가기</Box>
-      <Box show={showBox}>판매글 작성하러가기</Box>
+      <NavLink to="/addPost/sale"><Box show={showBox}>구매글 작성하러가기</Box></NavLink>
+      <NavLink to="/addPost/purchase"><Box show={showBox}>판매글 작성하러가기</Box></NavLink>
       <Button onClick={onClickShowBox}>{showBox ? 'X' : <img src="/images/icons/write.png" alt="+_img" />}</Button>
     </ButtonWrapper>
   );

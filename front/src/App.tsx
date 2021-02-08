@@ -1,5 +1,6 @@
 import React from 'react';
 import { HashRouter, Switch, Route } from 'react-router-dom';
+import AddPostPage from './features/addPost/AddPostPage';
 import DetailPostView from './features/detailPostView/DetailPostView';
 import Login from './features/login/Login';
 import PostList from './features/postList/PostList';
@@ -15,6 +16,7 @@ function App():JSX.Element {
             <Route path="/" exact component={Login} />
             <Route path="/home" exact component={PostList} />
             <Route path="/post/:id" exact component={DetailPostView} />
+            <Route path="/addPost/:division" exact component={AddPostPage} />
           </Switch>
         </HashRouter>
       </div>

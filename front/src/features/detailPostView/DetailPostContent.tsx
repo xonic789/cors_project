@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
 import countDaoUtil from '../../utils/countDaoUtil';
 import ProgressUtil from '../../utils/progressUtil';
+import { deleteBookPostRequest } from '../postList/postSlice';
 import ImageSlide from './ImageSlide';
 
+interface DetailPostInterface {
+  id: number;
+}
 const ContentWrapper = styled.div`
 `;
 const ContentTop = styled.div`
@@ -116,6 +120,10 @@ const HeartButton = styled.button`
 const Price = styled.div`
   font-weight: 800;
 `;
+const Delete = styled.div`
+  font-size: 15px;
+  padding: 20px 0;
+`;
 const Report = styled.div`
   font-size: 15px;
   padding: 20px 0;
@@ -126,11 +134,15 @@ const UploadeTime = styled.div`
   padding: 10px 0;
 `;
 
-function DetailPostContent(): JSX.Element {
+function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
+  const dispatch = useDispatch();
   const [heart, setHeart] = useState(false);
   const { detailBookPost } = useSelector((state) => state.detailViewSlice);
   const HandleHeartButton = () => {
     setHeart(!heart);
+  };
+  const DeletePost = () => {
+    dispatch(deleteBookPostRequest(id));
   };
   return (
     <>
@@ -157,6 +169,7 @@ function DetailPostContent(): JSX.Element {
           <AdditionalContent>{countDaoUtil(detailBookPost.countDAO)}</AdditionalContent>
           <OtherBooksButton>판매자의 다른도서 보러가기</OtherBooksButton>
           <Report>신고하기⚡️</Report>
+          {/* 여기서 사용자랑 이게시물 아이디랑 같으면 삭제하는걸로 로직짜야함 */}<Delete onClick={DeletePost}>삭제하기</Delete>
         </ContentMain>
         <ContentBottom>
           <HeartButton onClick={HandleHeartButton}>
