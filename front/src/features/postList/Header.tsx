@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import CategoryMenu from './CategoryMenu';
 import { loadBookPostRequest } from './postSlice';
@@ -17,6 +17,7 @@ const HeaderWrapper = styled.div`
   background-color: white;
   max-width: 600px;
   margin: 0 auto;
+  z-index: 50;
 `;
 const TopWrapper = styled.div`
   display: flex;
@@ -81,6 +82,7 @@ function Header(): JSX.Element {
   const dispatch = useDispatch();
   const [openMenu, setOpenMenu] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
+  const { filtering } = useSelector((state) => state.postSlice);
   const onOpenMenuHandler = useCallback((e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setOpenMenu(true);
@@ -91,12 +93,12 @@ function Header(): JSX.Element {
   }, []);
   const onClickSalePostTab = useCallback(() => {
     setTabIndex(0);
-    dispatch(loadBookPostRequest({ division: 'sales', category: '' }));
-  }, [dispatch]);
+    dispatch(loadBookPostRequest({ division: 'sales', category: filtering.category }));
+  }, [dispatch, filtering.category]);
   const onClickPurchasPostTab = useCallback(() => {
     setTabIndex(1);
-    dispatch(loadBookPostRequest({ division: 'purchase', category: '' }));
-  }, [dispatch]);
+    dispatch(loadBookPostRequest({ division: 'purchase', category: filtering.category }));
+  }, [dispatch, filtering.category]);
   return (
     <HeaderWrapper>
       {openMenu && <CategoryMenu onMenuClose={onCloseMenuHandler} />}
