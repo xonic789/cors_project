@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized';
 import { useSelector, useDispatch } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+import CategoryFormatUtil from '../../utils/categoryFormatUtil';
+import { loadDetailBookPostRequest } from '../detailPostView/detailViewSlice';
 import { loadScrollBookPostRequest, loadBookPostRequest } from './postSlice';
-import CategoryFormat from '../../utils/categoryFormatting';
 
 interface IndexInterface {
   index: number;
@@ -55,6 +57,9 @@ const Categoty = styled.div`
 function InfiniteScrollList(): JSX.Element {
   const dispatch = useDispatch();
   const { bookPost, hasMorePost, isLoadScrollBookPostLoading } = useSelector((state) => state.postSlice);
+  const onLoadDetail = useCallback((id) => {
+    dispatch(loadDetailBookPostRequest(id));
+  }, [dispatch]);
   const scrollListener = (params:OnScrollParams) => {
     if (params.scrollTop + params.clientHeight >= params.scrollHeight - 300) {
       console.log(hasMorePost, !isLoadScrollBookPostLoading);
@@ -67,14 +72,16 @@ function InfiniteScrollList(): JSX.Element {
     const post = bookPost[index];
     return (
       <div style={style}>
-        <Content key={post.articleId}>
-          <img src={post.image} alt="" />
-          <ContentExplanation>
-            <Categoty>{CategoryFormat(post.category)}</Categoty>
-            <h3>{post.title}</h3>
-            <h3>{post.tprice}원</h3>
-          </ContentExplanation>
-        </Content>
+        <NavLink to={`post/${post.articleId}`} onClick={() => onLoadDetail(post.articleId)}>
+          <Content key={post.articleId}>
+            <img src={post.image} alt="" />
+            <ContentExplanation>
+              <Categoty>{CategoryFormatUtil(post.category)}</Categoty>
+              <h3>{post.title}</h3>
+              <h3>{post.tprice}원</h3>
+            </ContentExplanation>
+          </Content>
+        </NavLink>
       </div>
     );
   };
