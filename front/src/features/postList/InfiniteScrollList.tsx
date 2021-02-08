@@ -57,7 +57,8 @@ function InfiniteScrollList(): JSX.Element {
     if (params.scrollTop + params.clientHeight >= params.scrollHeight - 300) {
       console.log(hasMorePost, !isLoadScrollBookPostLoading);
       if (hasMorePost && !isLoadScrollBookPostLoading) {
-        dispatch(loadScrollBookPostRequest({}));
+        const LastId = bookPost[bookPost.length - 1].articleId;
+        dispatch(loadScrollBookPostRequest(LastId));
       }
     }
   };

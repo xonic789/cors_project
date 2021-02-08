@@ -43,8 +43,8 @@ const postSlice = createSlice({
     loadScrollBookPostSuccess(state, action) {
       state.isLoadScrollBookPostLoading = false;
       state.isLoadScrollPostDone = true;
-      state.bookPost = action.payload.concat(state.bookPost);
-      state.hasMorePost = state.bookPost.length < 150;
+      state.bookPost = state.bookPost.concat(action.payload);
+      state.hasMorePost = state.bookPost.length === 10;
     },
     loadScrollBookPostError(state, action) {
       state.isLoadScrollBookPostLoading = false;

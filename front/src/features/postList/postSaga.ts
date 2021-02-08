@@ -20,10 +20,10 @@ function* loadBookPost(action: PayloadAction<loadBookPost>) {
     yield put(loadBookPostError({ error: error.response.data }));
   }
 }
-function* loadScrollBookPost() {
+function* loadScrollBookPost(action: PayloadAction<number>) {
   try {
     const { filtering } = yield select((state) => state.postSlice);
-    // const result = yield call(getBookPostAPI, filtering);
+    // const result = yield call(getBookPostAPI, filtering, action.payload);
     console.log(filtering);
     const result = generateDummyPost(10);
     console.log(result);
