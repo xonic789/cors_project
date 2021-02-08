@@ -1,5 +1,5 @@
 import faker from 'faker';
-import { AddBookPostInterface, PostListInterface, articleDetailInterface } from '../../interfaces/PostList.interface';
+import { AddBookPostInterface, PostListInterface, articleDetailInterface } from './PostList.interface';
 
 export const dummyAddBookPost = (data: AddBookPostInterface) => ({
   articleId: faker.random.number(),
@@ -10,7 +10,7 @@ export const dummyAddBookPost = (data: AddBookPostInterface) => ({
   title: data.title, // 내가 넣어줄 값
   thumnail: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNEqDnzERi5Aa-o2Qk7r-GmibgwZWM0wV4utkTJZBRNULFk8KwNzUKtPXvgPE&usqp=CAc', // 내가 넣어줄 값
   images: [], // 내가 넣어줄 값
-  contens: data.contens, // 내가 넣어줄 값
+  content: data.content, // 내가 넣어줄 값
   category: data.category, // 내가 넣어줄 값
   tprice: data.tprice, // 내가 넣어줄 값
   division: data.division, // 내가 넣어줄 값
@@ -29,6 +29,7 @@ export const dummyDetailBookPost: articleDetailInterface = {
     wishCount: 5,
   },
   title: '흥부와 놀부',
+  content: '한번밖에 안읽은 책입니다. 상태 깨끗하고요.',
   writeDate: new Date('2020-10-11'),
   rprice: 13000,
   tprice: 13000,

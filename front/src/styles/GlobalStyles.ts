@@ -8,6 +8,10 @@ const GlobalStyle = createGlobalStyle`
   * {
     box-sizing: border-box;
   }
+  a {
+    color: inherit;
+    text-decoration: none
+  }
 `;
 
 export default GlobalStyle;
