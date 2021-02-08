@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { NavLink, RouteComponentProps, useParams } from 'react-router-dom';
 import styled from 'styled-components';
-import { NavLink, RouteComponentProps } from 'react-router-dom';
+import { loadDetailBookPostRequest } from './detailViewSlice';
 import DetailPostContent from './DetailPostContent';
 
 const DetailPostViewContainer = styled.div`
@@ -19,13 +21,26 @@ const Header = styled.div`
 `;
 
 function DetailPostView({ history }: RouteComponentProps):JSX.Element {
+  const dispatch = useDispatch();
+  const { detailBookPost } = useSelector((state) => state.detailViewSlice);
+  const id = useParams();
+
   const goback = () => {
     history.goBack();
   };
+
+  useEffect(() => {
+    dispatch(loadDetailBookPostRequest(id));
+  }, [dispatch, id]);
+
   return (
     <DetailPostViewContainer>
-      <NavLink to="home" onClick={goback}><Header><img src="/images/icons/back.png" alt="back_icon" /></Header></NavLink>
-      <DetailPostContent />
+      <NavLink to="home" onClick={goback}>
+        <Header>
+          <img src="/images/icons/back.png" alt="back_icon" />
+        </Header>
+      </NavLink>
+      {detailBookPost !== null ? <DetailPostContent /> : <div>Loading...</div>}
     </DetailPostViewContainer>
   );
 }

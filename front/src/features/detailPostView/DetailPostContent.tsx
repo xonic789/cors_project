@@ -51,6 +51,19 @@ const Category = styled.div`
   font-size: 13px;
   color: #919191;
 `;
+const Thumbnail = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #e8e8e8;
+  color: #3960a6;
+  font-weight: 700;
+  border-radius: 5px;
+  & img {
+    width: 80px;
+    margin-right: 20px;
+  }
+`;
 const Content = styled.div`
   padding: 20px 0;
 `;
@@ -116,18 +129,12 @@ const UploadeTime = styled.div`
 function DetailPostContent(): JSX.Element {
   const [heart, setHeart] = useState(false);
   const { detailBookPost } = useSelector((state) => state.detailViewSlice);
-  const images = [
-    'https://i.pinimg.com/originals/14/42/80/144280730d980a74790187079c376f0c.jpg',
-    'https://i.pinimg.com/originals/80/37/6e/80376e91064ee65b96f075438d40f104.jpg',
-    'https://pgnqdrjultom1827145.cdn.ntruss.com/img/ef/a2/efa2dd37b944994045f508ea57846fa32d034b1dc5b90a5b84961e9a8af74fda_v1.jpg',
-  ];
   const HandleHeartButton = () => {
     setHeart(!heart);
   };
-  console.log(detailBookPost);
   return (
     <>
-      <ImageSlide images={images} />
+      <ImageSlide images={detailBookPost.image} />
       <ContentWrapper>
         <ContentTop>
           <ProfileWrapper>
@@ -140,6 +147,10 @@ function DetailPostContent(): JSX.Element {
           <ContentTitle>{detailBookPost.title}</ContentTitle>
           <Category>{CategoryFormatUtil(detailBookPost.category)}</Category>
           <UploadeTime>9초전</UploadeTime>
+          <Thumbnail>
+            <img src={detailBookPost.thumbnail} alt="thumnail" />
+            <div>원가: {detailBookPost.tprice} 원</div>
+          </Thumbnail>
           <Content>
             {detailBookPost.content}
           </Content>
@@ -151,7 +162,7 @@ function DetailPostContent(): JSX.Element {
           <HeartButton onClick={HandleHeartButton}>
             <img src={heart ? '/images/icons/heart_active.png' : '/images/icons/heart.png'} alt="heartButton" />
           </HeartButton>
-          <Price>12,000원</Price>
+          <Price>{detailBookPost.rprice} 원</Price>
           <ChattingButton>채팅하기</ChattingButton>
         </ContentBottom>
       </ContentWrapper>

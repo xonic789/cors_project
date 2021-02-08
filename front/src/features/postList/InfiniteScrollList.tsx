@@ -1,19 +1,14 @@
-import React, { useCallback } from 'react';
-import { InfiniteLoader, List, AutoSizer } from 'react-virtualized';
+import React from 'react';
+import { List, AutoSizer } from 'react-virtualized';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
-import { loadDetailBookPostRequest } from '../detailPostView/detailViewSlice';
-import { loadScrollBookPostRequest, loadBookPostRequest } from './postSlice';
+import { loadScrollBookPostRequest } from './postSlice';
 
 interface IndexInterface {
   index: number;
   style?: any;
-}
-interface loadMoreRowsInterface {
-  startIndex: number;
-  stopIndex: number;
 }
 interface OnScrollParams {
   clientHeight: number;
@@ -57,9 +52,7 @@ const Categoty = styled.div`
 function InfiniteScrollList(): JSX.Element {
   const dispatch = useDispatch();
   const { bookPost, hasMorePost, isLoadScrollBookPostLoading } = useSelector((state) => state.postSlice);
-  const onLoadDetail = useCallback((id) => {
-    dispatch(loadDetailBookPostRequest(id));
-  }, [dispatch]);
+
   const scrollListener = (params:OnScrollParams) => {
     if (params.scrollTop + params.clientHeight >= params.scrollHeight - 300) {
       console.log(hasMorePost, !isLoadScrollBookPostLoading);
@@ -68,11 +61,12 @@ function InfiniteScrollList(): JSX.Element {
       }
     }
   };
+
   const rowRanderer = ({ index, style }: IndexInterface) => {
     const post = bookPost[index];
     return (
       <div style={style}>
-        <NavLink to={`post/${post.articleId}`} onClick={() => onLoadDetail(post.articleId)}>
+        <NavLink to={`post/${post.articleId}`}>
           <Content key={post.articleId}>
             <img src={post.image} alt="" />
             <ContentExplanation>
@@ -85,6 +79,7 @@ function InfiniteScrollList(): JSX.Element {
       </div>
     );
   };
+
   return (
     <ListWrapper>
       <AutoSizer disableHeight>
