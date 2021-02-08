@@ -5,6 +5,7 @@ import AppLayout from '../../components/AppLayout';
 import Header from './Header';
 import { loadBookPostRequest } from './postSlice';
 import InfiniteScrollList from './InfiniteScrollList';
+import AddPostButton from './AddPostButton';
 
 const PostListWrapper = styled.div`
 `;
@@ -17,6 +18,7 @@ function PostList(): JSX.Element {
     <AppLayout>
       <PostListWrapper>
         <Header />
+        <AddPostButton />
         <InfiniteScrollList />
       </PostListWrapper>
     </AppLayout>
