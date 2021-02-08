@@ -28,18 +28,18 @@ export const dummyDetailBookPost: articleDetailInterface = {
     views: 3,
     wishCount: 5,
   },
-  title: '흥부와 놀부',
+  title: '이것이 MYSQL 이다',
   content: '한번밖에 안읽은 책입니다. 상태 깨끗하고요.',
   writeDate: new Date('2020-10-11'),
   rprice: 13000,
-  tprice: 13000,
+  tprice: 28000,
   progress: 'POSTING',
   category: {
-    cid: 2435, oneDepth: '외국도서', twoDepth: '요리', threeDepth: '가정요리', fourDepth: '', fiveDepth: '',
+    cid: 2435, oneDepth: '국내도서', twoDepth: '자기계발', threeDepth: 'IT서적', fourDepth: '', fiveDepth: '',
   },
   division: 'SALE',
-  thumbnail: faker.random.image(),
-  image: [faker.random.image(), faker.random.image(), faker.random.image()],
+  thumbnail: 'http://image.yes24.com/momo/TopCate3025/MidCate007/302460746.jpg',
+  image: ['https://blog.kakaocdn.net/dn/28NKv/btqFjFQr9pe/n0TKtuuV3zmBSTF1olKqIK/img.jpg', 'https://www.hanbit.co.kr/data/editor/20200706083421_vfsgqsvu.jpg', 'https://www.hanbit.co.kr/data/editor/20200705234134_skcbzgms.jpg'],
 };
 export const generateDummyPost = (Postnumber: number) => Array(Postnumber).fill(0).map(() => (
   {
