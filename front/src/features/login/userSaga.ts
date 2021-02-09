@@ -1,5 +1,4 @@
-import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
-
+import { all, call, fork, put, takeLatest, getContext } from 'redux-saga/effects';
 import {
   logoutAsync,
   modifyProfileAsync,
@@ -25,14 +24,16 @@ import {
 } from './userSlice';
 import { modifyProfileInterface } from '../../interfaces/UserInterface';
 
-function* postLoginRequestSaga(action: { payload: { email: string, passwd: string } }) {
+function* postLoginRequestSaga(action: { payload: { user: { email: string, passwd: string }, history: any } }) {
   try {
-    const loginUser = yield call(postLoginAsync, action.payload);
-    console.log(loginUser);
+    const loginUser = yield call(postLoginAsync, action.payload.user);
+
     yield put({
       type: postLoginRequestSuccess,
       payload: loginUser,
     });
+
+    action.payload.history.push('/home');
   } catch (error) {
     yield put({
       type: postLoginRequestError,

@@ -30,13 +30,8 @@ const TitleBox = styled.div`
 
 const Logo = styled.img`
   width: auto;
-  height: 10vw;
+  height: 18vw;
   margin-right: 0.5em;
-`;
-
-const Title = styled.h1`
-  font-size: 10vw;
-  color: #3162C7;
 `;
 
 const LinkBox = styled.div`
@@ -59,8 +54,7 @@ function Login():JSX.Element {
     <Wrapper>
       <Layout>
         <TitleBox>
-          <Logo src="/images/icons/logo.jpg" />
-          <Title>코스마켓</Title>
+          <Logo src="/images/icons/title_logo.jpg" />
         </TitleBox>
         <LoginForm />
         <LinkBox>

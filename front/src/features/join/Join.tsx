@@ -97,7 +97,7 @@ const CertificationRequest = styled.button`
   font-size: 3vw;
   font-weight: bold;
   padding: 1em 1.5em;
-  background: #6f96e9;
+  background: #265290;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -130,7 +130,7 @@ const CertificationButton = styled.button`
   font-size: 4vw;
   font-weight: bold;
   padding: 0.5em 1em;
-  background: #6f96e9;
+  background: #265290;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -196,7 +196,7 @@ const AddressSearchInput = styled.input`
 `;
 const AddressSearchButton = styled.button`
   padding: 0.7em;
-  background: #6f96e9;
+  background: #265290;
   color: #fff;
   font-weight: bold;
   border: none;
@@ -225,7 +225,7 @@ const AgreeCheckBox = styled.img`
 `;
 const AgreeText = styled.div`
   & span {
-    color: #6f96e9;
+    color: #265290;
   }
 `;
 
@@ -256,7 +256,7 @@ const JoinButton = styled.button`
   padding: 0.8em 0;
   text-align: center;
   color: #fff;
-  background: #6f96e9;
+  background: #265290;
   border: none;
   outline: none;
   margin-bottom: 1.5em;

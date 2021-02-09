@@ -28,9 +28,9 @@ const Input = styled.input`
   font-size: 4.5vw;
   padding: 0.8em 1.3em;
   outline: none;
-  border: 2px solid #3162C788;
+  border: 2px solid #3960a688;
   border-radius: 8px;
-  box-shadow: 5px 5px 10px #3162C755;
+  box-shadow: 5px 5px 10px #3960a655;
   &:not(:last-child) {
     margin-bottom: 1em;
   }
@@ -40,7 +40,7 @@ const Button = styled.button`
   width: 18em;
   text-align: center;
   padding: 1em 0;
-  background: #6F96E9;
+  background: #3960a6;
   font-weight: bold;
   color: #FFF;
   font-size: 4.5vw;
@@ -66,9 +66,11 @@ function LoginForm(): JSX.Element {
     });
   };
 
+  const history = useHistory();
+
   const onLogin = (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(postLoginRequest({ email: inputs.email, passwd: inputs.passwd }));
+    dispatch(postLoginRequest({ user: { email: inputs.email, passwd: inputs.passwd }, history }));
   };
 
   return (
