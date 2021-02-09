@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeLatest, getContext } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   logoutAsync,
   modifyProfileAsync,
@@ -14,11 +14,8 @@ import {
   postLogoutRequestSuccess,
   postLogoutRequestError,
   postModifyProfileRequest,
-  getWishListRequest,
   postAddWishListRequest,
   postRemoveWishListRequest,
-  getMySaleArticleRequest,
-  getMyPurchaseArticleRequest,
   postModifyProfileRequestError,
   postModifyProfileRequestSuccess,
 } from './userSlice';
@@ -89,24 +86,12 @@ function* postModifyProfileRequestSaga(action: {payload: modifyProfileInterface}
   }
 }
 
-function* getWishListRequestSaga() {
-  yield console.log('찜목록 불러오기');
-}
-
 function* postAddWishListRequestSaga() {
   yield console.log('찜하기');
 }
 
 function* postRemoveWishListRequestSaga() {
   yield console.log('찜 해제하기');
-}
-
-function* getMySaleArticleRequestSaga() {
-  yield console.log('내 판매글 불러오기');
-}
-
-function* getMyPurchaseArticleRequestSaga() {
-  yield console.log('내 구매글 불러오기');
 }
 
 function* watchLogin(): Generator {
@@ -120,14 +105,8 @@ function* watchProfile(): Generator {
 }
 
 function* watchWishList(): Generator {
-  yield takeLatest(getWishListRequest, getWishListRequestSaga);
   yield takeLatest(postAddWishListRequest, postAddWishListRequestSaga);
   yield takeLatest(postRemoveWishListRequest, postRemoveWishListRequestSaga);
-}
-
-function* watchMyArticles(): Generator {
-  yield takeLatest(getMySaleArticleRequest, getMySaleArticleRequestSaga);
-  yield takeLatest(getMyPurchaseArticleRequest, getMyPurchaseArticleRequestSaga);
 }
 
 export default function* loginSaga(): Generator {
@@ -135,6 +114,5 @@ export default function* loginSaga(): Generator {
     fork(watchLogin),
     fork(watchProfile),
     fork(watchWishList),
-    fork(watchMyArticles),
   ]);
 }
