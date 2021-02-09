@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { RootStateOrAny, useSelector } from 'react-redux';
 import LoginForm from './LoginForm';
 import SocialLogin from './SocialLogin';
 
@@ -30,13 +29,9 @@ const TitleBox = styled.div`
 `;
 
 const Logo = styled.img`
-  width: 10vw;
-  height: 10vw;
-`;
-
-const Title = styled.h1`
-  font-size: 10vw;
-  color: #3162C7;
+  width: auto;
+  height: 18vw;
+  margin-right: 0.5em;
 `;
 
 const LinkBox = styled.div`
@@ -55,24 +50,11 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
-  const {
-    loginSucceed,
-  } = useSelector((state: RootStateOrAny) => state.LoginSlice);
-
-  const history = useHistory();
-
-  useEffect(() => {
-    if (loginSucceed === true) {
-      history.push('/home');
-    }
-  }, [loginSucceed, history]);
-
   return (
     <Wrapper>
       <Layout>
         <TitleBox>
-          <Logo />
-          <Title>코스마켓</Title>
+          <Logo src="/images/icons/title_logo.jpg" />
         </TitleBox>
         <LoginForm />
         <LinkBox>
