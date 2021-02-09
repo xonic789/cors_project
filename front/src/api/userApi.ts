@@ -27,7 +27,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
 
 export function socialLoginAsync(social: string): Promise<AxiosResponse> {
   return axios({
-    method: 'post',
+    method: 'get',
     url: `/oauth2/authorization/${social}`,
   }).then((result) => result.data);
 }

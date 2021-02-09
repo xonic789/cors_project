@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeLatest, getContext } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   logoutAsync,
   modifyProfileAsync,
