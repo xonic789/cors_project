@@ -6,6 +6,9 @@ const FormLayout = styled.form`
   flex-direction: column;
   align-items: center;
   font-size: 4vw;
+  @media screen and (min-width: 430px) {
+    font-size: 17.216px;
+  }
 `;
 
 const Header = styled.header`
@@ -19,6 +22,12 @@ const Header = styled.header`
       width: 100%;
       font-size: 4.5vw;
       padding: 1.5em;
+  }
+  @media screen and (min-width: 430px) {
+    width: 430.4px;
+    & h1 {
+      font-size: 19.368px;
+    }
   }
 `;
 
@@ -39,6 +48,9 @@ const ModifyButton = styled.button`
   border-radius: 50px;
   color: #3162C7;
   background: none;
+  @media screen and (min-width: 430px) {
+    font-size: 12.912px;
+  }
 `;
 
 const ImageBox = styled.div`
@@ -47,12 +59,18 @@ const ImageBox = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 2.5em;
+  @media screen and (min-width: 430px) {
+    width: 430.4px;
+  }
 `;
 
 const BackgroundImg = styled.div`
   width: 100%;
   height: 11em;
   background: #000;
+  @media screen and (min-width: 430px) {
+    width: 430.4px;
+  }
 `;
 
 const ProfileImg = styled.div`
@@ -69,6 +87,9 @@ const InputBox = styled.div`
   flex-direction: column;
   width: 90vw;
   margin-bottom: 2em;
+  @media screen and (min-width: 430px) {
+    width: 387.350px;
+  }
 `;
 
 const InputGroup = styled.div`
@@ -87,6 +108,15 @@ const InputGroup = styled.div`
 
   &:not(:last-child) {
       margin-bottom: 0.5em;
+  }
+
+  @media screen and (min-width: 430px) {
+    & label {
+      font-size: 15.064px;
+    }
+    & p {
+      font-size: 12.912px;
+    }
   }
 `;
 
@@ -115,6 +145,12 @@ const Input = styled.div`
       height: 1.5em;
       margin-right: 1em;
   }
+
+  @media screen and (min-width: 430px) {
+    & input {
+      font-size: 17.216px;
+    }
+  }
 `;
 
 const RemoveBox = styled.div`
@@ -135,6 +171,16 @@ const RemoveBox = styled.div`
         border: none;
         outline: none;
         text-decoration: underline;
+    }
+
+    @media screen and (min-width: 430px) {
+      width: 387.35px;
+      & p {
+        font-size: 15.064px;
+      }
+      & button {
+        font-size: 16.35px;
+      }
     }
 `;
 

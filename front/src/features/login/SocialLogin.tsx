@@ -8,12 +8,20 @@ const SocialLoginBox = styled.div`
   font-size: 4.5vw;
   display: flex;
   justify-content: space-between;
+  @media screen and (min-width: 460px) {
+    width: 222.7px;
+    font-size: 20px;
+  }
 `;
 
 const SocialItem = styled.img`
   width: 2.5em;
   height: 2.5em;
   border-radius: 10px;
+  @media screen and (min-width: 460px) {
+    width: 50px;
+    height: 50px;
+  }
 `;
 
 function SocialLogin():JSX.Element {
