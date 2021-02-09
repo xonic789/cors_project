@@ -5,7 +5,6 @@ import DaumPostCode, { AddressData } from 'react-daum-postcode';
 import { emailCertificationAsync, emailDuplicationAsync, joinRequestAsync, nicknameDuplicationAsync } from '../../api/joinApi';
 
 const Positional = styled.div`
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -17,6 +16,7 @@ const Positional = styled.div`
 `;
 
 const Header = styled.header`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -29,6 +29,7 @@ const Header = styled.header`
     font-weight: 400;
   }
   @media screen and (min-width: 460px) {
+    width: 460px;
     & h1 {
     font-size: 20px;
   }
