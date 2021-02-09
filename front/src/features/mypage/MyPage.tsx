@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import AppLayout from '../../components/AppLayout';
 
 const Wrapper = styled.div`
   position: relative;
@@ -145,50 +146,52 @@ const UtilLink = styled(Link)`
 
 function MyPage():JSX.Element {
   return (
-    <Wrapper>
-      <Layout>
-        <MyInfo>
-          <ProfileImg src="/images/icons/my.png" />
-          <ProfileText>
-            <MyName>로그인/회원가입하기<SpanImg src="/images/icons/back.png" /></MyName>
-            <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>
-          </ProfileText>
-        </MyInfo>
-        <ProfileBtn to="/mypage/modify">프로필 수정</ProfileBtn>
-        <MyMenu>
-          <MyMenuItem>
-            <MyMenuLink to="/mypage/sales">
-              <MenuImgBox>
-                <MenuImg src="/images/icons/sell_active.png" />
-              </MenuImgBox>
-              <MenuText>판매내역</MenuText>
-            </MyMenuLink>
-          </MyMenuItem>
-          <MyMenuItem>
-            <MyMenuLink to="/mypage/purchase">
-              <MenuImgBox>
-                <MenuImg src="/images/icons/pur_active.png" />
-              </MenuImgBox>
-              <MenuText>구매내역</MenuText>
-            </MyMenuLink>
-          </MyMenuItem>
-          <MyMenuItem>
-            <MyMenuLink to="/mypage/wishs">
-              <MenuImgBox>
-                <MenuImg src="/images/icons/heart_blue.png" />
-              </MenuImgBox>
-              <MenuText>찜목록</MenuText>
-            </MyMenuLink>
-          </MyMenuItem>
-        </MyMenu>
-        <UtilMenuList>
-          <UtilMenuItem><UtilLink to="/question">문의하기</UtilLink></UtilMenuItem>
-          <UtilMenuItem><UtilLink to="/notice">공지사항</UtilLink></UtilMenuItem>
-          <UtilMenuItem><UtilLink to="/review">한줄평</UtilLink></UtilMenuItem>
-          <UtilMenuItem><UtilLink to="/mymarket">나의마켓</UtilLink></UtilMenuItem>
-        </UtilMenuList>
-      </Layout>
-    </Wrapper>
+    <AppLayout>
+      <Wrapper>
+        <Layout>
+          <MyInfo>
+            <ProfileImg src="/images/icons/my.png" />
+            <ProfileText>
+              <MyName>로그인/회원가입하기<SpanImg src="/images/icons/back.png" /></MyName>
+              <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>
+            </ProfileText>
+          </MyInfo>
+          <ProfileBtn to="/mypage/modify">프로필 수정</ProfileBtn>
+          <MyMenu>
+            <MyMenuItem>
+              <MyMenuLink to="/mypage/sales">
+                <MenuImgBox>
+                  <MenuImg src="/images/icons/sell_active.png" />
+                </MenuImgBox>
+                <MenuText>판매내역</MenuText>
+              </MyMenuLink>
+            </MyMenuItem>
+            <MyMenuItem>
+              <MyMenuLink to="/mypage/purchase">
+                <MenuImgBox>
+                  <MenuImg src="/images/icons/pur_active.png" />
+                </MenuImgBox>
+                <MenuText>구매내역</MenuText>
+              </MyMenuLink>
+            </MyMenuItem>
+            <MyMenuItem>
+              <MyMenuLink to="/mypage/wishs">
+                <MenuImgBox>
+                  <MenuImg src="/images/icons/heart_blue.png" />
+                </MenuImgBox>
+                <MenuText>찜목록</MenuText>
+              </MyMenuLink>
+            </MyMenuItem>
+          </MyMenu>
+          <UtilMenuList>
+            <UtilMenuItem><UtilLink to="/question">문의하기</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/notice">공지사항</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/review">한줄평</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/mymarket">나의마켓</UtilLink></UtilMenuItem>
+          </UtilMenuList>
+        </Layout>
+      </Wrapper>
+    </AppLayout>
   );
 }
 

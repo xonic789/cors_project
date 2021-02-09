@@ -59,7 +59,7 @@ function AppLayout({ children }: AppLayoutInterface):JSX.Element {
     ['/images/icons/home.png', '/images/icons/home_active.png', '홈', 'home'],
     ['/../images/icons/chat.png', '/images/icons/chat_active.png', '채팅', 'chatting'],
     ['/../images/icons/market.png', '/images/icons/market_active.png', '마켓', 'market'],
-    ['/../images/icons/my.png', '/images/icons/my_active.png', 'MY', 'my'],
+    ['/../images/icons/my.png', '/images/icons/my_active.png', 'MY', 'mypage'],
   ];
   const onClickMenuHandler = (id:number) => {
     setActive(id);
