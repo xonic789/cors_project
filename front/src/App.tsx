@@ -5,6 +5,7 @@ import DetailPostView from './features/detailPostView/DetailPostView';
 import Login from './features/login/Login';
 import PostList from './features/postList/PostList';
 import Join from './features/join/Join';
+import ModifyProfile from './features/modifyProfile/ModifyProfile';
 import GlobalStyle from './styles/GlobalStyles';
 
 function App():JSX.Element {
@@ -19,6 +20,7 @@ function App():JSX.Element {
             <Route path="/post/:id" exact component={DetailPostView} />
             <Route path="/addPost/:division" exact component={AddPostPage} />
             <Route path="/join" exact component={Join} />
+            <Route path="/mypage/modify" exact component={ModifyProfile} />
           </Switch>
         </HashRouter>
       </div>
