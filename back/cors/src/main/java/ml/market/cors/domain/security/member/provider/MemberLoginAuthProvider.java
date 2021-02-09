@@ -38,16 +38,13 @@ public class MemberLoginAuthProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String email = (String) authentication.getPrincipal();
         String passwd = (String) authentication.getCredentials();
-        MemberDAO memberDAO = null;
-        memberDAO = memberLoginAuthService.loadUserByUsername(email);
+        MemberDAO memberDAO = memberLoginAuthService.loadUserByUsername(email);
         String orgPasswd =  memberDAO.getPassword();
-
         boolean bResult = comparePassword(passwd, orgPasswd);
         if(!bResult) {
             throw new BadCredentialsException(email);
         }
-
-        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(memberDAO.getMember_id(), passwd, memberDAO.getAuthorities());
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(memberDAO, passwd, memberDAO.getAuthorities());
         return token;
     }
 
@@ -57,7 +54,6 @@ public class MemberLoginAuthProvider implements AuthenticationProvider {
         if(aClass.equals(authentication)){
             return true;
         }
-
         return false;
     }
 }

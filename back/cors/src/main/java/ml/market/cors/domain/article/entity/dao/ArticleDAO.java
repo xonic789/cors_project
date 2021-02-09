@@ -80,7 +80,6 @@ public class ArticleDAO {
         this.progress = progress;
         this.tprice = tprice;
         this.division = division;
-        this.member = member;
         this.image_info=image_info;
         this.title=title;
         this.member=memberDAO;
@@ -111,7 +110,7 @@ public class ArticleDAO {
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),
                 articleForm.getRprice(), LocalDateTime.now(ZoneId.of("Asia/Seoul")),
-                articleForm.getProgress(), articleForm.getTprice(),
+                Progress.POSTING, articleForm.getTprice(),
                 articleForm.getDivision(),
                 new Image_infoDAO(articleForm.getImage(),articleForm.getDivision()),
                 articleForm.getTitle(),member,book_categoryDAO);
@@ -122,7 +121,7 @@ public class ArticleDAO {
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),
                 articleForm.getRprice(), LocalDateTime.now(ZoneId.of("Asia/Seoul")),
-                articleForm.getProgress(), articleForm.getTprice(),
+                Progress.POSTING, articleForm.getTprice(),
                 articleForm.getDivision(),
                 new Image_infoDAO(articleForm.getImage(),articleForm.getDivision()),
                 articleForm.getTitle(),member,book_categoryDAO,market);
@@ -130,7 +129,6 @@ public class ArticleDAO {
 
     public ArticleDAO updateArticle(ArticleForm articleForm,Image_infoDAO image_info,CountDAO countDAO) {
         this.content = articleForm.getContent();
-        this.progress = articleForm.getProgress();
         this.tprice = articleForm.getTprice();
         this.division = articleForm.getDivision();
         this.image_info=image_info;

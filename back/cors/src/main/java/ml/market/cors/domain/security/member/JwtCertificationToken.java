@@ -9,15 +9,14 @@ import java.util.List;
 public class JwtCertificationToken implements Authentication {
     private String email;
 
+    private long id;
+
     private List roles;
 
-    public JwtCertificationToken(String email) {
-        this.email = email;
-    }
-
-    public JwtCertificationToken(String email, List roles) {
+    public JwtCertificationToken(long id, String email, List roles) {
         this.email = email;
         this.roles = roles;
+        this.id = id;
     }
 
     @Override
@@ -27,7 +26,7 @@ public class JwtCertificationToken implements Authentication {
 
     @Override
     public Object getCredentials() {
-        return null;
+        return this.id;
     }
 
     @Override
@@ -35,6 +34,10 @@ public class JwtCertificationToken implements Authentication {
         return null;
     }
 
+    /*
+    싱글톤으로 객체가 반환되면서 멤버필드에 동기화 문제가 발생한다.
+    리팩토링 하면서 고친다.
+     */
     @Override
     public Object getPrincipal() {
         return this;

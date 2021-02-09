@@ -21,16 +21,8 @@ public class ArticleForm {
     private String image;
     private Long cid;
     private MultipartFile[] file;
-
-
     private int rprice;
-
-    private LocalDateTime writeDate;
-
-    private Progress progress;
-
     private int tprice;
-
     private Division division;
 
 
