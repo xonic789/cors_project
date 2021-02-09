@@ -1,13 +1,20 @@
 import axios, { AxiosResponse } from 'axios';
-import { addPostInterface } from '../interfaces/PostList.interface';
+import { AddBookPostInterface } from '../interfaces/PostList.interface';
 
 // 일반사용자 판매/구매글 추가
-export function addBookPostAPI(data: addPostInterface):Promise<AxiosResponse> {
-  return axios.post('api/article', data);
+export function addBookPostAPI(data: AddBookPostInterface):Promise<AxiosResponse> {
+  return axios.post('http://local.corsmarket.ml/api/article', data);
+}
+export function deleteBookPostAPI(id: number):Promise<AxiosResponse> {
+  return axios.delete(`http://local.corsmarket.ml/api/article/delete/${id}`);
 }
 // 일반사용자 판매/구매글 리스트 불러오기
-export function getBookPostAPI(division:string, categoryFilter:string):Promise<AxiosResponse> {
-  return axios.get(`api/articles/${division}`, { params: { category: categoryFilter } });
+export function getBookPostAPI(filtering:{ division:string, categoryFilter:string }, id: number):Promise<AxiosResponse> {
+  return axios.get(`http://local.corsmarket.ml/api/articles/${filtering.division}`, { params: { category: filtering.categoryFilter, lastId: id } });
+}
+// 일반사용자 판매/구매글 상세페이지 불러오기
+export function getBookPostDetailViewAPI(postId: number):Promise<AxiosResponse> {
+  return axios.get(`http://local.corsmarket.ml/api/article/${postId}`);
 }
 // 마켓리스트 불러오기
 export function getMarketListAPI():Promise<AxiosResponse> {

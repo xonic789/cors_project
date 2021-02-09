@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import CategoryMenu from './CategoryMenu';
 import { loadBookPostRequest } from './postSlice';
@@ -15,6 +15,9 @@ const HeaderWrapper = styled.div`
   left: 0;
   right: 0;
   background-color: white;
+  max-width: 600px;
+  margin: 0 auto;
+  z-index: 50;
 `;
 const TopWrapper = styled.div`
   display: flex;
@@ -40,7 +43,7 @@ const LogoWrapper = styled.div`
   flex-basis: 2;
   font-size: 25px;
   & img{
-    width: 50px;
+    height: 40px;
   }
 `;
 const SearchInput = styled.div`
@@ -49,7 +52,7 @@ const SearchInput = styled.div`
   justify-content: space-between;
   padding: 5px;
   background-color: #e9e9e9;
-  width: 85vw;
+  width: 85%;
   margin: auto;
   & input {
     color: white;
@@ -75,35 +78,36 @@ const PostTabItem = styled.li<PostTabItemInterface>`
   border-bottom: ${(props) => props.tab === props.active && '3px solid #3960a6'};
 `;
 
-const Header: React.FC = () => {
+function Header(): JSX.Element {
   const dispatch = useDispatch();
   const [openMenu, setOpenMenu] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
+  const { filtering } = useSelector((state) => state.postSlice);
   const onOpenMenuHandler = useCallback((e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setOpenMenu(true);
   }, []);
-  const onCloseMenuHandler = useCallback((e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
+  const onCloseMenuHandler = useCallback(() => {
+    setTabIndex(0);
     setOpenMenu(false);
   }, []);
   const onClickSalePostTab = useCallback(() => {
     setTabIndex(0);
-    dispatch(loadBookPostRequest('sales'));
-  }, [dispatch]);
+    dispatch(loadBookPostRequest({ division: 'sales', category: filtering.category }));
+  }, [dispatch, filtering.category]);
   const onClickPurchasPostTab = useCallback(() => {
     setTabIndex(1);
-    dispatch(loadBookPostRequest({ division: 'purchase' }));
-  }, [dispatch]);
+    dispatch(loadBookPostRequest({ division: 'purchase', category: filtering.category }));
+  }, [dispatch, filtering.category]);
   return (
     <HeaderWrapper>
-      {openMenu && <CategoryMenu onMenuClose={onCloseMenuHandler} isOppend={openMenu} />}
+      {openMenu && <CategoryMenu onMenuClose={onCloseMenuHandler} />}
       <TopWrapper>
         <BuggerMenu onClick={onOpenMenuHandler}>
           <img src="/images/icons/category.png" alt="menu_icon" />
         </BuggerMenu>
         <LogoWrapper>
-          <img src="/images/icons/logo.png" alt="logo" />
+          <img src="/images/icons/logo.jpeg" alt="logo" />
         </LogoWrapper>
       </TopWrapper>
       <SearchInput>
@@ -116,6 +120,6 @@ const Header: React.FC = () => {
       </PostTab>
     </HeaderWrapper>
   );
-};
+}
 
 export default Header;
