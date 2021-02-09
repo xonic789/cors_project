@@ -5,8 +5,8 @@ import ml.market.cors.domain.article.entity.enums.Division;
 
 @Data
 public class ArticleSearchCondition {
-
     private Division division;
     private String category;
-
+    private Long lastId;
+    private String title;
 }

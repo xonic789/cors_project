@@ -1,6 +1,7 @@
 package ml.market.cors.domain.security.oauth.exception;
 
 import edu.umd.cs.findbugs.annotations.CleanupObligation;
+import org.apache.http.protocol.HTTP;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,6 @@ import java.io.IOException;
 public class ExceptionPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        response.setStatus(411);
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
 }

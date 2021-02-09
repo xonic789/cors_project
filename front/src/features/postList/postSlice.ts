@@ -1,44 +1,66 @@
 import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import PostList, { dummyBookPost } from './mockdata';
 import { articleInterface } from '../../interfaces/PostList.interface';
 
 const postSlice = createSlice({
   name: 'posts',
   initialState: {
     bookPost: [],
+    hasMorePost: true,
+    filtering: { division: 'sales', category: '' },
+
     isLoadBookPostLoading: false,
     isLoadBookPostDone: false,
     isLoadBookPostError: false,
-    isAddBookPostLoading: false,
-    isAddBookPostDone: false,
-    isAddBookPostError: null,
+
+    isLoadScrollBookPostLoading: false,
+    isLoadScrollPostDone: false,
+    isLoadScrollPostError: null,
+
+    isDeleteBookPostLoading: false,
+    isDeleteBookPostDone: false,
+    isDeleteBookPostError: null,
   },
   reducers: {
     loadBookPostRequest(state, action) {
       state.isLoadBookPostLoading = true;
+      state.isLoadScrollBookPostLoading = false;
+      state.hasMorePost = true;
+      state.filtering.division = action.payload.division;
+      state.filtering.category = action.payload.category;
     },
     loadBookPostSuccess(state, action) {
       state.isLoadBookPostLoading = false;
       state.isLoadBookPostDone = true;
-      state.bookPost = action.payload.data;
+      state.bookPost = action.payload;
     },
     loadBookPostError(state, action) {
       state.isLoadBookPostLoading = false;
       state.isLoadBookPostError = action.payload.error;
     },
-    addBookPostRequest(state, action) {
-      state.isAddBookPostLoading = true;
-      state.isAddBookPostDone = false;
+    loadScrollBookPostRequest(state, action) {
+      state.isLoadScrollBookPostLoading = true;
     },
-    addBookPostSuccess(state, action) {
-      state.isAddBookPostLoading = false;
-      state.isAddBookPostDone = true;
-      // state.bookPost.unshift(dummyBookPost(action.payload));
+    loadScrollBookPostSuccess(state, action) {
+      state.isLoadScrollBookPostLoading = false;
+      state.isLoadScrollPostDone = true;
+      state.bookPost = state.bookPost.concat(action.payload);
+      state.hasMorePost = state.bookPost.length === 10;
     },
-    addBookPostError(state, action) {
-      state.isAddBookPostLoading = false;
-      state.isAddBookPostDone = false;
-      state.isAddBookPostError = action.payload.error;
+    loadScrollBookPostError(state, action) {
+      state.isLoadScrollBookPostLoading = false;
+      state.isLoadScrollPostError = action.payload.error;
+    },
+    deleteBookPostRequest(state, action) {
+      state.isDeleteBookPostLoading = true;
+    },
+    deleteBookPostSuccess(state, action) {
+      state.isDeleteBookPostLoading = false;
+      state.isDeleteBookPostDone = true;
+      state.bookPost.filter((post:articleInterface) => post.articleId !== action.payload);
+    },
+    deleteBookPostError(state, action) {
+      state.isDeleteBookPostLoading = false;
+      state.isDeleteBookPostError = action.payload.error;
     },
   },
 });
@@ -47,9 +69,12 @@ export const {
   loadBookPostRequest,
   loadBookPostSuccess,
   loadBookPostError,
-  addBookPostRequest,
-  addBookPostError,
-  addBookPostSuccess,
+  loadScrollBookPostRequest,
+  loadScrollBookPostSuccess,
+  loadScrollBookPostError,
+  deleteBookPostRequest,
+  deleteBookPostSuccess,
+  deleteBookPostError,
 } = postSlice.actions;
 
 export default postSlice.reducer;

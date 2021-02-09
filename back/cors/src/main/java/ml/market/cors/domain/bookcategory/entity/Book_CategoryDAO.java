@@ -28,18 +28,18 @@ public class Book_CategoryDAO {
     private List<ArticleDAO> articles = new ArrayList<>();
 
     @Column(name = "one_depth")
-    private String one_depth;
+    private String oneDepth;
 
     @Column(name = "two_depth")
-    private String two_depth;
+    private String twoDepth;
 
     @Column(name = "three_depth")
-    private String three_depth;
+    private String threeDepth;
 
     @Column(name = "four_depth")
-    private String four_depth;
+    private String fourDepth;
 
     @Column(name = "five_depth")
-    private String five_depth;
+    private String fiveDepth;
 
 }
