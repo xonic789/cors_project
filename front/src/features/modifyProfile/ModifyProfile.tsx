@@ -1,5 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { nicknameDuplicationAsync } from '../../api/joinApi';
+import { postModifyProfileRequest } from '../login/userSlice';
 
 const FormLayout = styled.form`
   display: flex;
@@ -32,6 +36,7 @@ const Header = styled.header`
 `;
 
 const BackImg = styled.img`
+  cursor: pointer;
   position: absolute;
   left: 1em;
   width: 2em;
@@ -39,6 +44,7 @@ const BackImg = styled.img`
 `;
 
 const ModifyButton = styled.button`
+  cursor: pointer;
   position: absolute;
   font-size: 3vw;
   right: 1em;
@@ -107,7 +113,7 @@ const InputGroup = styled.div`
   }
 
   &:not(:last-child) {
-      margin-bottom: 0.5em;
+      margin-bottom: 1em;
   }
 
   @media screen and (min-width: 430px) {
@@ -185,10 +191,200 @@ const RemoveBox = styled.div`
 `;
 
 function ModifyProfile():JSX.Element {
+  const { user } = useSelector((state) => state.userSlice);
+  const { nickname, profileImg } = user;
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  const [modifyInputs, setModifInputs] = useState({
+    nickname: {
+      value: '',
+      state: 'none',
+      message: '',
+      color: 'red',
+    },
+    passwd: {
+      value: '',
+      state: 'none',
+      message: '',
+      color: 'red',
+    },
+    newPasswd: {
+      value: '',
+      state: 'none',
+      message: '',
+      color: 'red',
+    },
+    newPasswdCheck: {
+      value: '',
+      state: 'none',
+      message: '',
+      color: 'red',
+    },
+  });
+
+  const onChangeInuts = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    let passwdChekInput: {
+      value: string,
+      state: string,
+      message: string,
+      color: string,
+    } = {
+      value: '',
+      state: '',
+      message: '',
+      color: '',
+    };
+
+    switch (name) {
+      case 'nickname':
+        if (value === nickname) {
+          setModifInputs({
+            ...modifyInputs,
+            nickname: {
+              ...modifyInputs.nickname,
+              value,
+              state: 'none',
+              message: '',
+            },
+          });
+        } else if (value.length < 4) {
+          setModifInputs({
+            ...modifyInputs,
+            nickname: {
+              value,
+              state: 'fail',
+              message: '닉네임을 4자 이상 입력해주세요.',
+              color: 'red',
+            },
+          });
+        } else {
+          setModifInputs({
+            ...modifyInputs,
+            nickname: {
+              ...modifyInputs.nickname,
+              value,
+              state: 'check',
+              message: '',
+            },
+          });
+        }
+        break;
+      case 'passwd':
+        setModifInputs({
+          ...modifyInputs,
+          passwd: {
+            ...modifyInputs.passwd,
+            value,
+            state: 'check',
+          },
+        });
+        break;
+      case 'newPasswd':
+        if (modifyInputs.newPasswdCheck.value !== '' && modifyInputs.newPasswdCheck.value !== value) {
+          passwdChekInput = {
+            ...modifyInputs.newPasswdCheck,
+            state: 'fail',
+            message: '비밀번호가 일치하지 않습니다.',
+            color: 'red',
+          };
+        } else {
+          passwdChekInput = {
+            ...modifyInputs.newPasswdCheck,
+            state: 'check',
+            message: '',
+          };
+        }
+        if (/^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/.test(value)) {
+          setModifInputs({
+            ...modifyInputs,
+            newPasswd: {
+              ...modifyInputs.newPasswd,
+              value,
+              state: 'check',
+              message: '',
+            },
+            newPasswdCheck: passwdChekInput,
+          });
+        } else {
+          setModifInputs({
+            ...modifyInputs,
+            newPasswd: {
+              value,
+              state: 'fail',
+              message: '8~20자의 영문 대소문자, 숫자, 특수문자 조합으로 설정해주세요.',
+              color: 'red',
+            },
+            newPasswdCheck: passwdChekInput,
+          });
+        }
+        break;
+      case 'newPasswdCheck':
+        if (modifyInputs.newPasswd.value === value) {
+          setModifInputs({
+            ...modifyInputs,
+            newPasswdCheck: {
+              ...modifyInputs.newPasswdCheck,
+              value,
+              state: 'check',
+              message: '',
+            },
+          });
+        } else {
+          setModifInputs({
+            ...modifyInputs,
+            newPasswdCheck: {
+              value,
+              state: 'fail',
+              message: '비밀번호가 일치하지 않습니다.',
+              color: 'red',
+            },
+          });
+        }
+        break;
+      default:
+        break;
+    }
+  };
+
+  const onSubmitModifyProfile = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (modifyInputs.nickname.state !== 'check') {
+      alert('닉네임을 확인해주세요.');
+    } else if (modifyInputs.passwd.state !== 'check') {
+      alert('비밀번호를 확인해주세요.');
+    } else if (modifyInputs.newPasswd.state !== 'check') {
+      alert('새비밀번호를 확인해주세요.');
+    } else if (modifyInputs.newPasswdCheck.state !== 'check') {
+      alert('비밀번호가 일치하지 않습니다.');
+    } else {
+      try {
+        await nicknameDuplicationAsync(modifyInputs.nickname.value);
+        dispatch(postModifyProfileRequest({
+          modifyProfile: { nickname: modifyInputs.nickname.value, passwd: modifyInputs.passwd.value, newPasswd: modifyInputs.newPasswd.value },
+          modifyInputs,
+          setModifInputs,
+        }));
+      } catch {
+        setModifInputs({
+          ...modifyInputs,
+          nickname: {
+            ...modifyInputs.nickname,
+            state: 'fail',
+            message: '이미 사용중인 닉네임입니다.',
+            color: 'red',
+          },
+        });
+      }
+    }
+  };
+
   return (
-    <FormLayout>
+    <FormLayout method="post" onSubmit={onSubmitModifyProfile}>
       <Header>
-        <BackImg src="/images/icons/back.png" />
+        <BackImg src="/images/icons/back.png" onClick={() => history.push('/mypage')} />
         <h1>프로필 편집</h1>
         <ModifyButton type="submit">완료</ModifyButton>
       </Header>
@@ -200,34 +396,34 @@ function ModifyProfile():JSX.Element {
         <InputGroup>
           <label htmlFor="nickname">닉네임</label>
           <Input>
-            <input type="text" id="nickname" name="nickname" />
+            <input type="text" onChange={onChangeInuts} id="nickname" name="nickname" value={modifyInputs.nickname.value} />
             <img src="/images/icons/none.png" alt="" />
           </Input>
-          <p>{null}</p>
+          <p style={{ color: modifyInputs.nickname.color }}>{modifyInputs.nickname.message}</p>
         </InputGroup>
         <InputGroup>
           <label htmlFor="passwd">현재 비밀번호</label>
           <Input>
-            <input id="passwd" name="passwd" type="password" />
+            <input id="passwd" name="passwd" onChange={onChangeInuts} type="password" value={modifyInputs.passwd.value} />
             <img src="/images/icons/none.png" alt="" />
           </Input>
-          <p>{null}</p>
+          <p style={{ color: modifyInputs.passwd.color }}>{modifyInputs.passwd.message}</p>
         </InputGroup>
         <InputGroup>
           <label htmlFor="newPasswd">새 비밀번호</label>
           <Input>
-            <input id="newPasswd" name="newPasswd" type="password" />
+            <input id="newPasswd" name="newPasswd" onChange={onChangeInuts} type="password" value={modifyInputs.newPasswd.value} />
             <img src="/images/icons/none.png" alt="" />
           </Input>
-          <p>{null}</p>
+          <p style={{ color: modifyInputs.newPasswd.color }}>{modifyInputs.newPasswd.message}</p>
         </InputGroup>
         <InputGroup>
           <label htmlFor="newPasswdCheck">새 비밀번호 확인</label>
           <Input>
-            <input id="newPasswdCheck" name="newPasswdCheck" type="password" />
+            <input id="newPasswdCheck" name="newPasswdCheck" onChange={onChangeInuts} type="password" value={modifyInputs.newPasswdCheck.value} />
             <img src="/images/icons/none.png" alt="" />
           </Input>
-          <p>{null}</p>
+          <p style={{ color: modifyInputs.newPasswdCheck.color }}>{modifyInputs.newPasswdCheck.message}</p>
         </InputGroup>
       </InputBox>
       <RemoveBox>

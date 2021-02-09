@@ -74,6 +74,7 @@ const userSlice = createSlice({
     postModifyProfileRequestSuccess: (state, action) => {
       state.isModifyProfileLoading = false;
       state.isModifyProfileSuccess = true;
+      state.user.nickname = action.payload;
     },
     postModifyProfileRequestError: (state, action) => {
       state.isModifyProfileLoading = false;

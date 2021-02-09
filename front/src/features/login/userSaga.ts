@@ -74,17 +74,27 @@ function* postLogoutRequestSaga() {
   }
 }
 
-function* postModifyProfileRequestSaga(action: {payload: modifyProfileInterface}) {
+function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: modifyProfileInterface, modifyInputs: any, setModifInputs: any}}) {
   try {
-    yield call(modifyProfileAsync, action.payload);
+    yield call(modifyProfileAsync, action.payload.modifyProfile);
 
     yield put({
       type: postModifyProfileRequestSuccess,
+      payload: action.payload.modifyProfile.nickname,
     });
   } catch (error) {
     yield put({
       type: postModifyProfileRequestError,
       payload: error,
+    });
+    action.payload.setModifInputs({
+      ...action.payload.modifyInputs,
+      passwd: {
+        ...action.payload.modifyInputs.passwd,
+        message: '비밀번호가 일치하지 않습니다.',
+        state: 'fail',
+        color: 'red',
+      },
     });
   }
 }
