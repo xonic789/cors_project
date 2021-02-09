@@ -11,6 +11,9 @@ const Positional = styled.div`
   align-items: center;
   height: 100vh;
   font-size: 4.5vw;
+  @media screen and (min-width: 460px) {
+    font-size: 20px;
+  }
 `;
 
 const Header = styled.header`
@@ -24,6 +27,11 @@ const Header = styled.header`
   & h1 {
     font-size: 4.5vw;
     font-weight: 400;
+  }
+  @media screen and (min-width: 460px) {
+    & h1 {
+    font-size: 20px;
+  }
   }
 `;
 
@@ -53,6 +61,9 @@ const JoinForm = styled.form`
   & > div:last-child {
     margin-bottom: 1.5em;
   }
+  @media screen and (min-width: 460px) {
+    width: 414px;
+  }
   `;
 
 const JoinInputBox = styled.div`
@@ -63,7 +74,12 @@ const JoinInputBox = styled.div`
     font-size: 3.5vw;
     margin-bottom: 0.5em;
   }
-  `;
+  @media screen and (min-width: 460px) {
+    & label {
+      font-size: 16.1px;
+    }
+  }
+`;
 
 const JoinInput = styled.div`
   position: relative;
@@ -82,6 +98,9 @@ const Input = styled.input`
   background: none;
   border: none;
   outline: none;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 
 const CheckLogo = styled.img`
@@ -97,11 +116,14 @@ const CertificationRequest = styled.button`
   font-size: 3vw;
   font-weight: bold;
   padding: 1em 1.5em;
-  background: #265290;
+  background: ;
   color: #fff;
   border: none;
   border-radius: 5px;
   outline: none;
+  @media screen and (min-width: 460px) {
+    font-size: 13.8px;
+  }
 `;
 
 const CertificationBox = styled.div`
@@ -125,21 +147,30 @@ const CertificationInput = styled.input`
   border-radius: 5px;
   border: none;
   outline: none;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 const CertificationButton = styled.button`
   font-size: 4vw;
   font-weight: bold;
   padding: 0.5em 1em;
-  background: #265290;
+  background: ;
   color: #fff;
   border: none;
   border-radius: 5px;
   outline: none;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 
 const InputMessage = styled.p`
   font-size: 2vw;
   margin-top: 1em;
+  @media screen and (min-width: 460px) {
+    font-size: 9.2px;
+  }
 `;
 
 const SearchModal = styled.div`
@@ -161,6 +192,9 @@ const CloseButton = styled.img`
   top: 0.4em;
   right: 0.4em;
   font-size: 6vw;
+  @media screen and (min-width: 460px) {
+    font-size: 27.6px;
+  }
 `;
 
 const AddressFormBox = styled.div`
@@ -175,6 +209,12 @@ const AddressFormBox = styled.div`
   }
   & ${JoinInput} {
     padding: 0.5em;
+  }
+
+  @media screen and (min-width: 460px) {
+    & label {
+      font-size: 16.1px;
+    }
   }
 `;
 
@@ -193,16 +233,22 @@ const AddressSearchInput = styled.input`
   border-radius: 5px;
   margin-right: 0.5em;
   font-size: 4vw;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 const AddressSearchButton = styled.button`
   padding: 0.7em;
-  background: #265290;
+  background: ;
   color: #fff;
   font-weight: bold;
   border: none;
   outline: none;
   border-radius: 5px;
   font-size: 3.5vw;
+  @media screen and (min-width: 460px) {
+    font-size: 16.1px;
+  }
 `;
 
 const AgreementBox = styled.div`
@@ -210,6 +256,9 @@ const AgreementBox = styled.div`
   flex-direction: column;
   width: 90vw;
   margin-bottom: 2.5em;
+  @media screen and (min-width: 460px) {
+    width: 414px;
+  }
 `;
 const AllAgreeBox = styled.div`
   display: flex;
@@ -217,6 +266,9 @@ const AllAgreeBox = styled.div`
   font-size: 4.5vw;
   font-weight: bold;
   margin-bottom: 1em;
+  @media screen and (min-width: 460px) {
+    font-size: 20px;
+  }
 `;
 const AgreeCheckBox = styled.img`
   width: 1.5em;
@@ -225,7 +277,7 @@ const AgreeCheckBox = styled.img`
 `;
 const AgreeText = styled.div`
   & span {
-    color: #265290;
+    color: ;
   }
 `;
 
@@ -235,6 +287,9 @@ const SubAgreeBox = styled.div`
   align-items: center;
   font-size: 4vw;
   margin-bottom: 1em;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 
 const AgreeDetail = styled.img`
@@ -256,10 +311,14 @@ const JoinButton = styled.button`
   padding: 0.8em 0;
   text-align: center;
   color: #fff;
-  background: #265290;
+  background: ;
   border: none;
   outline: none;
   margin-bottom: 1.5em;
+  @media screen and (min-width: 460px) {
+    width: 368px;
+    font-size: 20px;
+  }
 `;
 
 function Join():JSX.Element {
