@@ -34,6 +34,11 @@ const Input = styled.input`
   &:not(:last-child) {
     margin-bottom: 1em;
   }
+  @media screen and (min-width: 460px) {
+    font-size: 20px;
+    padding: 16px 26px;
+    margin-bottom: 20px;
+  }
 `;
 
 const Button = styled.button`
@@ -48,6 +53,11 @@ const Button = styled.button`
   border-radius: 200px;
   outline: none;
   margin-bottom: 1.2em;
+  @media screen and (min-width: 460px) {
+    font-size: 20px;
+    padding: 20px 0;
+    margin-bottom: 24px;
+  }
 `;
 
 function LoginForm(): JSX.Element {
