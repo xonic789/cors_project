@@ -1,11 +1,13 @@
 package ml.market.cors.domain.article.entity.dao;
 
+import lombok.Getter;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "wish_list")
+@Getter
 public class Wish_listDAO {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

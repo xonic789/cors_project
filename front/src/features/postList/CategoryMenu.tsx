@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import CategoryJSON from './Category.json';
+import CategoryJSON from './category.json';
 import { loadBookPostRequest } from './postSlice';
 
 interface CategoryMenuPropsInterFace {
@@ -21,6 +21,8 @@ const BurgerMenuWrapper = styled.div`
   min-height: 100vh;
   background-color: white;
   overflow: auto;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 const BurgerMenuHeader = styled.div`
   display: flex;
@@ -32,6 +34,8 @@ const BurgerMenuHeader = styled.div`
   background-color: white;
   border-bottom: 1px solid #e8e8e8;
   padding: 10px;
+  max-width: 600px;
+  margin: 0 auto;
 `;
 const BurgerMenuBody = styled.div`
   margin-top: 80px;
@@ -78,7 +82,7 @@ const CloseButtton = styled.button`
     width: 25px;
   }
 `;
-const CategoryMenu = ({ onMenuClose }:CategoryMenuPropsInterFace):JSX.Element => {
+function CategoryMenu({ onMenuClose }:CategoryMenuPropsInterFace):JSX.Element {
   const dispatch = useDispatch();
   const [categoryTab, setCategoryTab] = useState<number>(0);
   const onHandleCategoryTab = useCallback((index: number) => {
@@ -119,6 +123,6 @@ const CategoryMenu = ({ onMenuClose }:CategoryMenuPropsInterFace):JSX.Element =>
       </BurgerMenuBody>
     </BurgerMenuWrapper>
   );
-};
+}
 
 export default CategoryMenu;
