@@ -40,6 +40,17 @@ public class ResponseEntityUtils {
         return new ResponseEntity<Message<Object>>(message,headers,HttpStatus.BAD_REQUEST);
     }
 
+    public ResponseEntity<Message<Object>> getMessageResponseEntityForbidden(Object data){
+        headers = getJsonHeaders();
+        message = getForbiddenMessage(data);
+        return new ResponseEntity<Message<Object>>(message,headers,HttpStatus.FORBIDDEN);
+    }
+    public ResponseEntity<Message<Object>> getMessageResponseEntityUnauthorized(Object data){
+        headers = getJsonHeaders();
+        message = getUnauthorizedMessage(data);
+        return new ResponseEntity<Message<Object>>(message,headers,HttpStatus.UNAUTHORIZED);
+    }
+
 
 
     private Message<Object> getCreatedMessage(Object data) {
@@ -69,6 +80,22 @@ public class ResponseEntityUtils {
         message = new Message<>();
         message.setStatus(StatusEnum.NOT_FOUND);
         message.setMessage("페이지를 찾을 수 없습니다.");
+        message.setData(data);
+        return message;
+    }
+
+    private Message<Object> getForbiddenMessage(Object data) {
+        message = new Message<>();
+        message.setStatus(StatusEnum.FORBIDDEN);
+        message.setMessage("권한이 불충분합니다");
+        message.setData(data);
+        return message;
+    }
+
+    private Message<Object> getUnauthorizedMessage(Object data) {
+        message = new Message<>();
+        message.setStatus(StatusEnum.UN_AUTHORIZED);
+        message.setMessage("인증되지 않았습니다");
         message.setData(data);
         return message;
     }
