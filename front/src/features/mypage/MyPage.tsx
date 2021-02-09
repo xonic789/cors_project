@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import AppLayout from '../../components/AppLayout';
 
 const Wrapper = styled.div`
@@ -145,15 +146,26 @@ const UtilLink = styled(Link)`
 `;
 
 function MyPage():JSX.Element {
+  const { user } = useSelector((state) => state.userSlice);
+  const { nickname, profileImg } = user;
+
   return (
     <AppLayout>
       <Wrapper>
         <Layout>
           <MyInfo>
-            <ProfileImg src="/images/icons/my.png" />
+            <ProfileImg src={profileImg} />
             <ProfileText>
-              <MyName>로그인/회원가입하기<SpanImg src="/images/icons/back.png" /></MyName>
-              <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>
+              {
+                nickname !== ''
+                  ? <MyName>{nickname}</MyName>
+                  : (
+                    <>
+                      <MyName>로그인/회원가입하기<SpanImg src="/images/icons/back.png" /></MyName>
+                      <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>
+                    </>
+                  )
+              }
             </ProfileText>
           </MyInfo>
           <ProfileBtn to="/mypage/modify">프로필 수정</ProfileBtn>
