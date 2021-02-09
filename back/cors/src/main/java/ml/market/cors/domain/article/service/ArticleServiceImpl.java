@@ -14,8 +14,7 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Image_info_Repository;
-import ml.market.cors.repository.article.ArticleRepositoryCustom;
-import ml.market.cors.repository.bookcategory.Book_Category_Repository;
+import ml.market.cors.repository.bookcategory.BookCategoryRepository;
 import ml.market.cors.repository.market.MarketRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class ArticleServiceImpl implements ArticleService{
     private final ArticleRepository articleRepository;
     private final CountRepository countRepository;
     private final Image_info_Repository image_info_repository;
-    private final Book_Category_Repository book_category_repository;
+    private final BookCategoryRepository book_category_repository;
     private final MarketRepository marketRepository;
 
 
@@ -48,6 +47,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional(readOnly = false)
     public ArticleDAO saveMarketArticle(ArticleForm articleForm, MemberDAO memberDAO){
         Book_CategoryDAO book_categoryDAO = book_category_repository.findById(articleForm.getCid()).get();
+
         MarketDAO findMarket = marketRepository.findByMemberId(memberDAO.getMember_id());
         ArticleDAO createArticle = ArticleDAO.createArticleMarket(articleForm,memberDAO,book_categoryDAO,findMarket);
         countRepository.save(createArticle.getCountDAO());
@@ -55,10 +55,16 @@ public class ArticleServiceImpl implements ArticleService{
         return articleRepository.save(createArticle);
     }
 
+
+
+
+
     @Override
     public ArticleDAO findById(Long id){
         return articleRepository.findByIdFetch(id);
     }
+
+
 
     /**
      * 게시물 수정
@@ -67,10 +73,11 @@ public class ArticleServiceImpl implements ArticleService{
      */
 
     @Override
+    @Transactional(readOnly = false)
     public ArticleDAO updateArticle(Long article_id,ArticleForm articleForm) {
         ArticleDAO findArticle = findById(article_id);
         Image_infoDAO findImage = image_info_repository.findById(findArticle.getImage_info().getIndex_id()).get();
-        CountDAO countDAO = countRepository.findById(findArticle.getCountDAO().getCount_id()).get();
+        CountDAO countDAO = countRepository.findById(findArticle.getCountDAO().getCountId()).get();
         return findArticle.updateArticle(articleForm, findImage,countDAO);
     }
 
@@ -99,15 +106,26 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     public List<ArticleDTO> findAll(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition) {
         return articleRepository.findByDivision(division,pageable, articleSearchCondition);
-
     }
+
+    @Override
+    public List<ArticleDTO> findAllByMemberLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition, MemberDAO memberDAO) {
+        return articleRepository.findByDivisionAndUserLocation(division,pageable,articleSearchCondition,memberDAO);
+    }
+
+    @Override
+    public List<ArticleDTO> findMarketAll(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition) {
+        return articleRepository.findByMarketDivision(division,pageable, articleSearchCondition);
+    }
+
+
 
     @Override
     @Transactional(readOnly = false)
     public void deleteArticle(Long article_id) {
         ArticleDAO findArticle = articleRepository.findByIdFetch(article_id);
         image_info_repository.deleteById(findArticle.getImage_info().getIndex_id());
-        countRepository.deleteById(findArticle.getCountDAO().getCount_id());
+        countRepository.deleteById(findArticle.getCountDAO().getCountId());
         articleRepository.deleteById(article_id);
     }
 }

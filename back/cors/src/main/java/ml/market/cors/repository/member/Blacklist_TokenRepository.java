@@ -6,5 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface Blacklist_TokenRepository extends JpaRepository<Blacklist_TokenDAO, String> {
+    Blacklist_TokenDAO findByHash(String hash);
 }
 

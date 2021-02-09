@@ -1,35 +1,42 @@
 package ml.market.cors.controller.api.member;
 
+import lombok.RequiredArgsConstructor;
+import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.mail.service.EmailManagement;
 import ml.market.cors.domain.mail.vo.MailVO;
+import ml.market.cors.domain.member.entity.MemberDAO;
+import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.member.service.MemberManagement;
 import ml.market.cors.domain.member.service.MemberVO;
+import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.util.Message;
 import ml.market.cors.domain.util.ResponseEntityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import ml.market.cors.repository.article.Wish_list_Repository;
+import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
+@RequiredArgsConstructor
 public class MemberController {
-    @Autowired
-    private MemberManagement memberManagement;
+    private final MemberManagement memberManagement;
 
-    @Autowired
-    private EmailManagement emailManagement;
+    private final EmailManagement emailManagement;
 
-    @Autowired
-    private ResponseEntityUtils responseEntityUtils;
+    private final ResponseEntityUtils responseEntityUtils;
 
     @PostMapping("/check/nickname")
-    public ResponseEntity<Message<Object>> existNickname(@ModelAttribute MemberVO memberVO, HttpServletResponse response){
+    public ResponseEntity<Message<Object>> existNickname(@ModelAttribute MemberVO memberVO){
         ResponseEntity<Message<Object>> messageResponseEntity;
         try {
             if(memberManagement.existNickname(memberVO.getNickname())){
@@ -43,7 +50,7 @@ public class MemberController {
     }
 
     @PostMapping("/check/email")
-    public ResponseEntity<Message<Object>> existEmail(@RequestParam("email") String email, HttpServletResponse response){
+    public ResponseEntity<Message<Object>> existEmail(@RequestParam("email") String email){
         ResponseEntity<Message<Object>> messageResponseEntity;
         try{
             emailManagement.insert(email);
@@ -55,10 +62,10 @@ public class MemberController {
     }
 
     @PostMapping("/check/code")
-    public ResponseEntity<Message<Object>> isCode(@ModelAttribute MailVO mailVO, HttpServletResponse response){
+    public ResponseEntity<Message<Object>> isCode(@ModelAttribute MailVO mailVO){
         ResponseEntity<Message<Object>> messageResponseEntity;
         try {
-            if (emailManagement.checkCode(mailVO) == false) {
+            if (!emailManagement.checkCode(mailVO)) {
                 throw new Exception();
             }
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);
@@ -69,10 +76,10 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<Message<Object>> join(@ModelAttribute MemberVO memberVo, HttpServletResponse response) {
+    public ResponseEntity<Message<Object>> join(@ModelAttribute MemberVO memberVo) {
         ResponseEntity<Message<Object>> messageResponseEntity;
         try{
-            if(memberManagement.create(memberVo) == false){
+            if(!memberManagement.create(memberVo)){
                 throw new Exception();
             }
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);
@@ -81,4 +88,40 @@ public class MemberController {
         }
         return messageResponseEntity;
     }
+
+    @PutMapping("/change/profile")
+    public ResponseEntity<Message<Object>> change(@AuthenticationPrincipal JwtCertificationToken memberIdentify
+                                                  , @RequestParam Map<String, Object> member
+            , @RequestPart("profile_img")MultipartFile multipartFile) {
+        ResponseEntity<Message<Object>> messageResponseEntity;
+        try {
+            long memberId = (Long) memberIdentify.getCredentials();
+            if (memberManagement.change(member, memberId, multipartFile)) {
+                messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(memberManagement.setMember(memberId));
+            } else {
+                messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 변경 실패");
+            }
+        } catch (Exception e) {
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 변경 실패");
+        }
+
+        return messageResponseEntity;
+    }
+
+    @GetMapping("/mypage")
+    public ResponseEntity<Message<Object>> getMypage(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
+    , HttpServletResponse response){
+        ResponseEntity<Message<Object>> messageResponseEntity = null;
+
+        Map result = memberManagement.viewProfile(response, (long)jwtCertificationToken.getCredentials());
+        if(result == null){
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 로드 실패");
+        }
+        else{
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(result);
+        }
+        return messageResponseEntity;
+    }
+
+
 }

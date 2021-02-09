@@ -10,7 +10,7 @@ import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Image_info_Repository;
-import ml.market.cors.repository.bookcategory.Book_Category_Repository;
+import ml.market.cors.repository.bookcategory.BookCategoryRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +32,8 @@ class ArticleServiceImplTest {
     @Autowired ArticleService articleService;
     @Autowired CountRepository countRepository;
     @Autowired Image_info_Repository image_info_repository;
-    @Autowired Book_Category_Repository book_category_repository;
+    @Autowired
+    BookCategoryRepository book_category_repository;
 
 
     @Test
@@ -69,7 +70,6 @@ class ArticleServiceImplTest {
         articleForm.setTitle("제목입니다");
         articleForm.setCid(1L);
         articleForm.setRprice(10000);
-        articleForm.setProgress(Progress.POSTING);
         articleForm.setDivision(Division.SALES);
         return articleForm;
     }
@@ -80,7 +80,6 @@ class ArticleServiceImplTest {
         articleForm.setTitle("제목입니다");
         articleForm.setCid(1L);
         articleForm.setRprice(10000);
-        articleForm.setProgress(Progress.POSTING);
         articleForm.setDivision(Division.PURCHASE);
         return articleForm;
     }
@@ -131,7 +130,6 @@ class ArticleServiceImplTest {
         ArticleForm updateForm = new ArticleForm();
         updateForm.setContent("바뀌었다.");
         updateForm.setDivision(Division.PURCHASE);
-        updateForm.setProgress(Progress.POSTING);
         updateForm.setRprice(10000);
         updateForm.setTprice(2000);
         ArticleDAO findArticle = articleService.findById(articleDAO.getArticle_id());
