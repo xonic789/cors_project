@@ -168,7 +168,7 @@ function MyPage():JSX.Element {
       <Wrapper>
         <Layout>
           <MyInfo>
-            <ProfileImg src="/images/icons/my.png" />
+            <ProfileImg src="/images/icons/init_profile.png" />
             <ProfileText>
               <MyName>로그인/회원가입하기<SpanImg src="/images/icons/back.png" /></MyName>
               <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>

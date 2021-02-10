@@ -8,6 +8,7 @@ import Join from './features/join/Join';
 import ModifyProfile from './features/modifyProfile/ModifyProfile';
 import GlobalStyle from './styles/GlobalStyles';
 import MyPage from './features/mypage/MyPage';
+import Review from './features/review/Review';
 
 function App():JSX.Element {
   return (
@@ -23,6 +24,7 @@ function App():JSX.Element {
             <Route path="/join" exact component={Join} />
             <Route path="/mypage" exact component={MyPage} />
             <Route path="/mypage/modify" exact component={ModifyProfile} />
+            <Route path="/review" exact component={Review} />
           </Switch>
         </HashRouter>
       </div>
