@@ -4,7 +4,8 @@ import postSaga from './features/postList/postSaga';
 import addPostSaga from './features/addPost/addPostSaga';
 import detailPostSaga from './features/detailPostView/detailViewSaga';
 import userSaga from './features/login/userSaga';
+import noticeSaga from './features/notice/noticeSaga';
 
 export default function* rootSaga(): Generator {
-  yield all([fork(postSaga), fork(detailPostSaga), fork(userSaga), fork(addPostSaga)]);
+  yield all([fork(postSaga), fork(detailPostSaga), fork(userSaga), fork(addPostSaga), fork(noticeSaga)]);
 }
