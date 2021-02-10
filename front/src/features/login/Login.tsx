@@ -31,7 +31,9 @@ const TitleBox = styled.div`
 const Logo = styled.img`
   width: auto;
   height: 18vw;
-  margin-right: 0.5em;
+  @media screen and (min-width: 460px) {
+    height: 82.8px;
+  }
 `;
 
 const LinkBox = styled.div`
@@ -41,6 +43,10 @@ const LinkBox = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2em;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+    margin-bottom: 36.8px;
+  }
 `;
 
 const StyledLink = styled(Link)`

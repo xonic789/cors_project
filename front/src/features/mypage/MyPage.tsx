@@ -24,6 +24,9 @@ const MyInfo = styled.div`
   align-items: center;
   font-size: 4.5vw;
   margin-bottom: 1em;
+  @media screen and (min-width: 455px) {
+    font-size: 20.484px;   
+  }
 `;
 
 const ProfileImg = styled.img`
@@ -45,6 +48,9 @@ const MyName = styled.h2`
   font-size: 5.5vw;
   font-weight: bold;
   margin-bottom: 0.5em;
+  @media screen and (min-width: 455px) {
+    font-size: 25.036px;
+  }
 `;
 
 const SpanImg = styled.img`
@@ -55,6 +61,9 @@ const SpanImg = styled.img`
 
 const MyDicription = styled.p`
   font-size: 3vw;
+  @media screen and (min-width: 455px) {
+    font-size: 13.656px;
+  }
 `;
 
 const ProfileBtn = styled(Link)`
@@ -68,6 +77,9 @@ const ProfileBtn = styled(Link)`
   margin-bottom: 1em;
   text-decoration: none;
   color: #000;
+  @media screen and (min-width: 455px) {
+    font-size: 15.932px;
+  }
 `;
 
 const MyMenu = styled.ul`
@@ -77,6 +89,9 @@ const MyMenu = styled.ul`
   border: 1px solid rgba(158, 158, 158, 0.7);
   border-radius: 5px;
   margin-bottom: 3em;
+  @media screen and (min-width: 455px) {
+    font-size: 15.932px;
+  }
 `;
 
 const MenuImg = styled.img`
@@ -142,6 +157,9 @@ const UtilLink = styled(Link)`
   text-decoration: none;
   font-size: 4vw;
   font-weight: bold;
+  @media screen and (min-width: 455px) {
+    font-size: 18.2px;
+  }
 `;
 
 function MyPage():JSX.Element {
