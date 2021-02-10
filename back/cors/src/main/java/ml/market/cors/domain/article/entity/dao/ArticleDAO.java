@@ -10,7 +10,6 @@ import ml.market.cors.domain.market.entity.MarketDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;
-import java.lang.reflect.Member;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Objects;

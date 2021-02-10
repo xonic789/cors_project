@@ -3,6 +3,8 @@ spring:
     include:
       - aws
       - credentials
+  mvc:
+    static-path-pattern: /static/**
 
   datasource:
     url: jdbc:mysql://118.67.128.36:3306/corsdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
@@ -30,6 +32,7 @@ spring:
           google:
             client-id: 494377772043-o0tfbhk9ed4cn86u0r75m8256d57cc2u.apps.googleusercontent.com
             client-secret: yoOHGlFvC_4rxSyBXSFE2VB1
+            
   servlet:
     multipart:
       enabled: true
