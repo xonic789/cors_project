@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import AppLayout from '../../components/AppLayout';
 import Header from './Header';
@@ -11,17 +11,18 @@ const PostListWrapper = styled.div`
 `;
 function PostList(): JSX.Element {
   const dispatch = useDispatch();
-
   useEffect(() => {
-    dispatch(loadBookPostRequest({ division: 'sales', category: '' }));
+    dispatch(loadBookPostRequest({ filtering: { division: 'sales', category: '' } }));
   }, [dispatch]);
 
+  const { bookPost } = useSelector((state) => state.postSlice);
+  console.log(bookPost);
   return (
     <AppLayout>
       <PostListWrapper>
         <Header />
         <AddPostButton />
-        <InfiniteScrollList />
+        { bookPost.length !== 0 ? <InfiniteScrollList /> : <div>Loading...</div>}
       </PostListWrapper>
     </AppLayout>
   );

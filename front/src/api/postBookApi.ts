@@ -6,11 +6,12 @@ export function addBookPostAPI(data: AddBookPostInterface):Promise<AxiosResponse
   return axios.post('http://local.corsmarket.ml/api/article', data);
 }
 export function deleteBookPostAPI(id: number):Promise<AxiosResponse> {
-  return axios.delete(`http://local.corsmarket.ml/api/article/delete/${id}`);
+  return axios.delete(`http://local.corsmarket.ml/api/article/${id}`);
 }
 // 일반사용자 판매/구매글 리스트 불러오기
-export function getBookPostAPI(filtering:{ division:string, categoryFilter:string }, id: number):Promise<AxiosResponse> {
+export function getBookPostAPI(filtering:{ division:string, categoryFilter:string }, id?: number):Promise<AxiosResponse> {
   return axios.get(`http://local.corsmarket.ml/api/articles/${filtering.division}`, { params: { category: filtering.categoryFilter, lastId: id } });
+  // http://local.corsmarket.ml/api/articles/sales ? category = ''
 }
 // 일반사용자 판매/구매글 상세페이지 불러오기
 export function getBookPostDetailViewAPI(postId: number):Promise<AxiosResponse> {

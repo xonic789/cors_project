@@ -7,29 +7,30 @@ import { loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
   loadScrollBookPostRequest, loadScrollBookPostSuccess, loadScrollBookPostError, deleteBookPostSuccess, deleteBookPostError, deleteBookPostRequest } from './postSlice';
 
 interface loadBookPost {
-  division: 'purchase' | 'sale',
-  categoty?: string
+  filtering: { division:string, categoryFilter:string },
+  lastId?: number
 }
+
 function* loadBookPost(action: PayloadAction<loadBookPost>) {
   try {
-    // const result = yield call(getBookPostAPI, action.payload.division);
-    const result = generateDummyPost(10);
-    console.log(result);
-    yield put(loadBookPostSuccess(result));
+    const result = yield call(getBookPostAPI, action.payload.filtering);
+    // const result = generateDummyPost(10);
+    console.log(result.data);
+    yield put(loadBookPostSuccess(result.data));
   } catch (error) {
-    yield put(loadBookPostError({ error: error.response.data }));
+    yield put(loadBookPostError({ error }));
   }
 }
-function* loadScrollBookPost(action: PayloadAction<number>) {
+function* loadScrollBookPost(action: PayloadAction<loadBookPost>) {
   try {
     const { filtering } = yield select((state) => state.postSlice);
-    // const result = yield call(getBookPostAPI, filtering, action.payload);
     console.log(filtering);
-    const result = generateDummyPost(10);
-    console.log(result);
-    yield put(loadScrollBookPostSuccess(result));
+    const result = yield call(getBookPostAPI, filtering, action.payload.lastId);
+    // const result = generateDummyPost(10);
+    console.log(result.data);
+    yield put(loadScrollBookPostSuccess(result.data));
   } catch (error) {
-    yield put(loadScrollBookPostError({ error: error.response.data }));
+    yield put(loadScrollBookPostError({ error }));
   }
 }
 function* deleteBookPost(action: PayloadAction<number>) {
