@@ -44,7 +44,7 @@ const postSlice = createSlice({
       state.isLoadScrollBookPostLoading = false;
       state.isLoadScrollPostDone = true;
       state.bookPost = state.bookPost.concat(action.payload.data);
-      state.hasMorePost = state.bookPost.length === 10;
+      state.hasMorePost = action.payload.data.length === 10;
     },
     loadScrollBookPostError(state, action) {
       state.isLoadScrollBookPostLoading = false;
