@@ -11,11 +11,10 @@ const PostListWrapper = styled.div`
 `;
 function PostList(): JSX.Element {
   const dispatch = useDispatch();
+  const { bookPost, filtering } = useSelector((state) => state.postSlice);
   useEffect(() => {
-    dispatch(loadBookPostRequest({ filtering: { division: 'sales', category: '' } }));
-  }, [dispatch]);
-
-  const { bookPost } = useSelector((state) => state.postSlice);
+    dispatch(loadBookPostRequest({ filtering: { division: filtering.division, category: filtering.category } }));
+  }, [dispatch, filtering.category, filtering.division]);
   console.log(bookPost);
   return (
     <AppLayout>
