@@ -1,5 +1,6 @@
 import React from 'react';
 import { HashRouter, Switch, Route } from 'react-router-dom';
+import NotFound from './components/NotFound';
 import AddPostPage from './features/addPost/AddPostPage';
 import DetailPostView from './features/detailPostView/DetailPostView';
 import Login from './features/login/Login';
@@ -19,6 +20,7 @@ function App():JSX.Element {
             <Route path="/post/:id" exact component={DetailPostView} />
             <Route path="/addPost/:division" exact component={AddPostPage} />
             <Route path="/join" exact component={Join} />
+            <Route component={NotFound} />
           </Switch>
         </HashRouter>
       </div>
