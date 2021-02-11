@@ -13,13 +13,21 @@ import java.util.List;
 public interface ArticleService {
 
     ArticleDAO saveArticle(ArticleForm articleForm, MemberDAO memberDAO);
+
     ArticleDAO saveMarketArticle(ArticleForm articleForm, MemberDAO memberDAO);
+
     ArticleDAO findById(Long id);
+
     ArticleDAO updateArticle(Long article_id,ArticleForm articleForm);
+
     Progress updateArticleProgress(Long article_id, String progress);
+
     List<ArticleDTO> findAll(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition);
+
     List<ArticleDTO> findAllByMemberLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition,MemberDAO memberDAO);
+
     List<ArticleDTO> findMarketAll(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition);
+
     void deleteArticle(Long article_id);
 
 }

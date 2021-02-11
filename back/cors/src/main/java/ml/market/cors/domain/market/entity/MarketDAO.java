@@ -3,6 +3,7 @@ package ml.market.cors.domain.market.entity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.market.enums.MarketStatus;
 import ml.market.cors.domain.member.entity.MemberDAO;
 
 import javax.persistence.*;
@@ -44,4 +45,7 @@ public class MarketDAO {
     @Column(name = "image")
     private String image;
 
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private MarketStatus status;
 }
