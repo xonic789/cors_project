@@ -90,7 +90,7 @@ function InfiniteScrollList(): JSX.Element {
             width={width} // 항목의 너비
             rowRenderer={rowRanderer} // 항목렌더링할때쓰는 함수
             onScroll={scrollListener} // scroll 함수
-            overscanRowCount={2} // 다음에 로드해올 항목 미리 컨텐츠 높이 잡기
+            overscanRowCount={10} // 다음에 로드해올 항목 미리 컨텐츠 높이 잡기
           />
         )}
       </AutoSizer>
