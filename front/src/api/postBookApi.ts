@@ -3,7 +3,12 @@ import { AddBookPostInterface } from '../interfaces/PostList.interface';
 
 // 일반사용자 판매/구매글 추가
 export function addBookPostAPI(data: AddBookPostInterface):Promise<AxiosResponse> {
-  return axios.post('http://local.corsmarket.ml/api/article', data);
+  const config = {
+    headers: {
+      'content-type': 'multipart/form-data',
+    },
+  };
+  return axios.post('http://local.corsmarket.ml/api/article', data, config);
 }
 export function deleteBookPostAPI(id: number):Promise<AxiosResponse> {
   return axios.delete(`http://local.corsmarket.ml/api/article/${id}`);

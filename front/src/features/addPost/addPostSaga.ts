@@ -16,6 +16,7 @@ function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {
     yield put(addBookPostError({ error: error.response.data }));
   }
 }
+
 function* watchAddBookPost() {
   yield takeLatest(addBookPostRequest, addBookPost);
 }
