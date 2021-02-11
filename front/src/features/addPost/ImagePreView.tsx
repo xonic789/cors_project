@@ -1,10 +1,16 @@
 import React, { useCallback, useRef, useState } from 'react';
 import styled from 'styled-components';
-import { v4 as uuidv4 } from 'uuid';
 
-interface ImageViewInterface {
+interface ImageURLInterface {
   id: string;
   url: string;
+  image: Blob;
+}
+
+interface ImagePreViewInterface {
+  onChangeImage: (e: any) => void,
+  images: ImageURLInterface[],
+  onDelete: (imageId: string) => void,
 }
 
 const ImageInputWrapper = styled.div`
@@ -37,67 +43,29 @@ const ImagePreviewWrapper = styled.div`
     width: 60px;
     background-color: white;
     border: 0;
-    font-weight: 600;
   }
 `;
 
-const ImagePreView = () => {
-  const [imageFile, setImageFile] = useState<ImageViewInterface[]>([]);
+function ImagePreView({ onChangeImage, images, onDelete }: ImagePreViewInterface):JSX.Element {
   const ImageRef = useRef<HTMLInputElement>(null);
-  const onDeleteImage = (imageId: string) => {
-    const filteringImageFile = imageFile.filter((image) => image.id !== imageId);
-    setImageFile([...filteringImageFile]);
-  };
   const onClickImageUpload = useCallback(() => {
     ImageRef.current?.click();
   }, []);
-  const ImageFileReaderPromise = (file: Blob) => new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (reader.result !== null) {
-        resolve(reader.result as string);
-      }
-    };
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-  const ImageFileReader = async (file: Blob) => {
-    try {
-      const image: string = await ImageFileReaderPromise(file);
-      if (imageFile.length >= 2) {
-        alert('사진은 최대 두장만 선택하실 수 있습니다.');
-      } else {
-        setImageFile(imageFile.concat({ id: uuidv4(), url: image }));
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  const onHandleUpload = (e: any) => {
-    e.preventDefault();
-    console.log(e.target.files);
-    const imageFormData = new FormData();
-    const images = e.target.files;
-    ImageFileReader(e.target.files[0]);
-    [].forEach.call(images, (f) => {
-      imageFormData.append('file', f);
-    });
-  };
 
   return (
     <ImageInputWrapper>
-      <ImageInput type="file" accept="image/jpg,impge/png,image/jpeg" name="file" id="image" onChange={onHandleUpload} ref={ImageRef} multiple />
+      <ImageInput type="file" accept="image/jpg,impge/png,image/jpeg" name="file" id="image" onChange={onChangeImage} ref={ImageRef} />
       <button type="button" onClick={onClickImageUpload}>
         <img src="/images/icons/camera.png" alt="camera" />
       </button>
-      {imageFile.map((v) => (
+      {images.map((v) => (
         <ImagePreviewWrapper key={v.id}>
-          <button type="button" onClick={() => onDeleteImage(v.id)}>X</button>
+          <button type="button" onClick={() => onDelete(v.id)}>X</button>
           <img src={v.url} alt="img" />
         </ImagePreviewWrapper>
       ))}
     </ImageInputWrapper>
   );
-};
+}
 
 export default ImagePreView;
