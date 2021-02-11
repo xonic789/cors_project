@@ -7,7 +7,7 @@ import { loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
   loadScrollBookPostRequest, loadScrollBookPostSuccess, loadScrollBookPostError, deleteBookPostSuccess, deleteBookPostError, deleteBookPostRequest } from './postSlice';
 
 interface loadBookPost {
-  filtering: { division:string, categoryFilter:string },
+  filtering: { division:string, category:string },
   lastId?: number
 }
 
