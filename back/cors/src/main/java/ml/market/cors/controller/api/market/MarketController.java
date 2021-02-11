@@ -35,6 +35,9 @@ public class MarketController {
         return messageResponseEntity;
     }
 
+    /*
+    ACCEPT면은 멤버 권한 변경
+     */
     @PutMapping("/approve/update")
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Message<Object>> update(@ModelAttribute MarketApproveStatusUpdateDTO marketApproveStatusUpdateDTO, @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken){
@@ -49,6 +52,9 @@ public class MarketController {
         return messageResponseEntity;
     }
 
+    /*
+    페이징 처리하기
+     */
     @PostMapping("/view")
     public ResponseEntity<Message<Object>> view(@RequestParam("marketId") long marketId, Pageable pageable){
         MarketViewVO marketViewVO = marketService.view(marketId, pageable);

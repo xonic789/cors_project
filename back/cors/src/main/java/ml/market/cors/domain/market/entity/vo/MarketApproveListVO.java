@@ -7,7 +7,7 @@ import ml.market.cors.domain.market.enums.MarketStatus;
 @AllArgsConstructor
 @Getter
 public class MarketApproveListVO {
-    private long id;
-    private String name;
-    private MarketStatus status;
+    private long marketId;
+    private String marketName;
+    private MarketStatus MarketStatus;
 }

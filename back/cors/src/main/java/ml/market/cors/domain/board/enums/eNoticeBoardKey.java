@@ -5,5 +5,5 @@ public enum eNoticeBoardKey {
     email,
     title,
     content,
-    writeDate;
+    writeDate, pageTotal;
 }

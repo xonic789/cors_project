@@ -87,6 +87,9 @@ public class NoticeBoardService {
             itemMap.put(eNoticeBoardKey.title, item.getTitle());
             itemList.add(itemMap);
         }
+        itemMap = new HashMap<>();
+        itemMap.put(eNoticeBoardKey.pageTotal, Integer.toString(noticeBoardPage.getTotalPages()));
+        itemList.add(itemMap);
         return itemList;
     }
 }

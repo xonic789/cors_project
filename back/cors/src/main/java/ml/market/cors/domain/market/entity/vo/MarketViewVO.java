@@ -8,9 +8,9 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public class MarketViewVO {
-    private long id;
-    private String name;
-    private String intro;
-    private String image;
+    private long marketId;
+    private String marketName;
+    private String marketIntro;
+    private String marketImage;
     private List<ArticleViewInMarketVO> articleList;
 }
