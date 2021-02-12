@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { Console } from 'console';
 import { AddBookPostInterface } from '../interfaces/PostList.interface';
 
 export function getAladinBook(title: string):Promise<AxiosResponse> {
@@ -6,9 +7,10 @@ export function getAladinBook(title: string):Promise<AxiosResponse> {
 }
 // 일반사용자 판매/구매글 추가
 export function addBookPostAPI(data: AddBookPostInterface):Promise<AxiosResponse> {
+  console.log(data);
   const config = {
     headers: {
-      'content-type': 'multipart/form-data',
+      'Content-Type': 'multipart/form-data',
     },
   };
   return axios.post('http://local.corsmarket.ml/api/article', data, config);

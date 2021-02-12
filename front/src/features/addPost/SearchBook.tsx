@@ -1,6 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
+import aladinIteminterface from '../../interfaces/AladinInterface';
 
+interface searchBookInterface {
+  searchResult: aladinIteminterface[],
+  onClickItem: (item: aladinIteminterface) => void,
+}
 const SearchBookWrapper = styled.div`
   height: 400px;
   width: 90%;
@@ -24,46 +29,20 @@ const SearchBookDetail = styled.div`
     padding: 5px;
   }
 `;
-function SearchBook():JSX.Element {
-  const a = 1;
+function SearchBook({ searchResult, onClickItem }: searchBookInterface):JSX.Element {
   return (
     <SearchBookWrapper>
-      <SearchBookItem>
-        <img src="https://image.aladin.co.kr/product/26274/61/coversum/8983949082_1.jpg" alt="bookcover" />
-        <SearchBookDetail>
-          <h5>{'국내도서>소설/시/희곡>역사소설>한국 역사소설'}</h5>
-          <h5>흥부와 놀부</h5>
-          <h5>최사규 지음</h5>
-          <h5>30,000원</h5>
-        </SearchBookDetail>
-      </SearchBookItem>
-      <SearchBookItem>
-        <img src="https://image.aladin.co.kr/product/26274/61/coversum/8983949082_1.jpg" alt="bookcover" />
-        <SearchBookDetail>
-          <h5>{'국내도서>소설/시/희곡>역사소설>한국 역사소설'}</h5>
-          <h5>흥부와 놀부</h5>
-          <h5>최사규 지음</h5>
-          <h5>30,000원</h5>
-        </SearchBookDetail>
-      </SearchBookItem>
-      <SearchBookItem>
-        <img src="https://image.aladin.co.kr/product/26274/61/coversum/8983949082_1.jpg" alt="bookcover" />
-        <SearchBookDetail>
-          <h5>{'국내도서>소설/시/희곡>역사소설>한국 역사소설'}</h5>
-          <h5>흥부와 놀부</h5>
-          <h5>최사규 지음</h5>
-          <h5>30,000원</h5>
-        </SearchBookDetail>
-      </SearchBookItem>
-      <SearchBookItem>
-        <img src="https://image.aladin.co.kr/product/26274/61/coversum/8983949082_1.jpg" alt="bookcover" />
-        <SearchBookDetail>
-          <h5>{'국내도서>소설/시/희곡>역사소설>한국 역사소설'}</h5>
-          <h5>흥부와 놀부</h5>
-          <h5>최사규 지음</h5>
-          <h5>30,000원</h5>
-        </SearchBookDetail>
-      </SearchBookItem>
+      {searchResult.map((v) => (
+        <SearchBookItem key={v.itemId} onClick={() => onClickItem(v)}>
+          <img src={v.cover} alt="bookcover" />
+          <SearchBookDetail>
+            <h5>{v.categoryName}</h5>
+            <h5>{v.title}</h5>
+            <h5>{v.author}</h5>
+            <h5>{v.priceStandard}원</h5>
+          </SearchBookDetail>
+        </SearchBookItem>
+      ))}
     </SearchBookWrapper>
   );
 }

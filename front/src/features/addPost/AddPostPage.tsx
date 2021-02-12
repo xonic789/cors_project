@@ -7,6 +7,7 @@ import { addBookPostRequest } from './addPostSlice';
 import ImagePreView from './ImagePreView';
 import ImageFileReaderPromise from '../../utils/imageFileReader';
 import { getAladinBook } from '../../api/postBookApi';
+import aladinIteminterface from '../../interfaces/AladinInterface';
 import SearchBook from './SearchBook';
 
 interface ParamTypes {
@@ -111,12 +112,16 @@ const SearchInput = styled.div`
 `;
 function AddPostPage():JSX.Element {
   const [searchTitle, setSearchTitle] = useState<string>('');
-  const [searchResult, setSearchResult] = useState([]);
-  const [cid, setCid] = useState<string>('');
+  const [searchResult, setSearchResult] = useState<aladinIteminterface[]>([]);
+  const [title, setTitle] = useState<string>('');
+  const [category, setCategory] = useState<string>('');
+  const [cid, setCid] = useState<number>();
   const [thumbnail, setThumbnail] = useState<string>('');
   const [images, setImages] = useState<ImageURLInterface[]>([]);
+  const [realPrice, setRealPrice] = useState<number>();
   const [price, setPrice] = useState<string>('');
   const [content, setContent] = useState<string>('');
+  const [isOpenSearchBox, setIsOpenSearchBox] = useState<boolean>(false);
   const history = useHistory();
 
   const { isAddBookPostLoading, isAddBookPostDone } = useSelector((state) => state.addPostSlice);
@@ -139,15 +144,22 @@ function AddPostPage():JSX.Element {
   };
   const loadSearchResultBook = async () => {
     getAladinBook(searchTitle).then(({ data }) => {
-      setSearchResult(data.item);
-      console.log(data.item);
+      const a = data.replace(/\\/ig, '\\\\', /;/g, '');
+      const b = a.substr(0, a.length - 1);
+      const parseData = JSON.parse(b);
+      setSearchResult(parseData.item);
+      if (parseData.item.length === 0) {
+        alert('검색결과가 없습니다');
+      } else {
+        setIsOpenSearchBox(true);
+      }
     }).catch((error) => {
       console.log(error);
     });
   };
-  const handleChangeSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTitle(e.target.value);
-  }, []);
+  };
   const handleClickSearch = () => {
     loadSearchResultBook();
   };
@@ -167,16 +179,39 @@ function AddPostPage():JSX.Element {
   const handleChangeImages = (e: any) => {
     ImageFileReader(e.target.files[0]);
   };
+  const handleClickItem = (item: aladinIteminterface) => {
+    setCategory(item.categoryName);
+    setTitle(item.title);
+    setCid(item.categoryId);
+    setThumbnail(item.cover);
+    setRealPrice(item.priceStandard);
+    setIsOpenSearchBox(false);
+  };
   const handleSubmitPost = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData();
     for (let i = 0; i < images.length; i++) {
-      formData.append('file', images[i].image);
+      formData.append('file', images[i].image); // 사용자가 등록한 이미지
     }
-    formData.append('tprice', price);
-    formData.append('content', content);
-    formData.append('division', upperCaseDivision);
-    dispatch(addBookPostRequest(formData));
+    formData.append('cid', String(cid)); // 알라딘에서 받은 정보
+    formData.append('title', title); // 알라딘에서 받은 정보
+    formData.append('image', thumbnail); // 알라딘에서 받은 정보
+    formData.append('rprice', String(realPrice)); // 알라딘에서 받은 정보
+    formData.append('content', content); // 사용자가 입력한 정보
+    formData.append('tprice', price); // 사용자가 입력한 정보
+    formData.append('division', upperCaseDivision); // 사용자가 입력한 정보
+
+    console.log(formData.keys(), formData.getAll('file'));
+    console.log(formData.get('cid'));
+    console.log(formData.get('title'));
+    console.log(formData.get('image'));
+    console.log(formData.get('rprice'));
+    console.log(formData.get('content'));
+    console.log(formData.get('tprice'));
+    console.log(formData.get('division'));
+
+    dispatch(addBookPostRequest({ data: formData }));
+
     if (isAddBookPostDone) {
       setContent('');
       setImages([]);
@@ -184,11 +219,11 @@ function AddPostPage():JSX.Element {
     } else if (isAddBookPostDone !== true) {
       alert('글 업로드에 실패했습니다.');
     }
-  }, [content, dispatch, images, isAddBookPostDone, price, upperCaseDivision]);
+  }, [cid, content, dispatch, images, isAddBookPostDone, price, realPrice, thumbnail, title, upperCaseDivision]);
   return (
     <>
       <AddPostWrapper>
-        {searchTitle !== '' && <SearchBook />}
+        {isOpenSearchBox && <SearchBook searchResult={searchResult} onClickItem={handleClickItem} />}
         <AddPostHeader>
           <Logo src="/images/icons/logo.jpeg" alt="logo" />
           <button type="button" onClick={handleXButtonClick}>
@@ -202,12 +237,20 @@ function AddPostPage():JSX.Element {
           </button>
         </SearchInput>
         <BookWrapper>
-          <img src="https://image.aladin.co.kr/product/8281/81/coversum/k072434257_1.jpg" alt="thumbnail" />
-          <BookDetail>
-            <Category>{'국내도서>소설>한국소설>판타치소설'}</Category>
-            <BookTitle>선녀와 나무꾼</BookTitle>
-            <BookPrice>10,000 원</BookPrice>
-          </BookDetail>
+          {
+          title
+            ? (
+              <>
+                <img src={thumbnail} alt="thumbnail" />
+                <BookDetail>
+                  <Category>{category}</Category>
+                  <BookTitle>{title}</BookTitle>
+                  <BookPrice>{realPrice} 원</BookPrice>
+                </BookDetail>
+              </>
+            )
+            : <div>책을 검색해서 등록하세요!</div>
+        }
         </BookWrapper>
         <FormWrapper encType="multipart/form-data" onSubmit={handleSubmitPost}>
           <ImagePreView onChangeImage={handleChangeImages} images={images} onDelete={handleDeleteImage} />
