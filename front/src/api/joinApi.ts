@@ -5,7 +5,13 @@ export function emailDuplicationAsync(email: string): Promise<boolean> {
     method: 'POST',
     url: '/api/check/email',
     params: { email },
-  }).then((res) => (res.status !== 200));
+  }).then((res) => true).catch((error) => {
+    if (error.response.status !== 400) {
+      throw new Error('서버 통신 오류');
+    }
+
+    return false;
+  });
 }
 
 export function emailCertificationAsync(email: string, code: string): Promise<boolean> {
@@ -13,7 +19,13 @@ export function emailCertificationAsync(email: string, code: string): Promise<bo
     method: 'POST',
     url: '/api/check/code',
     params: { email, code },
-  }).then((res) => (res.status === 200));
+  }).then((res) => true).catch((error) => {
+    if (error.response.status !== 400) {
+      throw new Error('서버 통신 오류');
+    }
+
+    return false;
+  });
 }
 
 export function nicknameDuplicationAsync(nickname: string): Promise<boolean> {
