@@ -12,6 +12,7 @@ export interface modifyProfileInterface {
   nickname: string, // 닉네임
   passwd: string, // 이전 비밀번호
   newPasswd: string, // 새 비밀번호
+  intro: string,
 }
 
 export interface modifyProfileImageInterface {

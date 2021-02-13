@@ -365,7 +365,7 @@ function ModifyProfile():JSX.Element {
         console.log(result);
         if (result) {
           dispatch(postModifyProfileRequest({
-            modifyProfile: { nickname: modifyInputs.nickname.value, passwd: modifyInputs.passwd.value, newPasswd: modifyInputs.newPasswd.value },
+            modifyProfile: { nickname: modifyInputs.nickname.value, passwd: modifyInputs.passwd.value, newPasswd: modifyInputs.newPasswd.value, intro: 'test' },
             modifyInputs,
             setModifInputs,
           }));
