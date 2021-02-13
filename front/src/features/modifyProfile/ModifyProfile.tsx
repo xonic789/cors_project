@@ -361,22 +361,27 @@ function ModifyProfile():JSX.Element {
       alert('비밀번호가 일치하지 않습니다.');
     } else {
       try {
-        await nicknameDuplicationAsync(modifyInputs.nickname.value);
-        dispatch(postModifyProfileRequest({
-          modifyProfile: { nickname: modifyInputs.nickname.value, passwd: modifyInputs.passwd.value, newPasswd: modifyInputs.newPasswd.value },
-          modifyInputs,
-          setModifInputs,
-        }));
+        const result = await nicknameDuplicationAsync(modifyInputs.nickname.value);
+        console.log(result);
+        if (result) {
+          dispatch(postModifyProfileRequest({
+            modifyProfile: { nickname: modifyInputs.nickname.value, passwd: modifyInputs.passwd.value, newPasswd: modifyInputs.newPasswd.value },
+            modifyInputs,
+            setModifInputs,
+          }));
+        } else {
+          setModifInputs({
+            ...modifyInputs,
+            nickname: {
+              ...modifyInputs.nickname,
+              state: 'fail',
+              message: '이미 사용중인 닉네임입니다.',
+              color: 'red',
+            },
+          });
+        }
       } catch {
-        setModifInputs({
-          ...modifyInputs,
-          nickname: {
-            ...modifyInputs.nickname,
-            state: 'fail',
-            message: '이미 사용중인 닉네임입니다.',
-            color: 'red',
-          },
-        });
+        alert('서버통신중 에러발생');
       }
     }
   };
