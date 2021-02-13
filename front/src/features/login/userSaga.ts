@@ -76,26 +76,34 @@ function* postLogoutRequestSaga() {
 
 function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: modifyProfileInterface, modifyInputs: any, setModifInputs: any}}) {
   try {
-    yield call(modifyProfileAsync, action.payload.modifyProfile);
-
-    yield put({
-      type: postModifyProfileRequestSuccess,
-      payload: action.payload.modifyProfile.nickname,
-    });
+    const result = yield call(modifyProfileAsync, action.payload.modifyProfile);
+    console.log(result);
+    if (result) {
+      yield put({
+        type: postModifyProfileRequestSuccess,
+        payload: action.payload.modifyProfile.nickname,
+      });
+    } else {
+      yield put({
+        type: postModifyProfileRequestError,
+        payload: '비밀번호 불일치',
+      });
+      action.payload.setModifInputs({
+        ...action.payload.modifyInputs,
+        passwd: {
+          ...action.payload.modifyInputs.passwd,
+          message: '비밀번호가 일치하지 않습니다.',
+          state: 'fail',
+          color: 'red',
+        },
+      });
+    }
   } catch (error) {
     yield put({
       type: postModifyProfileRequestError,
       payload: error,
     });
-    action.payload.setModifInputs({
-      ...action.payload.modifyInputs,
-      passwd: {
-        ...action.payload.modifyInputs.passwd,
-        message: '비밀번호가 일치하지 않습니다.',
-        state: 'fail',
-        color: 'red',
-      },
-    });
+    alert('서버 통신 에러');
   }
 }
 

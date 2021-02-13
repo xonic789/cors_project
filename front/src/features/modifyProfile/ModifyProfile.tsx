@@ -369,16 +369,6 @@ function ModifyProfile():JSX.Element {
             modifyInputs,
             setModifInputs,
           }));
-        } else {
-          setModifInputs({
-            ...modifyInputs,
-            nickname: {
-              ...modifyInputs.nickname,
-              state: 'fail',
-              message: '이미 사용중인 닉네임입니다.',
-              color: 'red',
-            },
-          });
         }
       } catch {
         alert('서버통신중 에러발생');
