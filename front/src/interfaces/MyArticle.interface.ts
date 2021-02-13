@@ -1,14 +1,12 @@
+interface categoryInterface {
+    cid: number, oneDepth: string, twoDepth: string, threeDepth: string, fourDepth: string, fiveDepth: string,
+}
+
 export interface myArticleInterface {
     articleId: string;
-    image: string;
-    category: {
-        cid: string;
-        oneDepth: string;
-        twoDepth: string;
-        threeDepth: string;
-        fourDepth: string;
-        fiveDepth: string;
-    };
+    thumbnail: string;
+    category: categoryInterface;
+    progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING';
     title: string;
     tprice: number;
 }

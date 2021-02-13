@@ -7,19 +7,16 @@ import {
   getMySaleArticleRequest,
   getMySaleArticleRequestSuccess,
   getMySaleArticleRequestError,
-  getMySaleArticleScrollRequest,
-  getMySaleArticleScrollRequestSuccess,
-  getMySaleArticleScrollRequestError,
 } from './mySaleArticleSlice';
 
-function* getMySaleArticleRequestSaga() {
+function* getMySaleArticleRequestSaga(action: { payload: number }) {
   try {
-    // const result = yield call(mySalesArtilceAsync);
-    const result = yield dummyMyArticleList;
-    console.log(result);
+    const result = yield call(mySalesArtilceAsync, action.payload);
+    const { myAricleList, pageTotal } = result.data.data;
+    console.log(result.data.data);
     yield put({
       type: getMySaleArticleRequestSuccess,
-      payload: result,
+      payload: { myAricleList, pageTotal },
     });
   } catch (error) {
     yield put({

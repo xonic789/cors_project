@@ -16,12 +16,10 @@ const mySaleArticleSlice = createSlice({
   name: 'myArticle',
   initialState: {
     mySaleArticle: [],
+    totalPage: 0,
     isGetMySaleArticlesLoading: false, // 내 판매글 가져오기
     isGetMySaleArticlesSuccess: false,
     isGetMySaleArticlesError: null,
-    isGetMySaleArticlesScrollLoading: false, // 내 판매글 추가 가져오기(스크롤)
-    isGetMySaleArticlesScrollSuccess: false,
-    isGetMySaleArticlesScrollError: null,
   },
   reducers: {
     getMySaleArticleRequest: (state, action) => {
@@ -30,23 +28,12 @@ const mySaleArticleSlice = createSlice({
     getMySaleArticleRequestSuccess: (state, action) => {
       state.isGetMySaleArticlesLoading = false;
       state.isGetMySaleArticlesSuccess = true;
-      state.mySaleArticle = action.payload;
+      state.mySaleArticle = action.payload.myAricleList;
+      state.totalPage = action.payload.pageTotal;
     },
     getMySaleArticleRequestError: (state, action) => {
       state.isGetMySaleArticlesLoading = false;
       state.isGetMySaleArticlesError = action.payload;
-    },
-    getMySaleArticleScrollRequest: (state, action) => {
-      state.isGetMySaleArticlesScrollLoading = true;
-    },
-    getMySaleArticleScrollRequestSuccess: (state, action) => {
-      state.isGetMySaleArticlesScrollLoading = false;
-      state.isGetMySaleArticlesScrollSuccess = true;
-      state.mySaleArticle = state.mySaleArticle.concat(action.payload);
-    },
-    getMySaleArticleScrollRequestError: (state, action) => {
-      state.isGetMySaleArticlesScrollLoading = false;
-      state.isGetMySaleArticlesScrollError = action.payload;
     },
   },
 });
@@ -55,9 +42,6 @@ export const {
   getMySaleArticleRequest,
   getMySaleArticleRequestSuccess,
   getMySaleArticleRequestError,
-  getMySaleArticleScrollRequest,
-  getMySaleArticleScrollRequestSuccess,
-  getMySaleArticleScrollRequestError,
 } = mySaleArticleSlice.actions;
 
 export default mySaleArticleSlice.reducer;
