@@ -4,9 +4,10 @@ export interface noticeInterface {
   noticeId: string,
   description: string,
   active: boolean,
+  content: string,
 }
 
 export interface getNoticeInterface {
   data: noticeInterface,
-  lastPage: number,
+  totalPage: number,
 }

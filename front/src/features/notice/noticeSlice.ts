@@ -7,6 +7,7 @@ const userSlice = createSlice({
   name: 'user',
   initialState: {
     noticeList: initialNoticeList,
+    totalPage: 0,
     isGetNoticeLoading: false, // 로그인
     isGetNoticeSucceed: false,
     isGetNoticeError: null,
@@ -18,7 +19,8 @@ const userSlice = createSlice({
     getNoticeRequestSuccess: (state, action) => {
       state.isGetNoticeLoading = false;
       state.isGetNoticeSucceed = true;
-      state.noticeList = action.payload;
+      state.noticeList = action.payload.data;
+      state.totalPage = action.payload.totalPage;
     },
     getNoticeRequestError: (state, action) => {
       state.isGetNoticeLoading = false;

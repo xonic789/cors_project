@@ -174,7 +174,7 @@ function Notice():JSX.Element {
               </NoticeTitleBox>
               <NoticeDetail style={{ height: notice.active ? 'auto' : '0', padding: notice.active ? '1em 1.5em' : '0 1.5em' }}>
                 <p>
-                  {notice.description}
+                  {notice.content}
                 </p>
               </NoticeDetail>
             </NoticeItem>
@@ -185,13 +185,13 @@ function Notice():JSX.Element {
         <PrevPage src="/images/icons/back.png" />
         <PageNumbers>
           <PageNumber>
-            <PageLink onClick={() => setPage(1)} to="/notice?page=1">1</PageLink>
+            <PageLink onClick={() => setPage(0)} to="/notice?page=0">1</PageLink>
           </PageNumber>
           <PageNumber>
-            <PageLink onClick={() => setPage(2)} to="/notice?page=2">2</PageLink>
+            <PageLink onClick={() => setPage(1)} to="/notice?page=1">2</PageLink>
           </PageNumber>
           <PageNumber>
-            <PageLink onClick={() => setPage(3)} to="/notice?page=3">3</PageLink>
+            <PageLink onClick={() => setPage(2)} to="/notice?page=2">3</PageLink>
           </PageNumber>
         </PageNumbers>
         <NextPage src="/images/icons/back.png" />
