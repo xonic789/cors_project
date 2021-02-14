@@ -25,17 +25,17 @@ const postSlice = createSlice({
       state.isLoadBookPostLoading = true;
       state.isLoadScrollBookPostLoading = false;
       state.hasMorePost = true;
-      state.filtering.division = action.payload.division;
-      state.filtering.category = action.payload.category;
+      state.filtering.division = action.payload.filtering.division;
+      state.filtering.category = action.payload.filtering.category;
     },
     loadBookPostSuccess(state, action) {
       state.isLoadBookPostLoading = false;
       state.isLoadBookPostDone = true;
-      state.bookPost = action.payload;
+      state.bookPost = action.payload.data;
     },
     loadBookPostError(state, action) {
       state.isLoadBookPostLoading = false;
-      state.isLoadBookPostError = action.payload.error;
+      state.isLoadBookPostError = action.payload;
     },
     loadScrollBookPostRequest(state, action) {
       state.isLoadScrollBookPostLoading = true;
@@ -43,12 +43,12 @@ const postSlice = createSlice({
     loadScrollBookPostSuccess(state, action) {
       state.isLoadScrollBookPostLoading = false;
       state.isLoadScrollPostDone = true;
-      state.bookPost = state.bookPost.concat(action.payload);
-      state.hasMorePost = state.bookPost.length === 10;
+      state.bookPost = state.bookPost.concat(action.payload.data);
+      state.hasMorePost = action.payload.data.length === 10;
     },
     loadScrollBookPostError(state, action) {
       state.isLoadScrollBookPostLoading = false;
-      state.isLoadScrollPostError = action.payload.error;
+      state.isLoadScrollPostError = action.payload;
     },
     deleteBookPostRequest(state, action) {
       state.isDeleteBookPostLoading = true;

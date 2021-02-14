@@ -52,13 +52,11 @@ const Categoty = styled.div`
 function InfiniteScrollList(): JSX.Element {
   const dispatch = useDispatch();
   const { bookPost, hasMorePost, isLoadScrollBookPostLoading } = useSelector((state) => state.postSlice);
-
   const scrollListener = (params:OnScrollParams) => {
     if (params.scrollTop + params.clientHeight >= params.scrollHeight - 300) {
-      console.log(hasMorePost, !isLoadScrollBookPostLoading);
       if (hasMorePost && !isLoadScrollBookPostLoading) {
         const LastId = bookPost[bookPost.length - 1].articleId;
-        dispatch(loadScrollBookPostRequest(LastId));
+        dispatch(loadScrollBookPostRequest({ lastId: LastId }));
       }
     }
   };
@@ -87,12 +85,12 @@ function InfiniteScrollList(): JSX.Element {
         {({ width }) => (
           <List
             rowCount={bookPost.length} // 항목의 개수
-            height={800} // 실제 렌더링 되는 높이범위
+            height={600} // 실제 렌더링 되는 높이범위
             rowHeight={200} // 항목의높이
             width={width} // 항목의 너비
             rowRenderer={rowRanderer} // 항목렌더링할때쓰는 함수
             onScroll={scrollListener} // scroll 함수
-            overscanRowCount={2} // 다음에 로드해올 항목 미리 컨텐츠 높이 잡기
+            overscanRowCount={10} // 다음에 로드해올 항목 미리 컨텐츠 높이 잡기
           />
         )}
       </AutoSizer>

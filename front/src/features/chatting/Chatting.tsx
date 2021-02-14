@@ -1,40 +1,78 @@
-import React, { useState } from 'react';
+import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
+import styled from 'styled-components';
 
 import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
+import { Client } from '@stomp/stompjs';
 
-import styled from 'styled-components';
-import { sendData } from '../../interfaces/Chatting.interface';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import chattingConnection from '../../api/chattingApi';
 
-const Chatting = () => {
-  const url = 'http://59.16.83.128:8080/';
-  const sockJS = new SockJS(url);
-  sockJS.onopen = function () {
-    console.log('open');
-  };
-  const stompClient = Stomp.over(sockJS);
+interface ChattingUserInterface {
+  userNickname: string,
+}
+interface useParamsID {
+  id: string
+}
+interface sendDataInterface {
+  messageType: string,
+  joinId: string,
+  nickname: string,
+  content: string
+}
+function Chatting({ userNickname }: ChattingUserInterface):JSX.Element {
+  const [message, setMessage] = useState('');
+  const [chatting, setChatting] = useState<string[]>([]);
+  const { id } = useParams<useParamsID>();
+  console.log(id);
+  const client = new Client({
+    brokerURL: chattingConnection,
+    debug(str: string) {
+      console.log(str);
+    },
+    reconnectDelay: 1000000,
+    heartbeatIncoming: 40000000,
+    heartbeatOutgoing: 40000000,
+  });
 
-  const cunnectChat = (userName:string) => {
-    stompClient.connect({}, (frame) => {
-      // alert("connent!");
-      stompClient.subscribe(`/chat/send/${userName}`, (response) => {
-        const data = JSON.parse(response.body);
-        // setData(data);
+  client.onConnect = function (frame) {
+    const roomIdApi = `http://local.corsmarket.ml/api/chat/room${id}`;
+    console.log(id);
+    axios.post(roomIdApi).then(({ data }) => {
+      console.log(data);
+      client.subscribe(`ws://local.corsmarket.ml/api/sub/chat/room/${data.roomId}`, (msg) => {
+        if (msg.body) {
+          setChatting([...chatting, msg.body]);
+          console.log(msg.body);
+        }
       });
-    }, () => {
-      // console.error("error");
     });
-    // stompClient.debug = function () {};
   };
-  const sendMessage = ({ chatRoomId, userId, receiver }:sendData) => {
-    // const sendMessageData = {'chatRoomId': chatRoomId, 'message': message, 'sender' :user_id, 'receiver': receiver};
-    // 실제는 sample 이 아니라 sendMessageData 형식으로 들어가야 하지 않을까,,,.?
-    // setData(data.concat(sampleMockMessage));
-    // stompClient.send("/chat/send", {}, JSON.stringify(sendMessageData));
+
+  client.onStompError = function (frame):void {
+    console.log(`Broker reported error: ${frame.headers.message}`);
+    console.log(`Additional details: ${frame.body}`);
+  };
+
+  client.activate();
+  const onSendMessage = () => {
+    const sendData: sendDataInterface = { messageType: 'TALK', joinId: id, nickname: userNickname, content: message };
+    client.publish({
+      destination: 'ws://local.corsmarket.ml/api/pub/chat/message',
+      body: JSON.stringify(sendData),
+      headers: {},
+    });
+  };
+  const onHandleChangeMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMessage(e.target.value);
   };
   return (
-    <div />
+    <div>
+      <form onSubmit={onSendMessage}>
+        <input type="text" onChange={onHandleChangeMessage} />
+        <button type="submit">전송하기</button>
+      </form>
+    </div>
   );
-};
-
+}
 export default Chatting;
