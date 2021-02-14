@@ -54,7 +54,7 @@ function ImagePreView({ onChangeImage, images, onDelete }: ImagePreViewInterface
 
   return (
     <ImageInputWrapper>
-      <ImageInput type="file" accept="image/jpg,impge/png,image/jpeg" name="file" id="image" onChange={onChangeImage} ref={ImageRef} />
+      <ImageInput type="file" accept="image/jpg,image/png,image/jpeg" name="file" id="image" onChange={onChangeImage} ref={ImageRef} />
       <button type="button" onClick={onClickImageUpload}>
         <img src="/images/icons/camera.png" alt="camera" />
       </button>
