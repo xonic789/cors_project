@@ -1,4 +1,4 @@
-package ml.market.cors.api.article;
+package ml.market.cors.controller.api.article;
 
 
 import lombok.AllArgsConstructor;
@@ -357,6 +357,7 @@ public class ArticleController {
                         article_id,
                         article_id + "에 해당하는 글이 없습니다."));
     }
+
 
 
 
