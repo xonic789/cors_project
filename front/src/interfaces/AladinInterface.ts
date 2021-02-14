@@ -1,0 +1,21 @@
+interface aladinIteminterface {
+  author: string,
+  categoryId: number,
+  categoryName: string,
+  cover: string,
+  creator: number,
+  customerReviewRank: number,
+  description: string,
+  isbn: string,
+  isbn13: string,
+  itemId: number,
+  link: string,
+  mileage: number,
+  priceSales: number,
+  priceStandard: number,
+  pubDate: string,
+  publisher: string,
+  stockStatus: string,
+  title: string,
+}
+export default aladinIteminterface;

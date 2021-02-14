@@ -1,4 +1,4 @@
-export interface chatting {
+export interface chattingInterface {
   messageId: number;
   message: string;
   time: Date;
@@ -6,7 +6,7 @@ export interface chatting {
   sender: string;
   chatRoomId: string;
 }
-export interface sendData {
+export interface sendDataInterface {
   chatRoomId:string,
   userId:string,
   receiver:string,
