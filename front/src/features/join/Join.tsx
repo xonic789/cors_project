@@ -156,7 +156,7 @@ const CertificationButton = styled.button`
   font-size: 4vw;
   font-weight: bold;
   padding: 0.5em 1em;
-  background: ;
+  background: #265290;
   color: #fff;
   border: none;
   border-radius: 5px;
@@ -240,7 +240,7 @@ const AddressSearchInput = styled.input`
 `;
 const AddressSearchButton = styled.button`
   padding: 0.7em;
-  background: ;
+  background: #265290;
   color: #fff;
   font-weight: bold;
   border: none;
@@ -278,7 +278,7 @@ const AgreeCheckBox = styled.img`
 `;
 const AgreeText = styled.div`
   & span {
-    color: ;
+    color: #265290;
   }
 `;
 
@@ -312,7 +312,7 @@ const JoinButton = styled.button`
   padding: 0.8em 0;
   text-align: center;
   color: #fff;
-  background: ;
+  background: #265290;
   border: none;
   outline: none;
   margin-bottom: 1.5em;
@@ -435,27 +435,32 @@ function Join():JSX.Element {
 
   const onClickEmailDuplication = async () => {
     try {
-      await emailDuplicationAsync(email.value);
-      setInputs({
-        ...inputs,
-        email: {
-          ...email,
-          duplicationCheck: true,
-        },
-      });
-      if (emailCertificationBox.current != null) {
-        emailCertificationBox.current.style.display = 'flex';
+      const result = await emailDuplicationAsync(email.value);
+
+      if (result) {
+        setInputs({
+          ...inputs,
+          email: {
+            ...email,
+            duplicationCheck: true,
+          },
+        });
+        if (emailCertificationBox.current != null) {
+          emailCertificationBox.current.style.display = 'flex';
+        }
+      } else {
+        setInputs({
+          ...inputs,
+          email: {
+            ...email,
+            message: '이미 사용중인 이메일입니다.',
+            color: 'red',
+            duplicationCheck: false,
+          },
+        });
       }
-    } catch {
-      setInputs({
-        ...inputs,
-        email: {
-          ...email,
-          message: '이미 사용중인 이메일입니다.',
-          color: 'red',
-          duplicationCheck: false,
-        },
-      });
+    } catch (error) {
+      alert('서버 통신중 오류가 발생하였습니다.');
     }
   };
 
@@ -471,29 +476,34 @@ function Join():JSX.Element {
 
   const onClickEmailCertification = async () => {
     try {
-      await emailCertificationAsync(email.value, email.code);
-      setInputs({
-        ...inputs,
-        email: {
-          ...email,
-          message: '인증이 완료되었습니다.',
-          color: 'blue',
-          certificationCheck: true,
-        },
-      });
-      if (emailCertificationBox.current != null) {
-        emailCertificationBox.current.style.display = 'none';
+      const result = await emailCertificationAsync(email.value, email.code);
+
+      if (result) {
+        setInputs({
+          ...inputs,
+          email: {
+            ...email,
+            message: '인증이 완료되었습니다.',
+            color: 'blue',
+            certificationCheck: true,
+          },
+        });
+        if (emailCertificationBox.current != null) {
+          emailCertificationBox.current.style.display = 'none';
+        }
+      } else {
+        setInputs({
+          ...inputs,
+          email: {
+            ...email,
+            message: '코드를 확인해주세요.',
+            color: 'red',
+            certificationCheck: false,
+          },
+        });
       }
     } catch {
-      setInputs({
-        ...inputs,
-        email: {
-          ...email,
-          message: '코드를 확인해주세요.',
-          color: 'red',
-          certificationCheck: false,
-        },
-      });
+      alert('서버 통신중 오류가 발생하였습니다.');
     }
   };
 

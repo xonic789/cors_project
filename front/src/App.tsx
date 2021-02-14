@@ -8,6 +8,8 @@ import Join from './features/join/Join';
 import ModifyProfile from './features/modifyProfile/ModifyProfile';
 import GlobalStyle from './styles/GlobalStyles';
 import MyPage from './features/mypage/MyPage';
+import MySaleArticle from './features/mySlaeArticle/MySaleArticle';
+import MyPurchaseArticle from './features/myPurchaseArticle/MyPurchaseArticle';
 
 function App():JSX.Element {
   return (
@@ -23,6 +25,8 @@ function App():JSX.Element {
             <Route path="/join" exact component={Join} />
             <Route path="/mypage" exact component={MyPage} />
             <Route path="/mypage/modify" exact component={ModifyProfile} />
+            <Route path="/mypage/sales" exact component={MySaleArticle} />
+            <Route path="/mypage/purchase" exact component={MyPurchaseArticle} />
           </Switch>
         </HashRouter>
       </div>

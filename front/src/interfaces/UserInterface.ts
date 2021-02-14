@@ -26,10 +26,3 @@ export interface myWishListInterface {
   title: string, // 책제목
   sumnail: string, // 대표 이미지
 }
-
-export interface myArticleInterface {
-  articleId: string, // 고유 번호
-  progress: 'completed' | 'hide' | 'trading' | 'posting', // 게시글 상태
-  title: string, // 책제목
-  sumnail: string, // 대표 이미지
-}

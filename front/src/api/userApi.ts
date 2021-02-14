@@ -48,6 +48,7 @@ export function logoutAsync(): Promise<AxiosResponse> {
 }
 
 export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
+  console.log('async~!');
   return axios({
     method: 'post',
     url: '/api/change/mypage',

@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeLatest, getContext } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   logoutAsync,
   modifyProfileAsync,
@@ -14,9 +14,9 @@ import {
   postLogoutRequestSuccess,
   postLogoutRequestError,
   getWishListRequest,
+  postModifyProfileRequest,
   postAddWishListRequest,
   postRemoveWishListRequest,
-  postModifyProfileRequest,
   postModifyProfileRequestError,
   postModifyProfileRequestSuccess,
 } from './userSlice';
@@ -92,10 +92,6 @@ function* postModifyProfileRequestSaga(action: {payload: modifyProfileInterface}
   }
 }
 
-function* getWishListRequestSaga() {
-  yield console.log('찜목록 불러오기');
-}
-
 function* postAddWishListRequestSaga() {
   yield console.log('찜하기');
 }
@@ -115,7 +111,6 @@ function* watchProfile(): Generator {
 }
 
 function* watchWishList(): Generator {
-  yield takeLatest(getWishListRequest, getWishListRequestSaga);
   yield takeLatest(postAddWishListRequest, postAddWishListRequestSaga);
   yield takeLatest(postRemoveWishListRequest, postRemoveWishListRequestSaga);
 }
