@@ -124,7 +124,7 @@ function AddPostPage():JSX.Element {
   const [isOpenSearchBox, setIsOpenSearchBox] = useState<boolean>(false);
   const history = useHistory();
 
-  const { isAddBookPostLoading, isAddBookPostDone } = useSelector((state) => state.addPostSlice);
+  const { isAddBookPostLoading, isAddBookPostDone, isAddBookPostError } = useSelector((state) => state.addPostSlice);
   const dispatch = useDispatch();
 
   const { division } = useParams<ParamTypes>();
@@ -188,11 +188,13 @@ function AddPostPage():JSX.Element {
     setIsOpenSearchBox(false);
   };
   const handleSubmitPost = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+    console.log(cid);
     e.preventDefault();
     const formData = new FormData();
     for (let i = 0; i < images.length; i++) {
       formData.append('file', images[i].image); // 사용자가 등록한 이미지
     }
+    formData.append('category', category); // category
     formData.append('cid', String(cid)); // 알라딘에서 받은 정보
     formData.append('title', title); // 알라딘에서 받은 정보
     formData.append('image', thumbnail); // 알라딘에서 받은 정보
@@ -212,14 +214,15 @@ function AddPostPage():JSX.Element {
 
     dispatch(addBookPostRequest({ data: formData }));
 
-    if (isAddBookPostDone) {
+    if (!isAddBookPostLoading && isAddBookPostDone) {
       setContent('');
       setImages([]);
       setPrice('');
-    } else if (isAddBookPostDone !== true) {
+      history.push('/home');
+    } else if (!isAddBookPostLoading && isAddBookPostError !== null) {
       alert('글 업로드에 실패했습니다.');
     }
-  }, [cid, content, dispatch, images, isAddBookPostDone, price, realPrice, thumbnail, title, upperCaseDivision]);
+  }, [category, cid, content, dispatch, history, images, isAddBookPostDone, isAddBookPostError, isAddBookPostLoading, price, realPrice, thumbnail, title, upperCaseDivision]);
   return (
     <>
       <AddPostWrapper>
