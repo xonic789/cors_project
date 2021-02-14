@@ -1,7 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 import AppLayout from '../../components/AppLayout';
+import { postLogoutRequest } from '../login/userSlice';
 
 const Wrapper = styled.div`
   position: relative;
@@ -162,22 +164,54 @@ const UtilLink = styled(Link)`
   }
 `;
 
+const LogoutButton = styled.button`
+  position: absolute;
+  right: 0.5em;
+  top: 0.5em;
+`;
+
 function MyPage():JSX.Element {
+  const history = useHistory();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.userSlice);
+  const { nickname, profileImg } = user;
+
+  const onClickRoleCheck = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (nickname === '') {
+      e.preventDefault();
+      alert('로그인이 필요한 기능입니다. 로그인 후 더 많은 혜택을 받으세요.');
+      history.push('/');
+    }
+  };
+
+  const onClickLogout = () => {
+    dispatch(postLogoutRequest({}));
+  };
+
   return (
     <AppLayout>
       <Wrapper>
+        <LogoutButton type="button" onClick={onClickLogout}>로그아웃</LogoutButton>
         <Layout>
           <MyInfo>
-            <ProfileImg src="/images/icons/my.png" />
+            <ProfileImg src={profileImg} />
             <ProfileText>
-              <MyName>로그인/회원가입하기<SpanImg src="/images/icons/back.png" /></MyName>
-              <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>
+              {
+                nickname !== ''
+                  ? <MyName>{nickname}</MyName>
+                  : (
+                    <>
+                      <MyName style={{ cursor: 'pointer' }} onClick={() => history.push('/')}>로그인/회원가입하기<SpanImg src="/images/icons/back.png" /></MyName>
+                      <MyDicription>로그인 후 더 많은 혜택을 받으세요.</MyDicription>
+                    </>
+                  )
+              }
             </ProfileText>
           </MyInfo>
-          <ProfileBtn to="/mypage/modify">프로필 수정</ProfileBtn>
+          <ProfileBtn onClick={onClickRoleCheck} to="/mypage/modify">프로필 수정</ProfileBtn>
           <MyMenu>
             <MyMenuItem>
-              <MyMenuLink to="/mypage/sales">
+              <MyMenuLink onClick={onClickRoleCheck} to="/mypage/sales">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/sell_active.png" />
                 </MenuImgBox>
@@ -185,7 +219,7 @@ function MyPage():JSX.Element {
               </MyMenuLink>
             </MyMenuItem>
             <MyMenuItem>
-              <MyMenuLink to="/mypage/purchase">
+              <MyMenuLink onClick={onClickRoleCheck} to="/mypage/purchase">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/pur_active.png" />
                 </MenuImgBox>
@@ -193,7 +227,7 @@ function MyPage():JSX.Element {
               </MyMenuLink>
             </MyMenuItem>
             <MyMenuItem>
-              <MyMenuLink to="/mypage/wishs">
+              <MyMenuLink onClick={onClickRoleCheck} to="/mypage/wishs">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/heart_blue.png" />
                 </MenuImgBox>
@@ -202,10 +236,10 @@ function MyPage():JSX.Element {
             </MyMenuItem>
           </MyMenu>
           <UtilMenuList>
-            <UtilMenuItem><UtilLink to="/question">문의하기</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink to="/notice">공지사항</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink to="/review">한줄평</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink to="/mymarket">나의마켓</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink onClick={onClickRoleCheck} to="/question">문의하기</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink onClick={onClickRoleCheck} to="/notice">공지사항</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink onClick={onClickRoleCheck} to="/review">한줄평</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink onClick={onClickRoleCheck} to="/mymarket">나의마켓</UtilLink></UtilMenuItem>
           </UtilMenuList>
         </Layout>
       </Wrapper>
