@@ -25,5 +25,4 @@ public class ArticleForm {
     private int tprice;
     private Division division;
 
-
 }
