@@ -37,6 +37,9 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional(readOnly = false)
     public ArticleDAO saveArticle(ArticleForm articleForm, MemberDAO memberDAO){
         Book_CategoryDAO book_categoryDAO = book_category_repository.findById(articleForm.getCid()).get();
+        if(book_categoryDAO!=null){
+            book_category_repository.save(new Book_CategoryDAO());
+        }
         ArticleDAO createArticle = ArticleDAO.createArticle(articleForm,memberDAO,book_categoryDAO);
         countRepository.save(createArticle.getCountDAO());
         image_info_repository.save(createArticle.getImage_info());

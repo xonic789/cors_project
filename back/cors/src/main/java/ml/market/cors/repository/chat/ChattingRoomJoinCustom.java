@@ -12,6 +12,7 @@ public interface ChattingRoomJoinCustom {
 
     ChattingRoomDTO findByJoinId(String join_id);
 
+    ChattingRoomDTO findByMemberIdAndArticleId(Long memberId,Long articleId);
 
 
 }
