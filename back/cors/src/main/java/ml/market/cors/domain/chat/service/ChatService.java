@@ -44,10 +44,18 @@ public class ChatService {
         return messageRepository.save(message);
     }
 
-    public List<ChattingRoomDTO> findAllByChatRoom(JwtCertificationToken jwtCertificationToken) {
+    public List<ChattingRoomDTO> findAllByChatRoom(JwtCertificationToken jwtCertificationToken) throws IllegalStateException {
         MemberDAO member = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException());
         return chattingRoomJoinRepository.findChatAll(member);
     }
+
+    public ChattingRoomDTO findByMemberIdAndArticleId(JwtCertificationToken jwtCertificationToken,Long articleId){
+        MemberDAO member = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException());
+        return chattingRoomJoinRepository.findByMemberIdAndArticleId(member.getMember_id(),articleId);
+    }
+
+
+
 
     public ChattingRoomDTO findOne(String joinId){
         return chattingRoomJoinRepository.findByJoinId(joinId);

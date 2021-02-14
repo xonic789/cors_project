@@ -36,11 +36,11 @@ function Chatting({ userNickname }: ChattingUserInterface):JSX.Element {
   });
 
   client.onConnect = function (frame) {
-    const roomIdApi = `http://local.corsmarket.ml/api/chat/room${id}`;
+    const roomIdApi = `http://local.corsmarket.ml/api/chat/room/`;
     console.log(id);
-    axios.post(roomIdApi).then(({ data }) => {
+    axios.post(roomIdApi, {params: { articleId: id}}).then(({ data }) => {
       console.log(data);
-      client.subscribe(`ws://local.corsmarket.ml/api/sub/chat/room/${data.roomId}`, (msg) => {
+      client.subscribe(`ws://local.corsmarket.ml/api/sub/chat/room/${data.joinId}`, (msg) => {
         if (msg.body) {
           setChatting([...chatting, msg.body]);
           console.log(msg.body);
