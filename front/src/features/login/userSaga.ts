@@ -13,33 +13,35 @@ import {
   postLogoutRequest,
   postLogoutRequestSuccess,
   postLogoutRequestError,
-  postModifyProfileRequest,
   getWishListRequest,
   postAddWishListRequest,
   postRemoveWishListRequest,
-  getMySaleArticleRequest,
-  getMyPurchaseArticleRequest,
+  postModifyProfileRequest,
   postModifyProfileRequestError,
   postModifyProfileRequestSuccess,
 } from './userSlice';
 import { modifyProfileInterface } from '../../interfaces/UserInterface';
 
-function* postLoginRequestSaga(action: { payload: { user: { email: string, passwd: string }, history: any } }) {
+function* postLoginRequestSaga(action: { payload: { user: { email: string, passwd: string } } }) {
   try {
     const loginUser = yield call(postLoginAsync, action.payload.user);
 
-    yield put({
-      type: postLoginRequestSuccess,
-      payload: loginUser,
-    });
-
-    action.payload.history.push('/home');
+    if (loginUser.nickname) {
+      yield put({
+        type: postLoginRequestSuccess,
+        payload: loginUser,
+      });
+    } else {
+      yield put({
+        type: postLoginRequestError,
+        payload: '로그인 정보를 확인해주세요.',
+      });
+    }
   } catch (error) {
     yield put({
       type: postLoginRequestError,
       payload: error,
     });
-    alert('로그인 정보를 확인하세요.');
   }
 }
 
@@ -101,14 +103,6 @@ function* postRemoveWishListRequestSaga() {
   yield console.log('찜 해제하기');
 }
 
-function* getMySaleArticleRequestSaga() {
-  yield console.log('내 판매글 불러오기');
-}
-
-function* getMyPurchaseArticleRequestSaga() {
-  yield console.log('내 구매글 불러오기');
-}
-
 function* watchLogin(): Generator {
   yield takeLatest(postLoginRequest, postLoginRequestSaga);
   yield takeLatest(postSocialLoginRequest, postSocialLoginRequestSaga);
@@ -125,16 +119,10 @@ function* watchWishList(): Generator {
   yield takeLatest(postRemoveWishListRequest, postRemoveWishListRequestSaga);
 }
 
-function* watchMyArticles(): Generator {
-  yield takeLatest(getMySaleArticleRequest, getMySaleArticleRequestSaga);
-  yield takeLatest(getMyPurchaseArticleRequest, getMyPurchaseArticleRequestSaga);
-}
-
 export default function* loginSaga(): Generator {
   yield all([
     fork(watchLogin),
     fork(watchProfile),
     fork(watchWishList),
-    fork(watchMyArticles),
   ]);
 }

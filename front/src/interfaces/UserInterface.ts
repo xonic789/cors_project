@@ -1,4 +1,5 @@
 export interface memberInterface {
+  userId: string, // 고유번호
   nickname: string, // 닉네임
   profileImg: string,
   latitude: number, // 위도

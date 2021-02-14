@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { memberInterface } from '../../interfaces/UserInterface';
 
 const initialUser: memberInterface = {
+  userId: '',
   nickname: '', // 닉네임
   profileImg: '', // 프로필 이미지
   latitude: 0, // 위도
@@ -43,9 +44,13 @@ const userSlice = createSlice({
   reducers: {
     postLoginRequest: (state, action) => {
       state.isLoginLoading = true;
+      state.isLoginSucceed = false;
+      state.isLoginError = null;
     },
     postSocialLoginRequest: (state, action) => {
       state.isLoginLoading = true;
+      state.isLoginSucceed = false;
+      state.isLoginError = null;
     },
     postLoginRequestSuccess: (state, action) => {
       state.isLoginLoading = false;

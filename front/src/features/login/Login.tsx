@@ -1,8 +1,10 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import LoginForm from './LoginForm';
 import SocialLogin from './SocialLogin';
+import { postLogoutRequest } from './userSlice';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -56,6 +58,26 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
+  const { isLoginSucceed, isLoginError } = useSelector((state) => state.userSlice);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  useEffect(() => {
+    dispatch(postLogoutRequest({}));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isLoginError !== null) {
+      alert(isLoginError);
+    }
+  }, [isLoginError]);
+
+  useEffect(() => {
+    if (isLoginSucceed) {
+      history.push('/home');
+    }
+  }, [isLoginSucceed, history]);
+
   return (
     <Wrapper>
       <Layout>
