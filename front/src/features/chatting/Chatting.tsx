@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 import { Client } from '@stomp/stompjs';
@@ -145,53 +145,60 @@ const ChattingMessage = styled.div`
   max-width: 200px;
   border-radius: 10px 10px 10px 0px;
 `;
+const client = new Client({
+  brokerURL: chattingConnection,
+  debug(str: string) {
+    console.log(str);
+  },
+  reconnectDelay: 50000,
+  heartbeatIncoming: 4000,
+  heartbeatOutgoing: 4000,
+});
 
 function Chatting({ userNickname }: ChattingUserInterface):JSX.Element {
   const [message, setMessage] = useState('');
   const [chatting, setChatting] = useState<string[]>([]);
+  const [myJoinId, setMyJoinId] = useState<string>('');
   const { id } = useParams<useParamsID>();
-  console.log(id);
-  const client = new Client({
-    brokerURL: chattingConnection,
-    debug(str: string) {
-      console.log(str);
-    },
-    reconnectDelay: 1000000,
-    heartbeatIncoming: 40000000,
-    heartbeatOutgoing: 40000000,
-  });
+  console.log('실행');
 
-  client.onConnect = function (frame) {
-    const roomIdApi = `http://local.corsmarket.ml/api/chat/room${id}`;
-    console.log(id);
-    axios.post(roomIdApi).then(({ data }) => {
-      console.log(data);
-      client.subscribe(`ws://local.corsmarket.ml/api/sub/chat/room/${data.roomId}`, (msg) => {
-        if (msg.body) {
-          setChatting([...chatting, msg.body]);
-          console.log(msg.body);
-        }
-      });
-    });
-  };
+  useEffect(() => {
+    client.onConnect = function (frame) {
+      const roomIdApi = `http://local.corsmarket.ml/api/chat/room?articleId=${id}`;
+      axios.post(roomIdApi)
+        .then(({ data }) => {
+          console.log(data.data.joinId);
+          client.subscribe(`ws://local.corsmarket.ml/api/sub/chat/room/${data.data.joinId}`, (msg) => {
+            console.log('mag-------!!!!!!!!!!!!!!!!!', msg);
+            console.log('aaaa');
+            setMyJoinId(data.data.joinId);
+            if (msg.body) {
+              setChatting([...chatting, msg.body]);
+            }
+          });
+        });
+    };
+    client.onStompError = function (frame):void {
+      // console.log(`Broker reported error: ${frame.headers.message}`);
+      // console.log(`Additional details: ${frame.body}`);
+    };
+    client.activate();
+  }, [chatting, id]);
 
-  client.onStompError = function (frame):void {
-    console.log(`Broker reported error: ${frame.headers.message}`);
-    console.log(`Additional details: ${frame.body}`);
-  };
-
-  client.activate();
-  const onSendMessage = () => {
-    const sendData: sendDataInterface = { messageType: 'TALK', joinId: id, nickname: userNickname, content: message };
+  const onSendMessage = (e: any) => {
+    e.preventDefault();
+    const sendData: sendDataInterface = { messageType: 'TALK', joinId: 'a2a7e23b-14c1-4535-99fa-a2ed4fc85fa1', nickname: '윤슬이야', content: message };
+    console.log(sendData);
     client.publish({
       destination: 'ws://local.corsmarket.ml/api/pub/chat/message',
       body: JSON.stringify(sendData),
       headers: {},
     });
   };
-  const onHandleChangeMessage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onHandleChangeMessage = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
-  };
+  }, []);
+  console.log(chatting, myJoinId);
   return (
     <ChattingWrapper>
       <ChattingMessageHeader>
