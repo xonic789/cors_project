@@ -2,16 +2,6 @@ import { ActionCreatorWithPayload, createSlice } from '@reduxjs/toolkit';
 import { myArticleInterface } from '../../interfaces/MyArticle.interface';
 import { memberInterface } from '../../interfaces/UserInterface';
 
-const initialUser: memberInterface = {
-  nickname: '', // 닉네임
-  profileImg: '', // 프로필 이미지
-  latitude: 0, // 위도
-  longitude: 0, // 경도
-  role: '', // 권한
-  articles: [], // 아이디 만
-  wishList: [], // 아이디 만
-};
-
 const mySaleArticleSlice = createSlice({
   name: 'myArticle',
   initialState: {

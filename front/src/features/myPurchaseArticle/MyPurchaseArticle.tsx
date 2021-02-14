@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { myArticleInterface } from '../../interfaces/MyArticle.interface';
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
 import numberArrayUtill from '../../utils/numberArrayUtill';
-import { getMySaleArticleRequest } from './mySaleArticleSlice';
+import { getMyPurchaseArticleRequest } from './myPurchaseArticleSlice';
 
 const Layout = styled.form`
   display: flex;
@@ -52,18 +52,16 @@ const BackImg = styled.img`
   }
 `;
 
-const MySaleItems = styled.div`
+const MyPurchaseItems = styled.div`
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: auto;
   @media screen and (min-width: 455px) {
     width: 455px;
   }
 `;
 
-const MySaleItem = styled.div`
+const MyPurchaseItem = styled.div`
   display: flex;
   align-items: center;
   padding: 1em;
@@ -193,10 +191,10 @@ const EmptyArticle = styled.div`
   }
 `;
 
-function MySaleArticle():JSX.Element | null {
+function MyPurchaseArticle():JSX.Element {
   const dispatch = useDispatch();
   const [page, setPage] = useState<number>(0);
-  const { mySaleArticle, totalPage, isGetMyPurchaseArticlesLoading } = useSelector((state) => state.mySaleArticleSlice);
+  const { myPurchaseArticle, totalPage } = useSelector((state) => state.myPurchaseArticleSlice);
   const progressForm = (progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING'): { text: string, background: string } => {
     const resultProgress = {
       COMPLETED: { text: '거래완료', background: '#1e1e1e' },
@@ -228,7 +226,7 @@ function MySaleArticle():JSX.Element | null {
   };
 
   useEffect(() => {
-    dispatch(getMySaleArticleRequest(page));
+    dispatch(getMyPurchaseArticleRequest(page));
   }, [dispatch, page]);
 
   return (
@@ -241,11 +239,11 @@ function MySaleArticle():JSX.Element | null {
           <h1>판매목록</h1>
         </Header>
         {
-          (totalPage === 0
+          totalPage === 0
             ? (
               <>
                 <EmptyArticle>
-                  <h2>등록한 판매글이 없습니다.</h2>
+                  <h2>등록한 구매글이 없습니다.</h2>
                   <p>다 보신 책들을 나누어 보아요.</p>
                   <button type="button">책 판매하러 가기</button>
                 </EmptyArticle>
@@ -253,10 +251,10 @@ function MySaleArticle():JSX.Element | null {
             )
             : (
               <>
-                <MySaleItems>
+                <MyPurchaseItems>
                   {
-                    mySaleArticle.map((item: myArticleInterface) => (
-                      <MySaleItem key={item.articleId}>
+                    myPurchaseArticle.map((item: myArticleInterface) => (
+                      <MyPurchaseItem key={item.articleId}>
                         <ItemImage src={item.thumbnail} />
                         <ItemInfo>
                           <p style={{ background: progressForm(item.progress).background }} className="my_state">{progressForm(item.progress).text}</p>
@@ -264,10 +262,10 @@ function MySaleArticle():JSX.Element | null {
                           <h2 className="my_title">{item.title}</h2>
                           <p className="my_price">{item.tprice}</p>
                         </ItemInfo>
-                      </MySaleItem>
+                      </MyPurchaseItem>
                     ))
                   }
-                  <MySaleItem>
+                  <MyPurchaseItem>
                     <ItemImage />
                     <ItemInfo>
                       <p style={{ background: progressForm('COMPLETED').background }} className="my_state">{progressForm('COMPLETED').text}</p>
@@ -275,8 +273,8 @@ function MySaleArticle():JSX.Element | null {
                       <h2 className="my_title">테스트중</h2>
                       <p className="my_price">200000</p>
                     </ItemInfo>
-                  </MySaleItem>
-                  <MySaleItem>
+                  </MyPurchaseItem>
+                  <MyPurchaseItem>
                     <ItemImage />
                     <ItemInfo>
                       <p style={{ background: progressForm('HIDE').background }} className="my_state">{progressForm('HIDE').text}</p>
@@ -284,8 +282,8 @@ function MySaleArticle():JSX.Element | null {
                       <h2 className="my_title">테스트중</h2>
                       <p className="my_price">200000</p>
                     </ItemInfo>
-                  </MySaleItem>
-                  <MySaleItem>
+                  </MyPurchaseItem>
+                  <MyPurchaseItem>
                     <ItemImage />
                     <ItemInfo>
                       <p style={{ background: progressForm('TRADING').background }} className="my_state">{progressForm('TRADING').text}</p>
@@ -293,29 +291,29 @@ function MySaleArticle():JSX.Element | null {
                       <h2 className="my_title">테스트중</h2>
                       <p className="my_price">200000</p>
                     </ItemInfo>
-                  </MySaleItem>
-                </MySaleItems>
+                  </MyPurchaseItem>
+                </MyPurchaseItems>
                 <Pagenation>
-                  <PrevLink onClick={onClickPrevPage} to={`/mypage/sales?page=${page - 1}`}>
+                  <PrevLink onClick={onClickPrevPage} to={`/mypage/Purchase?page=${page - 1}`}>
                     <Prev src="/images/icons/back.png" />
                   </PrevLink>
                   <PageItems>
                     {
                       numberArrayUtill(totalPage).map((i) => (
-                        <PageItem><Link onClick={() => setPage(i - 1)} to={`/mypage/sales?page=${i - 1}`}>{i}</Link></PageItem>
+                        <PageItem><Link onClick={() => setPage(i - 1)} to={`/mypage/Purchase?page=${i - 1}`}>{i}</Link></PageItem>
                       ))
                     }
                   </PageItems>
-                  <NextLink onClick={onClickNextPage} to={`/mypage/sales?page=${page + 1}`}>
+                  <NextLink onClick={onClickNextPage} to={`/mypage/Purchase?page=${page + 1}`}>
                     <Next src="/images/icons/back.png" />
                   </NextLink>
                 </Pagenation>
               </>
-            ))
+            )
         }
       </Layout>
     </>
   );
 }
 
-export default MySaleArticle;
+export default MyPurchaseArticle;

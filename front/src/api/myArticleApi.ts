@@ -11,9 +11,12 @@ export function mySalesArtilceAsync(page: number): Promise<AxiosResponse> {
   });
 }
 
-export function myPurchaseArtilceAsync(): Promise<AxiosResponse> {
+export function myPurchaseArtilceAsync(page: number): Promise<AxiosResponse> {
   return axios({
     method: 'get',
     url: '/api/mypage/purchase',
+    params: {
+      page,
+    },
   });
 }
