@@ -85,7 +85,7 @@ function InfiniteScrollList(): JSX.Element {
         {({ width }) => (
           <List
             rowCount={bookPost.length} // 항목의 개수
-            height={800} // 실제 렌더링 되는 높이범위
+            height={600} // 실제 렌더링 되는 높이범위
             rowHeight={200} // 항목의높이
             width={width} // 항목의 너비
             rowRenderer={rowRanderer} // 항목렌더링할때쓰는 함수

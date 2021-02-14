@@ -17,7 +17,7 @@ function PostList(): JSX.Element {
   }, [dispatch, filtering.category, filtering.division]);
   console.log(bookPost);
   return (
-    <AppLayout>
+    <AppLayout activeId={0}>
       <PostListWrapper>
         <Header />
         <AddPostButton />

@@ -7,9 +7,10 @@ interface BoxInterface {
 }
 const ButtonWrapper = styled.div`
   position:fixed;
+  width: 600px;
+  margin-left: auto;
   z-index: 30;
   bottom: 100px;
-  right: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;

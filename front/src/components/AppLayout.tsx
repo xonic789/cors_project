@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 interface AppLayoutInterface {
   children: JSX.Element;
+  activeId: number;
 }
 interface MenuItemProps {
   active: boolean,
@@ -51,8 +52,8 @@ const MenuItem = styled.li<MenuItemProps>`
   }
 `;
 
-function AppLayout({ children }: AppLayoutInterface):JSX.Element {
-  const [active, setActive] = useState<number>(0);
+function AppLayout({ children, activeId }: AppLayoutInterface):JSX.Element {
+  const [active, setActive] = useState<number>(activeId);
   const tabTitle = [
     ['/images/icons/home.png', '/images/icons/home_active.png', '홈', 'home'],
     ['/../images/icons/chat.png', '/images/icons/chat_active.png', '채팅', 'chatting'],

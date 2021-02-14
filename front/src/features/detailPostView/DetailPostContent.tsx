@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
 import countUtil from '../../utils/countDaoUtil';
@@ -176,7 +177,9 @@ function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
             <img src={heart ? '/images/icons/heart_active.png' : '/images/icons/heart.png'} alt="heartButton" />
           </HeartButton>
           <Price>{detailBookPost.rprice} 원</Price>
-          <ChattingButton>채팅하기</ChattingButton>
+          <NavLink to={`/chatting/${id}`}>
+            <ChattingButton>채팅하기</ChattingButton>
+          </NavLink>
         </ContentBottom>
       </ContentWrapper>
     </>
