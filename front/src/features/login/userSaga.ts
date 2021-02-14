@@ -63,7 +63,8 @@ function* postSocialLoginRequestSaga(action: { payload: { social: string } }) {
 
 function* postLogoutRequestSaga() {
   try {
-    yield call(logoutAsync);
+    // yield call(logoutAsync);
+    console.log('들어옴???');
 
     yield put({
       type: postLogoutRequestSuccess,

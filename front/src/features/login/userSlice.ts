@@ -12,35 +12,37 @@ const initialUser: memberInterface = {
   wishList: [], // 아이디 만
 };
 
+const initialState = {
+  user: initialUser,
+  isLoginLoading: false, // 로그인
+  isLoginSucceed: false,
+  isLoginError: null,
+  isLogoutLoading: false, // 로그아웃
+  isLogoutSucceed: false,
+  isLogoutError: null,
+  isModifyProfileLoading: false, // 프로필 수정
+  isModifyProfileSuccess: false,
+  isModifyProfileError: null,
+  isGetWishListLoading: false, // 내 찜목록 가져오기
+  isGetWishListSuccess: false,
+  isGetWishListError: null,
+  isAddWishListLoading: false, // 찜하기
+  isAddWishListSuccess: false,
+  isAddWishListError: null,
+  isRemoveWishListLoading: false, // 찜 해제하기
+  isRemoveWishListSuccess: false,
+  isRemoveWishListError: null,
+  isGetMySaleArticlesLoading: false, // 내 판매글 가져오기
+  isGetMySaleArticlesSuccess: false,
+  isGetMySaleArticlesError: null,
+  isGetMyPurchaseArticlesLoading: false, // 내 구매글 가져오기
+  isGetMyPurchaseArticlesSuccess: false,
+  isGetMyPurchaseArticlesError: null,
+};
+
 const userSlice = createSlice({
   name: 'user',
-  initialState: {
-    user: initialUser,
-    isLoginLoading: false, // 로그인
-    isLoginSucceed: false,
-    isLoginError: null,
-    isLogoutLoading: false, // 로그아웃
-    isLogoutSucceed: false,
-    isLogoutError: null,
-    isModifyProfileLoading: false, // 프로필 수정
-    isModifyProfileSuccess: false,
-    isModifyProfileError: null,
-    isGetWishListLoading: false, // 내 찜목록 가져오기
-    isGetWishListSuccess: false,
-    isGetWishListError: null,
-    isAddWishListLoading: false, // 찜하기
-    isAddWishListSuccess: false,
-    isAddWishListError: null,
-    isRemoveWishListLoading: false, // 찜 해제하기
-    isRemoveWishListSuccess: false,
-    isRemoveWishListError: null,
-    isGetMySaleArticlesLoading: false, // 내 판매글 가져오기
-    isGetMySaleArticlesSuccess: false,
-    isGetMySaleArticlesError: null,
-    isGetMyPurchaseArticlesLoading: false, // 내 구매글 가져오기
-    isGetMyPurchaseArticlesSuccess: false,
-    isGetMyPurchaseArticlesError: null,
-  },
+  initialState,
   reducers: {
     postLoginRequest: (state, action) => {
       state.isLoginLoading = true;
@@ -63,14 +65,18 @@ const userSlice = createSlice({
     },
     postLogoutRequest: (state, action) => {
       state.isLogoutLoading = true;
+      state.isLogoutSucceed = false;
+      state.isLogoutError = null;
     },
     postLogoutRequestSuccess: (state, action) => {
       state.isLogoutLoading = false;
       state.isLogoutSucceed = true;
-      state.user = initialUser;
+      state.isLogoutError = null;
+      state = initialState;
     },
     postLogoutRequestError: (state, action) => {
       state.isLogoutLoading = false;
+      state.isLogoutSucceed = false;
       state.isLogoutError = action.payload;
     },
     postModifyProfileRequest: (state, action) => {
