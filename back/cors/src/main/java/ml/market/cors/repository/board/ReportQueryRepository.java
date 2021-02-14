@@ -6,11 +6,13 @@ import ml.market.cors.domain.board.entity.QReport_boardDAO;
 import ml.market.cors.domain.board.entity.Report_boardDAO;
 import ml.market.cors.domain.board.entity.dto.QReportDTO;
 import ml.market.cors.domain.board.entity.dto.ReportDTO;
+import ml.market.cors.domain.member.entity.QMemberDAO;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 
 import static ml.market.cors.domain.board.entity.QReport_boardDAO.report_boardDAO;
+import static ml.market.cors.domain.member.entity.QMemberDAO.memberDAO;
 
 @Repository
 public class ReportQueryRepository {
@@ -31,7 +33,7 @@ public class ReportQueryRepository {
                         report_boardDAO.write_date
                 ))
                 .from(report_boardDAO)
-                .join(report_boardDAO.member).fetchJoin()
+                .join(report_boardDAO.member, memberDAO)
                 .where(report_boardDAO.report_id.eq(id))
                 .fetchOne();
     }

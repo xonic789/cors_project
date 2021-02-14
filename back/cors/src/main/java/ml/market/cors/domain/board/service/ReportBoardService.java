@@ -7,6 +7,6 @@ import ml.market.cors.domain.security.member.JwtCertificationToken;
 
 public interface ReportBoardService {
 
-    Report_boardDAO createReportBoard(ReportForm reportForm, JwtCertificationToken jwtCertificationToken);
+    Report_boardDAO createReportBoard(ReportForm reportForm, JwtCertificationToken jwtCertificationToken) throws IllegalStateException;
     ReportDTO findOne(Long id);
 }

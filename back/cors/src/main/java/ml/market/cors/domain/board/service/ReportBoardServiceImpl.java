@@ -10,21 +10,24 @@ import ml.market.cors.repository.board.ReportBoardRepository;
 import ml.market.cors.repository.board.ReportQueryRepository;
 import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ReportBoardServiceImpl implements ReportBoardService{
 
-    private ReportBoardRepository reportBoardRepository;
-    private MemberRepository memberRepository;
-    private ReportQueryRepository reportQueryRepository;
+    private final ReportBoardRepository reportBoardRepository;
+    private final MemberRepository memberRepository;
+    private final ReportQueryRepository reportQueryRepository;
+
 
     @Override
-    public Report_boardDAO createReportBoard(ReportForm reportForm, JwtCertificationToken jwtCertificationToken) {
+    @Transactional(readOnly = false)
+    public Report_boardDAO createReportBoard(ReportForm reportForm, JwtCertificationToken jwtCertificationToken) throws IllegalStateException{
         MemberDAO findMember = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException());
-
         Report_boardDAO reportBoard = Report_boardDAO.createReportBoard(reportForm, findMember);
         return reportBoardRepository.save(reportBoard);
     }

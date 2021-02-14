@@ -31,8 +31,7 @@ public class ChatService {
 
 
     public Chatting_room_joinDAO createChattingRoom(JwtCertificationToken jwtCertificationToken, ArticleDAO articleDAO) throws IllegalStateException{
-        Optional<MemberDAO> optionalMember = findMember(jwtCertificationToken);
-        MemberDAO member = optionalMember.orElseThrow(() -> new IllegalStateException());
+        MemberDAO member = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException());
 
         Chatting_room_joinDAO chatting = Chatting_room_joinDAO.createChatting(articleDAO, member);
         chattingRoomRepository.save(chatting.getChatting_room());
@@ -40,15 +39,13 @@ public class ChatService {
     }
 
     public MessageDAO createMessage(JwtCertificationToken jwtCertificationToken, ChatMessage chatMessage,Chatting_roomDAO chatting_roomDAO) throws IllegalStateException{
-        Optional<MemberDAO> optionalMember = findMember(jwtCertificationToken);
-        MemberDAO member = optionalMember.orElseThrow(() -> new IllegalStateException());
+        MemberDAO member = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException());
         MessageDAO message = MessageDAO.createMessage(chatMessage, member , chatting_roomDAO);
         return messageRepository.save(message);
     }
 
-    public List<ChattingRoomDTO> findAllByChatRoom(JwtCertificationToken jwtCertificationToken){
-        Optional<MemberDAO> optionalMember = findMember(jwtCertificationToken);
-        MemberDAO member = optionalMember.orElseThrow(() -> new IllegalStateException());
+    public List<ChattingRoomDTO> findAllByChatRoom(JwtCertificationToken jwtCertificationToken) {
+        MemberDAO member = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException());
         return chattingRoomJoinRepository.findChatAll(member);
     }
 

@@ -1,4 +1,4 @@
-package ml.market.cors.controller.api.board.notic;
+package ml.market.cors.controller.api.board.report;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,17 +22,16 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ReportController {
 
-    private ReportBoardService reportBoardService;
-    private ResponseEntityUtils responseEntityUtils;
+    private final ReportBoardService reportBoardService;
+    private final ResponseEntityUtils responseEntityUtils;
 
     @PostMapping("/api/report")
     public ResponseEntity<Message<Object>> createReport(
             @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken,
             @ModelAttribute ReportForm reportForm){
-
+        Report_boardDAO reportBoard =null;
         try{
-            Report_boardDAO reportBoard = reportBoardService.createReportBoard(reportForm, jwtCertificationToken);
-            return responseEntityUtils.getMessageResponseEntityCreated(reportBoardService.findOne(reportBoard.getReport_id()));
+            reportBoard = reportBoardService.createReportBoard(reportForm, jwtCertificationToken);
         }catch (IllegalStateException e){
             return responseEntityUtils.getMessageResponseEntityUnauthorized(
                     new Errors(
@@ -41,5 +40,6 @@ public class ReportController {
                             "member eq null",
                             "로그인 해야 합니다."));
         }
+        return responseEntityUtils.getMessageResponseEntityCreated(reportBoardService.findOne(reportBoard.getReport_id()));
     }
 }
