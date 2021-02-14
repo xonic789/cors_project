@@ -10,6 +10,7 @@ import GlobalStyle from './styles/GlobalStyles';
 import MyPage from './features/mypage/MyPage';
 import MySaleArticle from './features/mySlaeArticle/MySaleArticle';
 import MyPurchaseArticle from './features/myPurchaseArticle/MyPurchaseArticle';
+import Notice from './features/notice/Notice';
 
 function App():JSX.Element {
   return (
@@ -27,6 +28,7 @@ function App():JSX.Element {
             <Route path="/mypage/modify" exact component={ModifyProfile} />
             <Route path="/mypage/sales" exact component={MySaleArticle} />
             <Route path="/mypage/purchase" exact component={MyPurchaseArticle} />
+            <Route path="/notice" exact component={Notice} />
           </Switch>
         </HashRouter>
       </div>

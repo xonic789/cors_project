@@ -5,7 +5,8 @@ import detailViewSlice from './features/detailPostView/detailViewSlice';
 import userSlice from './features/login/userSlice';
 import mySaleArticleSlice from './features/mySlaeArticle/mySaleArticleSlice';
 import myPurchaseArticleSlice from './features/myPurchaseArticle/myPurchaseArticleSlice';
+import noticeSlice from './features/notice/noticeSlice';
 
 export default combineReducers({
-  postSlice, detailViewSlice, addPostSlice, userSlice, mySaleArticleSlice, myPurchaseArticleSlice,
+  postSlice, detailViewSlice, addPostSlice, userSlice, mySaleArticleSlice, myPurchaseArticleSlice, noticeSlice,
 });
