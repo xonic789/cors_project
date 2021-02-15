@@ -103,7 +103,6 @@ public class MemberController {
                                                   , @RequestParam Map<String, Object> member
             , @RequestPart(value = "profile_img", required = false)MultipartFile multipartFile) {
         ResponseEntity<Message<Object>> messageResponseEntity;
-        System.out.println("ewqewqewqewqewqe");
         try {
             long memberId = (Long) memberIdentify.getCredentials();
             if (memberManagement.change(member, memberId, multipartFile)) {
