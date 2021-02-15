@@ -43,6 +43,11 @@ public class ChatRoomController {
             if(chattingRoomDTO!=null){
                 return responseEntityUtils.getMessageResponseEntityOK(chattingRoomDTO);
             }else {
+                if(!chatService.articleMemberEqMember(jwtCertificationToken,articleId)){
+                    return responseEntityUtils.getMessageResponseEntityBadRequest(
+                            "잘못된 요청입니다. 자기 자신과는 대화할 수 없습니다."
+                    );
+                }
                 chattingRoom = chatService.createChattingRoom(jwtCertificationToken, articleDAO);
             }
         }catch (IllegalArgumentException e){

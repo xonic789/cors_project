@@ -173,8 +173,10 @@ public class ArticleController {
         return responseEntityUtils.getMessageResponseEntityOK(
                 new ArticleOne(
                         findArticle.getArticle_id(),
-                        findArticle.getMember().getMember_id(),
-                        findArticle.getMember().getNickname(),
+                        new Member(
+                                findArticle.getMember().getMember_id(),
+                                findArticle.getMember().getNickname(),
+                                findArticle.getMember().getEmail()),
                         findArticle.getTitle(),
                         findArticle.getContent(),
                         findArticle.getRprice(),
@@ -407,18 +409,16 @@ public class ArticleController {
 
     private Object[] fileUploadAndUrls(ArticleForm articleForm, ArticleDAO articleDAO) throws IllegalStateException{
         MultipartFile[] files = articleForm.getFile();
+        Object[] paths = new Object[2];
 
-        Object[] images = Arrays.stream(files).map(file -> {
+        for(int i=0;i<files.length;i++){
             try {
-                return s3Uploader.upload(file, "static", articleDAO.getArticle_id(),"article");
-            } catch (IOException e) {
+                paths[i]=s3Uploader.upload(files[i], "static", articleDAO.getArticle_id(),"article");
+            } catch (Exception e) {
                 e.printStackTrace();
-            } catch (IllegalStateException e){
-                System.out.println("파일 실패");
             }
-            return null;
-        }).toArray();
-        return images;
+        }
+        return paths;
     }
 
 
@@ -432,6 +432,14 @@ public class ArticleController {
             return true;
         }
         return false;
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class Member{
+        private Long memberId;
+        private String email;
+        private String nickname;
     }
 
 
@@ -483,8 +491,7 @@ public class ArticleController {
     @AllArgsConstructor
     static class ArticleOne{
         private Long articleId;
-        private Long memberId;
-        private String nickname;
+        private Member member;
         private String title;
         private String content;
         private int rprice;

@@ -49,7 +49,7 @@ public class ChatService {
         return chattingRoomJoinRepository.findChatAll(member);
     }
 
-    public ChattingRoomDTO findByMemberIdAndArticleId(JwtCertificationToken jwtCertificationToken,Long articleId){
+    public ChattingRoomDTO findByMemberIdAndArticleId(JwtCertificationToken jwtCertificationToken,Long articleId) throws IllegalStateException {
         MemberDAO member = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException());
         return chattingRoomJoinRepository.findByMemberIdAndArticleId(member.getMember_id(),articleId);
     }
@@ -74,6 +74,13 @@ public class ChatService {
         return Optional.empty();
     }
 
+    public boolean articleMemberEqMember(JwtCertificationToken jwtCertificationToken,Long articleId){
+        MemberDAO memberDAO = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException());
+        if(chattingRoomJoinRepository.ownerArticleMember(memberDAO.getMember_id(),articleId)==0L){
+            return true;
+        }
+        return false;
+    }
 
 
 
