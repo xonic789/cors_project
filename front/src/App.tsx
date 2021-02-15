@@ -11,6 +11,7 @@ import MyPage from './features/mypage/MyPage';
 import MySaleArticle from './features/mySlaeArticle/MySaleArticle';
 import MyPurchaseArticle from './features/myPurchaseArticle/MyPurchaseArticle';
 import Notice from './features/notice/Notice';
+import Review from './features/review/Review';
 
 function App():JSX.Element {
   return (
@@ -29,6 +30,7 @@ function App():JSX.Element {
             <Route path="/mypage/sales" exact component={MySaleArticle} />
             <Route path="/mypage/purchase" exact component={MyPurchaseArticle} />
             <Route path="/notice" exact component={Notice} />
+            <Route path="/review" exact component={Review} />
           </Switch>
         </HashRouter>
       </div>
