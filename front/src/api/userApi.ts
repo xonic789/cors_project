@@ -13,12 +13,12 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       passwd: user.passwd,
     },
   }).then((result) => {
-    const { userId, nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist } = result.headers;
+    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist } = result.headers;
 
     console.log(result.headers);
 
     const loginUser: memberInterface = {
-      userId,
+      email: '',
       nickname,
       profileImg,
       latitude,

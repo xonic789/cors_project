@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { memberInterface } from '../../interfaces/UserInterface';
 
 const initialUser: memberInterface = {
-  userId: '', // 고유번호
+  email: '', // 고유번호
   nickname: '', // 닉네임
   profileImg: '', // 프로필 이미지
   latitude: 0, // 위도

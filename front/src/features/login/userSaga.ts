@@ -28,7 +28,10 @@ function* postLoginRequestSaga(action: { payload: { user: { email: string, passw
     if (loginUser.nickname) {
       yield put({
         type: postLoginRequestSuccess,
-        payload: loginUser,
+        payload: {
+          ...loginUser,
+          email: action.payload.user.email,
+        },
       });
     }
   } catch (error) {
