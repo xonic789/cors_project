@@ -204,13 +204,6 @@ function AddPostPage():JSX.Element {
     formData.append('division', upperCaseDivision); // 사용자가 입력한 정보
 
     console.log(formData.keys(), formData.getAll('file'));
-    console.log(formData.get('cid'));
-    console.log(formData.get('title'));
-    console.log(formData.get('image'));
-    console.log(formData.get('rprice'));
-    console.log(formData.get('content'));
-    console.log(formData.get('tprice'));
-    console.log(formData.get('division'));
 
     dispatch(addBookPostRequest({ data: formData }));
 
