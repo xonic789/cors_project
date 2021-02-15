@@ -47,12 +47,19 @@ function* postLoginRequestSaga(action: { payload: { user: { email: string, passw
 
 function* postSocialLoginRequestSaga(action: { payload: { social: string } }) {
   try {
-    yield call(socialLoginAsync, action.payload.social);
+    const result = yield call(socialLoginAsync, action.payload.social);
 
-    yield put({
-      type: postLoginRequestSuccess,
-      payload: 'social',
-    });
+    if (result) {
+      yield put({
+        type: postLoginRequestSuccess,
+        payload: 'social',
+      });
+    } else {
+      yield put({
+        type: postLoginRequestError,
+        payload: '소셜 로그인 실패',
+      });
+    }
   } catch (error) {
     yield put({
       type: postLoginRequestError,
@@ -63,12 +70,18 @@ function* postSocialLoginRequestSaga(action: { payload: { social: string } }) {
 
 function* postLogoutRequestSaga() {
   try {
-    // yield call(logoutAsync);
-    console.log('들어옴???');
+    const result = yield call(logoutAsync);
 
-    yield put({
-      type: postLogoutRequestSuccess,
-    });
+    if (result) {
+      yield put({
+        type: postLogoutRequestSuccess,
+      });
+    } else {
+      yield put({
+        type: postLogoutRequestError,
+        payload: '로그아웃 실패',
+      });
+    }
   } catch (error) {
     yield put({
       type: postLogoutRequestError,
