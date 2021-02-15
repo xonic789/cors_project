@@ -176,14 +176,6 @@ function MyPage():JSX.Element {
   const { user } = useSelector((state) => state.userSlice);
   const { nickname, profileImg } = user;
 
-  const onClickRoleCheck = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    if (nickname === '') {
-      e.preventDefault();
-      alert('로그인이 필요한 기능입니다. 로그인 후 더 많은 혜택을 받으세요.');
-      history.push('/');
-    }
-  };
-
   const onClickLogout = () => {
     dispatch(postLogoutRequest({}));
   };
@@ -208,10 +200,10 @@ function MyPage():JSX.Element {
               }
             </ProfileText>
           </MyInfo>
-          <ProfileBtn onClick={onClickRoleCheck} to="/mypage/modify">프로필 수정</ProfileBtn>
+          <ProfileBtn to="/mypage/modify">프로필 수정</ProfileBtn>
           <MyMenu>
             <MyMenuItem>
-              <MyMenuLink onClick={onClickRoleCheck} to="/mypage/sales">
+              <MyMenuLink to="/mypage/sales">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/sell_active.png" />
                 </MenuImgBox>
@@ -219,7 +211,7 @@ function MyPage():JSX.Element {
               </MyMenuLink>
             </MyMenuItem>
             <MyMenuItem>
-              <MyMenuLink onClick={onClickRoleCheck} to="/mypage/purchase">
+              <MyMenuLink to="/mypage/purchase">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/pur_active.png" />
                 </MenuImgBox>
@@ -227,7 +219,7 @@ function MyPage():JSX.Element {
               </MyMenuLink>
             </MyMenuItem>
             <MyMenuItem>
-              <MyMenuLink onClick={onClickRoleCheck} to="/mypage/wishs">
+              <MyMenuLink to="/mypage/wishs">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/heart_blue.png" />
                 </MenuImgBox>
@@ -236,10 +228,10 @@ function MyPage():JSX.Element {
             </MyMenuItem>
           </MyMenu>
           <UtilMenuList>
-            <UtilMenuItem><UtilLink onClick={onClickRoleCheck} to="/question">문의하기</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink onClick={onClickRoleCheck} to="/notice">공지사항</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink onClick={onClickRoleCheck} to="/review">한줄평</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink onClick={onClickRoleCheck} to="/mymarket">나의마켓</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/question">문의하기</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/notice">공지사항</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/review">한줄평</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/mymarket">나의마켓</UtilLink></UtilMenuItem>
           </UtilMenuList>
         </Layout>
       </Wrapper>
