@@ -48,10 +48,16 @@ export function logoutAsync(): Promise<AxiosResponse> {
 }
 
 export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
-  console.log('async~!');
+  console.log(modifyProfile);
+
   return axios({
-    method: 'post',
-    url: '/api/change/mypage',
+    method: 'put',
+    url: '/api/change/profile',
     params: modifyProfile,
+  }).then((res) => true).catch((error) => {
+    if (error.response.status !== 400) {
+      throw new Error('서버통신에러');
+    }
+    return error;
   });
 }
