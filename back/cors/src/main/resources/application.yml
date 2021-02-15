@@ -30,6 +30,7 @@ spring:
           google:
             client-id: 494377772043-o0tfbhk9ed4cn86u0r75m8256d57cc2u.apps.googleusercontent.com
             client-secret: yoOHGlFvC_4rxSyBXSFE2VB1
+            
   servlet:
     multipart:
       enabled: true

@@ -15,6 +15,7 @@ import java.io.IOException;
 public class ExceptionPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+        System.out.println("403에러 근원지 exceptionpoint");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
     }
 }

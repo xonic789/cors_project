@@ -11,5 +11,4 @@ import java.util.List;
 
 @Repository
 public interface BookCategoryRepository extends JpaRepository<Book_CategoryDAO,Long>,BookCategoryRepositoryCustom{
-
 }

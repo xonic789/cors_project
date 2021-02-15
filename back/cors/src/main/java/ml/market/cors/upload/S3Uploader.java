@@ -33,6 +33,18 @@ public class S3Uploader implements Uploader{
         return upload(convertedFile,dirName,id,dir);
     }
 
+    public Map<String, String> upload(MultipartFile multipartFile, String dirName, Long id, String dir, String fileName) throws IOException {
+        Map<String, Object> map = convert(multipartFile, fileName);
+        File convertedFile = (File) map.get("file");
+        String uploadFileKey = (String)map.get("key");
+
+        Map<String, String> result = new HashMap<>();
+        String url = upload(convertedFile,dirName,id,dir);
+        result.put("url", url);
+        result.put("key", uploadFileKey);
+        return result;
+    }
+
     public Map<String, String> upload(MultipartFile multipartFile, String dirName, Long id, String dir, String fileName, String key) throws IOException {
         Map<String, Object> map = convert(multipartFile, fileName);
         File convertedFile = (File) map.get("file");

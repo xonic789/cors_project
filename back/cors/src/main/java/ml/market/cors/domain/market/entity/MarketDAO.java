@@ -1,7 +1,9 @@
 package ml.market.cors.domain.market.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.market.enums.MarketStatus;
 import ml.market.cors.domain.member.entity.MemberDAO;
@@ -14,6 +16,7 @@ import java.util.List;
 @Table(name="market")
 @Getter()
 @NoArgsConstructor
+@AllArgsConstructor
 public class MarketDAO {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,10 +40,10 @@ public class MarketDAO {
     private String location;
 
     @Column(name = "latitude")
-    private Integer latitude;
+    private double latitude;
 
     @Column(name = "longitude")
-    private Integer longitude;
+    private double longitude;
 
     @Column(name = "image")
     private String image;
@@ -48,4 +51,19 @@ public class MarketDAO {
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private MarketStatus status;
+
+    @Column(name = "canclecause")
+    private String canclecause;
+
+    public MarketDAO(MemberDAO member, String name, String intro, String location, double latitude, double longitude, String image, MarketStatus status, String canclecause) {
+        this.member = member;
+        this.name = name;
+        this.intro = intro;
+        this.canclecause = canclecause;
+        this.location = location;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.image = image;
+        this.status = status;
+    }
 }
