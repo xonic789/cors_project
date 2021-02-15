@@ -23,21 +23,12 @@ const initialState = {
   isModifyProfileLoading: false, // 프로필 수정
   isModifyProfileSuccess: false,
   isModifyProfileError: null,
-  isGetWishListLoading: false, // 내 찜목록 가져오기
-  isGetWishListSuccess: false,
-  isGetWishListError: null,
   isAddWishListLoading: false, // 찜하기
   isAddWishListSuccess: false,
   isAddWishListError: null,
   isRemoveWishListLoading: false, // 찜 해제하기
   isRemoveWishListSuccess: false,
   isRemoveWishListError: null,
-  isGetMySaleArticlesLoading: false, // 내 판매글 가져오기
-  isGetMySaleArticlesSuccess: false,
-  isGetMySaleArticlesError: null,
-  isGetMyPurchaseArticlesLoading: false, // 내 구매글 가져오기
-  isGetMyPurchaseArticlesSuccess: false,
-  isGetMyPurchaseArticlesError: null,
 };
 
 const userSlice = createSlice({
@@ -91,17 +82,6 @@ const userSlice = createSlice({
       state.isModifyProfileLoading = false;
       state.isModifyProfileError = action.payload;
     },
-    getWishListRequest: (state, action) => {
-      state.isGetWishListLoading = true;
-    },
-    getWishListRequestSuccess: (state, action) => {
-      state.isGetWishListLoading = false;
-      state.isGetWishListSuccess = true;
-    },
-    getWishListRequestError: (state, action) => {
-      state.isGetWishListLoading = false;
-      state.isGetWishListError = action.payload;
-    },
     postAddWishListRequest: (state, action) => {
       state.isAddWishListLoading = true;
     },
@@ -124,28 +104,6 @@ const userSlice = createSlice({
       state.isRemoveWishListLoading = false;
       state.isRemoveWishListError = action.payload;
     },
-    getMySaleArticleRequest: (state, action) => {
-      state.isGetMySaleArticlesLoading = true;
-    },
-    getMySaleArticleRequestSuccess: (state, action) => {
-      state.isGetMySaleArticlesLoading = false;
-      state.isGetMySaleArticlesSuccess = true;
-    },
-    getMySaleArticleRequestError: (state, action) => {
-      state.isGetMySaleArticlesLoading = false;
-      state.isGetMySaleArticlesError = action.payload;
-    },
-    getMyPurchaseArticleRequest: (state, action) => {
-      state.isGetMyPurchaseArticlesLoading = true;
-    },
-    getMyPurchaseArticleRequestSuccess: (state, action) => {
-      state.isGetMyPurchaseArticlesLoading = false;
-      state.isGetMyPurchaseArticlesSuccess = true;
-    },
-    getMyPurchaseArticleRequestError: (state, action) => {
-      state.isGetMyPurchaseArticlesLoading = false;
-      state.isGetMyPurchaseArticlesError = action.payload;
-    },
   },
 });
 
@@ -160,21 +118,12 @@ export const {
   postModifyProfileRequest,
   postModifyProfileRequestSuccess,
   postModifyProfileRequestError,
-  getWishListRequest,
-  getWishListRequestSuccess,
-  getWishListRequestError,
   postAddWishListRequest,
   postAddWishListRequestSuccess,
   postAddWishListRequestError,
   postRemoveWishListRequest,
   postRemoveWishListRequestSuccess,
   postRemoveWishListRequestError,
-  getMySaleArticleRequest,
-  getMySaleArticleRequestSuccess,
-  getMySaleArticleRequestError,
-  getMyPurchaseArticleRequest,
-  getMyPurchaseArticleRequestSuccess,
-  getMyPurchaseArticleRequestError,
 } = userSlice.actions;
 
 export default userSlice.reducer;

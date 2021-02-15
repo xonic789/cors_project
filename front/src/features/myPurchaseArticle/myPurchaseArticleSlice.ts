@@ -1,6 +1,4 @@
-import { ActionCreatorWithPayload, createSlice } from '@reduxjs/toolkit';
-import { myArticleInterface } from '../../interfaces/MyArticle.interface';
-import { memberInterface } from '../../interfaces/UserInterface';
+import { createSlice } from '@reduxjs/toolkit';
 
 const myPurchaseArticleSlice = createSlice({
   name: 'myArticle',

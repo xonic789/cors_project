@@ -33,23 +33,31 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
   });
 }
 
-export function socialLoginAsync(social: string): Promise<AxiosResponse> {
+export function socialLoginAsync(social: string): Promise<boolean> {
   return axios({
     method: 'post',
     url: `/oauth2/authorization/${social}`,
-  }).then((result) => result.data);
+  }).then((result) => true).catch((error) => {
+    if (error.response.status !== 400) {
+      throw new Error('서버 통신 에러');
+    }
+    return false;
+  });
 }
 
-export function logoutAsync(): Promise<AxiosResponse> {
+export function logoutAsync(): Promise<boolean> {
   return axios({
     method: 'post',
     url: '/api/logout',
+  }).then((result) => true).catch((error) => {
+    if (error.response.status !== 400) {
+      throw new Error('서버 통신 에러');
+    }
+    return false;
   });
 }
 
 export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
-  console.log(modifyProfile);
-
   return axios({
     method: 'put',
     url: '/api/change/profile',
