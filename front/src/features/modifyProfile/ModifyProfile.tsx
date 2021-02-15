@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -79,7 +79,7 @@ const BackgroundImg = styled.div`
   }
 `;
 
-const ProfileImg = styled.div`
+const ProfileImg = styled.img`
   position: absolute;
   bottom: -1.5em;
   width:5.5em;
@@ -191,7 +191,7 @@ const RemoveBox = styled.div`
 `;
 
 function ModifyProfile():JSX.Element {
-  const { user } = useSelector((state) => state.userSlice);
+  const { user, isModifyProfileError } = useSelector((state) => state.userSlice);
   const { nickname, profileImg } = user;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -222,6 +222,22 @@ function ModifyProfile():JSX.Element {
       color: 'red',
     },
   });
+
+  useEffect(() => {
+    if (isModifyProfileError === '비밀번호 불일치') {
+      setModifInputs((input) => ({
+        ...input,
+        passwd: {
+          ...input.passwd,
+          message: '비밀번호가 일치하지 않습니다.',
+          state: 'fail',
+          color: 'red',
+        },
+      }));
+    } else if (isModifyProfileError !== null) {
+      alert('서버 통신 에러');
+    }
+  }, [isModifyProfileError]);
 
   const onChangeInuts = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -385,7 +401,7 @@ function ModifyProfile():JSX.Element {
       </Header>
       <ImageBox>
         <BackgroundImg />
-        <ProfileImg />
+        <ProfileImg src={profileImg} />
       </ImageBox>
       <InputBox>
         <InputGroup>
