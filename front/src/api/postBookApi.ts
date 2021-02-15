@@ -35,6 +35,10 @@ export function getBookPostDetailViewAPI(postId: number):Promise<AxiosResponse> 
 export function getMarketListAPI():Promise<AxiosResponse> {
   return axios.get('http://local.corsmarket.ml/api/market');
 }
+export function deletePostAPI(id: number):Promise<AxiosResponse> {
+  return axios.get('http://local.corsmarket.ml/api/market/delete',
+    { params: { articleId: id } });
+}
 // 마켓글 불러오기
 export function getMarketBookAPI(marketId: number):Promise<AxiosResponse> {
   return axios.get(`http://local.corsmarket.ml/api/market/${marketId}`);
