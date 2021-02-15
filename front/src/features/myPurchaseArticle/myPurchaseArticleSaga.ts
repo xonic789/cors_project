@@ -2,7 +2,6 @@ import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   myPurchaseArtilceAsync,
 } from '../../api/myArticleApi';
-import dummyMyArticleList from './mockdata';
 import {
   getMyPurchaseArticleRequest,
   getMyPurchaseArticleRequestSuccess,
@@ -13,7 +12,7 @@ function* getMyPurchaseArticleRequestSaga(action: { payload: number }) {
   try {
     const result = yield call(myPurchaseArtilceAsync, action.payload);
     const { myAricleList, pageTotal } = result.data.data;
-    console.log(result.data.data);
+
     yield put({
       type: getMyPurchaseArticleRequestSuccess,
       payload: { myAricleList, pageTotal },
@@ -25,16 +24,6 @@ function* getMyPurchaseArticleRequestSaga(action: { payload: number }) {
     });
   }
 }
-
-// function* getMyPurchaseArticleScrollRequestSaga() {
-//   try {
-//     const result = dummyMyArticleList;
-//     console.log(result);
-//     yield put(loadScrollBookPostSuccess(result));
-//   } catch (error) {
-//     yield put(loadScrollBookPostError({ error: error.response.data }));
-//   }
-// }
 
 function* watchMyPurchaseArticle(): Generator {
   yield takeLatest(getMyPurchaseArticleRequest, getMyPurchaseArticleRequestSaga);

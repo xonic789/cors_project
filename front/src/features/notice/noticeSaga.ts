@@ -9,8 +9,7 @@ import {
 
 function* getNoticeRequestSaga(action: PayloadAction<number>) {
   try {
-    const result = yield getNoticeRequestAsync(action.payload);
-    console.log(result);
+    const result = yield call(getNoticeRequestAsync, action.payload);
 
     yield put({
       type: getNoticeRequestSuccess,

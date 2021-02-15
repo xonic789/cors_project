@@ -13,7 +13,6 @@ import {
   postLogoutRequest,
   postLogoutRequestSuccess,
   postLogoutRequestError,
-  getWishListRequest,
   postModifyProfileRequest,
   postAddWishListRequest,
   postRemoveWishListRequest,

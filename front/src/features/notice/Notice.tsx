@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { noticeInterface } from '../../interfaces/NoticeInterface';
-import dummyNoticeList from './mockdata';
 import { getNoticeRequest, toggleActiveNotice } from './noticeSlice';
 
 const Layout = styled.div`
