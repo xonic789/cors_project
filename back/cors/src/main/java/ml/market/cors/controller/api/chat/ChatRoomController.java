@@ -39,7 +39,12 @@ public class ChatRoomController {
         try {
             articleDAO = findArticle(articleId)
                     .orElseThrow(() -> new IllegalArgumentException("article_id에 해당하는 게시글이 없습니다."));
-            chattingRoom = chatService.createChattingRoom(jwtCertificationToken, articleDAO);
+            ChattingRoomDTO chattingRoomDTO = chatService.findByMemberIdAndArticleId(jwtCertificationToken, articleId);
+            if(chattingRoomDTO!=null){
+                return responseEntityUtils.getMessageResponseEntityOK(chattingRoomDTO);
+            }else {
+                chattingRoom = chatService.createChattingRoom(jwtCertificationToken, articleDAO);
+            }
         }catch (IllegalArgumentException e){
             return responseEntityUtils.getMessageResponseEntityBadRequest(
                     new Errors(
@@ -56,6 +61,7 @@ public class ChatRoomController {
                             "member eq null",
                             "로그인 해야 합니다."));
         }
+
 
         return responseEntityUtils.getMessageResponseEntityCreated(
                 new ChatRoom(

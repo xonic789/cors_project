@@ -104,7 +104,6 @@ const ContentBottom = styled.div`
 const ChattingButton = styled.button`
   color: white;
   background: #3960a6;
-  width: 40%;
   max-width: 200px;
   border: 0;
   padding: 10px;
@@ -162,7 +161,7 @@ function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
           <UploadeTime>9초전</UploadeTime>
           <Thumbnail>
             <img src={detailBookPost.thumbnail} alt="thumnail" />
-            <div>원가: {detailBookPost.tprice} 원</div>
+            <div>원가: {detailBookPost.rprice} 원</div>
           </Thumbnail>
           <Content>
             {detailBookPost.content}
@@ -176,7 +175,7 @@ function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
           <HeartButton onClick={HandleHeartButton}>
             <img src={heart ? '/images/icons/heart_active.png' : '/images/icons/heart.png'} alt="heartButton" />
           </HeartButton>
-          <Price>{detailBookPost.rprice} 원</Price>
+          <Price>{detailBookPost.tprice} 원</Price>
           <NavLink to={`/chatting/${id}`}>
             <ChattingButton>채팅하기</ChattingButton>
           </NavLink>

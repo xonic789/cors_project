@@ -61,10 +61,29 @@ public class ChattingRoomJoinRepositoryImpl implements ChattingRoomJoinCustom{
                         chatting_room_joinDAO.chatting_room.chatting_id
                 ))
                 .from(chatting_room_joinDAO)
-                .join(chatting_room_joinDAO.chatting_room).fetchJoin()
-                .join(chatting_room_joinDAO.article).fetchJoin()
+                .join(chatting_room_joinDAO.chatting_room)
+                .join(chatting_room_joinDAO.article)
                 .where(
                         chatting_room_joinDAO.join_id.eq(join_id))
+                .fetchOne();
+    }
+
+    @Override
+    public ChattingRoomDTO findByMemberIdAndArticleId(Long memberId,Long articleId) {
+
+        return query
+                .select(new QChattingRoomDTO(
+                        chatting_room_joinDAO.join_id,
+                        chatting_room_joinDAO.article.title,
+                        chatting_room_joinDAO.chatting_room.chatting_id
+                ))
+                .from(chatting_room_joinDAO)
+                .join(chatting_room_joinDAO.chatting_room,chatting_roomDAO)
+                .join(chatting_room_joinDAO.article,articleDAO)
+                .join(chatting_room_joinDAO.member,memberDAO)
+                .where(
+                        chatting_room_joinDAO.member.member_id.eq(memberId),
+                        chatting_room_joinDAO.article.article_id.eq(articleId))
                 .fetchOne();
     }
 

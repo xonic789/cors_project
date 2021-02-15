@@ -73,6 +73,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
             http.httpBasic().disable()
                     .csrf().disable()
+                    .headers()
+                        .frameOptions().sameOrigin()
+                    .and()
                     .securityContext().securityContextRepository(mCookieSecurityContextRepository)
                     .and()
                     .authorizeRequests()
