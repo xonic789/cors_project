@@ -175,8 +175,9 @@ public class ArticleController {
                         findArticle.getArticle_id(),
                         new Member(
                                 findArticle.getMember().getMember_id(),
-                                findArticle.getMember().getNickname(),
-                                findArticle.getMember().getEmail()),
+                                findArticle.getMember().getEmail(),
+                                findArticle.getMember().getNickname()
+                        ),
                         findArticle.getTitle(),
                         findArticle.getContent(),
                         findArticle.getRprice(),

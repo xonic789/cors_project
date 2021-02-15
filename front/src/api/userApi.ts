@@ -65,7 +65,7 @@ export function logoutAsync(): Promise<boolean> {
 export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
   return axios({
     method: 'put',
-    url: '/api/change/eeee',
+    url: '/api/change/profile',
     data: modifyProfile,
   }).then((res) => true).catch((error) => {
     if (error.response.status !== 400) {
