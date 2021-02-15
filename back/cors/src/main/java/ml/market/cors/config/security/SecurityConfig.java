@@ -39,6 +39,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 
 import java.util.LinkedList;
 import java.util.Objects;
@@ -73,20 +74,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
             http.httpBasic().disable()
                     .csrf().disable()
+                    .headers()
+                        .frameOptions().sameOrigin()
+                    .and()
                     .securityContext().securityContextRepository(mCookieSecurityContextRepository)
                     .and()
                     .authorizeRequests()
                     .antMatchers("/api/login").anonymous()
                     .antMatchers("/api/join").anonymous()
                     .antMatchers("/api/logout").authenticated()
-                    .antMatchers("/api/mypage").authenticated()
+                    .antMatchers("/api/market/view").authenticated()
+                    .antMatchers("/api/market/update").authenticated()
+                    .antMatchers("/api/market/save").authenticated()
+                    .antMatchers("/api/mypage/**").authenticated()
                     .antMatchers("/api/change/profile").authenticated()
                     .antMatchers("/**").permitAll()
                     .and()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .oauth2Login()
-                    .loginPage("/")
+                    .loginPage("/api/oauth2")
+                    .authorizationEndpoint()
+                    .baseUri("/api/oauth2/authorization")
+                    .and()
+                    .redirectionEndpoint()
+                    .baseUri("/api/login/oauth2/code/*")
+                    .and()
                     .userInfoEndpoint().userService(new CustomOAuth2UserService())
                     .and()
                     .successHandler(oauthSuccessHandler)
@@ -132,6 +145,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         if("google".equals(client)) {
             OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("google");
             return CommonOAuth2Provider.GOOGLE.getBuilder(client)
+                    .redirectUriTemplate(CustomOAuth2Provider.DEFAULT_LOGIN_REDIRECT_URL)
                     .clientId(registration.getClientId())
                     .clientSecret(registration.getClientSecret())
                     .scope("email", "profile")

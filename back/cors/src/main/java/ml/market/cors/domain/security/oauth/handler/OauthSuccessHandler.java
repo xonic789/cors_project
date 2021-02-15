@@ -75,7 +75,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         if (!bResult) {
             for(eSocialType type : eSocialType.values()){
                 if (type.getValue().equals(socialTypeName)) {
-                    memberRepository.save(new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, email, MemberParam.DEFAULT_PROFILE_IMG_DIR, MemberRole.USER, "blank", "blank", 0.0, 0.0, email, type));
+                    memberRepository.save(new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, MemberParam.DEFAULT_PROFILE_IMG_DIR, email, MemberRole.USER, null, "blank", "blank", 0.0, 0.0, email, type));
                     break;
                 }
             }

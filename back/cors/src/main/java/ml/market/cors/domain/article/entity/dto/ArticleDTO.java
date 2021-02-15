@@ -3,11 +3,9 @@ package ml.market.cors.domain.article.entity.dto;
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
 import ml.market.cors.domain.article.entity.dao.CountDAO;
-import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.market.entity.MarketDAO;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 

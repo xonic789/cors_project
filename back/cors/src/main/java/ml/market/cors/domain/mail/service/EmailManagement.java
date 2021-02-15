@@ -44,16 +44,23 @@ public class EmailManagement extends MailTransfer {
         }
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void insert(@NonNull String email) throws RuntimeException{
         Random rand = new Random();
         Long expireTime = new Date().getTime() + EXPIRE_TIME;
+        if(memberRepository.existsByEmail(email)){
+            throw new RuntimeException();
+        }
         try {
-            if(memberRepository.existsByEmail(email)){
-                throw new NoSuchElementException();
-            }
             if(emailStateRepository.existsById(email)){
-                throw new NoSuchElementException();
+                Optional<EmailStateDAO> optional = emailStateRepository.findById(email);
+                EmailStateDAO emailStateDAO = optional.get();
+                Date date = new Date();
+                if(date.after(new Date(emailStateDAO.getExpireTime()))){
+                    emailStateRepository.deleteById(email);
+                }else{
+                    throw new RuntimeException();
+                }
             }
             int code = rand.nextInt(CODE_BOUNDRY);
             String text = "인증코드: " + code;

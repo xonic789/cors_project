@@ -181,7 +181,7 @@ function MyPage():JSX.Element {
   };
 
   return (
-    <AppLayout>
+    <AppLayout activeId={3}>
       <Wrapper>
         <LogoutButton type="button" onClick={onClickLogout}>로그아웃</LogoutButton>
         <Layout>

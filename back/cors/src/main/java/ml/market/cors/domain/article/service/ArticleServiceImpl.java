@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,8 +37,16 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     @Transactional(readOnly = false)
     public ArticleDAO saveArticle(ArticleForm articleForm, MemberDAO memberDAO){
-        Book_CategoryDAO book_categoryDAO = book_category_repository.findById(articleForm.getCid()).get();
-        ArticleDAO createArticle = ArticleDAO.createArticle(articleForm,memberDAO,book_categoryDAO);
+        Optional<Book_CategoryDAO> optionalBookCategoryDAO = book_category_repository.findById(articleForm.getCid());
+        if(optionalBookCategoryDAO.isEmpty()){
+            Book_CategoryDAO save = book_category_repository.save(Book_CategoryDAO.createBookCategory(articleForm));
+            ArticleDAO createArticle = ArticleDAO.createArticle(articleForm,memberDAO,save);
+            countRepository.save(createArticle.getCountDAO());
+            image_info_repository.save(createArticle.getImage_info());
+            return articleRepository.save(createArticle);
+        }
+
+        ArticleDAO createArticle = ArticleDAO.createArticle(articleForm,memberDAO,optionalBookCategoryDAO.get());
         countRepository.save(createArticle.getCountDAO());
         image_info_repository.save(createArticle.getImage_info());
         return articleRepository.save(createArticle);
@@ -46,10 +55,18 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     @Transactional(readOnly = false)
     public ArticleDAO saveMarketArticle(ArticleForm articleForm, MemberDAO memberDAO){
-        Book_CategoryDAO book_categoryDAO = book_category_repository.findById(articleForm.getCid()).get();
+        Optional<Book_CategoryDAO> optionalBookCategoryDAO = book_category_repository.findById(articleForm.getCid());
+        if(optionalBookCategoryDAO.isEmpty()){
+            Book_CategoryDAO saveBookCategory = book_category_repository.save(Book_CategoryDAO.createBookCategory(articleForm));
+            MarketDAO findMarket = marketRepository.findByMemberId(memberDAO.getMember_id());
+            ArticleDAO createArticle = ArticleDAO.createArticleMarket(articleForm,memberDAO,saveBookCategory,findMarket);
+            countRepository.save(createArticle.getCountDAO());
+            image_info_repository.save(createArticle.getImage_info());
+            return articleRepository.save(createArticle);
+        }
 
         MarketDAO findMarket = marketRepository.findByMemberId(memberDAO.getMember_id());
-        ArticleDAO createArticle = ArticleDAO.createArticleMarket(articleForm,memberDAO,book_categoryDAO,findMarket);
+        ArticleDAO createArticle = ArticleDAO.createArticleMarket(articleForm,memberDAO,optionalBookCategoryDAO.get(),findMarket);
         countRepository.save(createArticle.getCountDAO());
         image_info_repository.save(createArticle.getImage_info());
         return articleRepository.save(createArticle);

@@ -1,5 +1,6 @@
 import React from 'react';
 import { HashRouter, Switch, Route } from 'react-router-dom';
+import NotFound from './components/NotFound';
 import AddPostPage from './features/addPost/AddPostPage';
 import DetailPostView from './features/detailPostView/DetailPostView';
 import Login from './features/login/Login';
@@ -13,6 +14,9 @@ import MyPurchaseArticle from './features/myPurchaseArticle/MyPurchaseArticle';
 import Notice from './features/notice/Notice';
 import Review from './features/review/Review';
 import WishList from './features/wishList/WishList';
+import ChattingList from './features/chatting/ChattingList';
+import Chatting from './features/chatting/Chatting';
+import Market from './features/market/Market';
 
 function App():JSX.Element {
   return (
@@ -25,6 +29,9 @@ function App():JSX.Element {
             <Route path="/home" exact component={PostList} />
             <Route path="/post/:id" exact component={DetailPostView} />
             <Route path="/addPost/:division" exact component={AddPostPage} />
+            <Route path="/chatting" exact component={ChattingList} />
+            <Route path="/chatting/:id" exact component={Chatting} />
+            <Route path="/market" exact component={Market} />
             <Route path="/join" exact component={Join} />
             <Route path="/mypage" exact component={MyPage} />
             <Route path="/mypage/modify" exact component={ModifyProfile} />
@@ -33,6 +40,7 @@ function App():JSX.Element {
             <Route path="/mypage/wishs" exact component={WishList} />
             <Route path="/notice" exact component={Notice} />
             <Route path="/review" exact component={Review} />
+            <Route component={NotFound} />
           </Switch>
         </HashRouter>
       </div>

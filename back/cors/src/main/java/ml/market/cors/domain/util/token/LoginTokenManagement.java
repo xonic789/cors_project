@@ -41,9 +41,9 @@ public class LoginTokenManagement extends JwtTokenManagement{
 
     public static final String JWT = "JWT";
 
-    public static final long ACCESS_EXPIRETIME = 1000 * 60 * 1;
+    public static final long ACCESS_EXPIRETIME = 1000 * 60 * 30;
 
-    public static final long REFRESH_EXPIRETIME = 1000 * 60 * 5;
+    public static final long REFRESH_EXPIRETIME = 1000 * 60 * 60;
 
     public static final String ALG_HEADER = "alg";
 

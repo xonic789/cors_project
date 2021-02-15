@@ -1,5 +1,6 @@
 package ml.market.cors.domain.member.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
@@ -45,6 +46,9 @@ public class MemberDAO implements UserDetails{
     @Enumerated(EnumType.STRING)
     private MemberRole role;
 
+    @Column(name = "intro")
+    private String intro;
+
     @Column(name = "passwd")
     private String password;
 
@@ -71,8 +75,23 @@ public class MemberDAO implements UserDetails{
         return grants;
     }
 
-    public MemberDAO(String profileKey, long member_id, String profile_img, String email, MemberRole role, String password, String address, double latitude, double longitude, String nickname, eSocialType eSocialType) {
+    public MemberDAO(String profileKey, String profile_img, String email, MemberRole role, String intro, String password, String address, double latitude, double longitude, String nickname, ml.market.cors.domain.security.oauth.enums.eSocialType eSocialType) {
+        this.profileKey = profileKey;
+        this.profile_img = profile_img;
+        this.email = email;
+        this.role = role;
+        this.intro = intro;
+        this.password = password;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.nickname = nickname;
+        this.eSocialType = eSocialType;
+    }
+
+    public MemberDAO(long member_id, String profileKey, String profile_img, String email, MemberRole role, String password, String address, double latitude, double longitude, String nickname, eSocialType eSocialType, String intro) {
         this.member_id = member_id;
+        this.intro = intro;
         this.profileKey = profileKey;
         this.profile_img = profile_img;
         this.email = email;
@@ -87,20 +106,6 @@ public class MemberDAO implements UserDetails{
 
     public MemberDAO(Long memberId) {
         this.member_id = memberId;
-    }
-
-    public MemberDAO(String profileKey, String email, String profile_img, MemberRole role, String password, String address, double latitude, double longitude, String nickname
-    , eSocialType eSocialType) {
-        this.email = email;
-        this.profileKey = profileKey;
-        this.profile_img = profile_img;
-        this.role = role;
-        this.password = password;
-        this.address = address;
-        this.latitude = latitude;
-        this.longitude = longitude;
-        this.nickname = nickname;
-        this.eSocialType = eSocialType;
     }
 
     @Override
