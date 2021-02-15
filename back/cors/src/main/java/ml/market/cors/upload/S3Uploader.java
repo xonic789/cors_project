@@ -28,10 +28,21 @@ public class S3Uploader implements Uploader{
     public String bucket;
 
     @Override
-    public String upload(MultipartFile multipartFile, String dirName,Long id,String dir) throws IOException {
-        File convertedFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패하였습니다."));
+    public String upload(MultipartFile multipartFile, String dirName,Long id,String dir) throws Exception {
+        File convertedFile = convert(multipartFile).orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환이 실패하였습니다."));
         return upload(convertedFile,dirName,id,dir);
+    }
+
+    public Map<String, String> upload(MultipartFile multipartFile, String dirName, Long id, String dir, String fileName) throws IOException {
+        Map<String, Object> map = convert(multipartFile, fileName);
+        File convertedFile = (File) map.get("file");
+        String uploadFileKey = (String)map.get("key");
+
+        Map<String, String> result = new HashMap<>();
+        String url = upload(convertedFile,dirName,id,dir);
+        result.put("url", url);
+        result.put("key", uploadFileKey);
+        return result;
     }
 
     public Map<String, String> upload(MultipartFile multipartFile, String dirName, Long id, String dir, String fileName, String key) throws IOException {
@@ -51,7 +62,7 @@ public class S3Uploader implements Uploader{
     }
 
     private String upload(File uploadFile, String dirName,Long id,String dir) {
-        String fileName = dirName + "/" + dir + id + "/" + uploadFile.getName();
+        String fileName = dirName + "/" + dir + "/" + id + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
         removeNewFile(uploadFile);
         return uploadImageUrl;
@@ -59,7 +70,6 @@ public class S3Uploader implements Uploader{
 
     private String putS3(File uploadFile, String fileName) {
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
-        amazonS3Client.deleteObject(bucket, fileName);
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 

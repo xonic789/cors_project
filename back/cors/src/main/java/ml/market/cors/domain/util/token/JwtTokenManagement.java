@@ -103,5 +103,8 @@ public abstract class JwtTokenManagement {
 
     public abstract Map<String, Object> setHeaders();
 
+    public boolean validateToken(String token){
+        return this.getClaims(token) != null;
+    }
 }
 

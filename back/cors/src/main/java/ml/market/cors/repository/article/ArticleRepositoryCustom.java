@@ -20,7 +20,4 @@ public interface ArticleRepositoryCustom {
     List<ArticleDTO> findByDivisionAndUserLocation(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition, MemberDAO member);
 
     ArticleDAO findByIdFetch(Long article_id);
-
-
-
 }

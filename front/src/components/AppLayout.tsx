@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
+import PostList from '../features/postList/PostList';
+import MyPage from '../features/mypage/MyPage';
 
 interface AppLayoutInterface {
   children: JSX.Element;
+  activeId: number;
 }
 interface MenuItemProps {
   active: boolean,
@@ -51,13 +54,13 @@ const MenuItem = styled.li<MenuItemProps>`
   }
 `;
 
-function AppLayout({ children }: AppLayoutInterface):JSX.Element {
-  const [active, setActive] = useState<number>(0);
+function AppLayout({ children, activeId }: AppLayoutInterface):JSX.Element {
+  const [active, setActive] = useState<number>(activeId);
   const tabTitle = [
     ['/images/icons/home.png', '/images/icons/home_active.png', '홈', 'home'],
     ['/../images/icons/chat.png', '/images/icons/chat_active.png', '채팅', 'chatting'],
     ['/../images/icons/market.png', '/images/icons/market_active.png', '마켓', 'market'],
-    ['/../images/icons/my.png', '/images/icons/my_active.png', 'MY', 'my'],
+    ['/../images/icons/my.png', '/images/icons/my_active.png', 'MY', 'mypage'],
   ];
   const onClickMenuHandler = (id:number) => {
     setActive(id);

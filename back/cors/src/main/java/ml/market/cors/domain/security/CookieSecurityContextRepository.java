@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
+import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Member;
 import java.util.*;
 
 
@@ -31,6 +33,8 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CookieSecurityContextRepository implements SecurityContextRepository {
     private final LoginTokenManagement loginTokenManagement;
+
+    private final MemberRepository memberRepository;
 
     private String notFoundAccessTokenCookie(@NonNull HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
@@ -52,6 +56,24 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         return accessToken;
     }
 
+    private Map<String, Object> refresh(Cookie[] cookies){
+        Cookie cook = CookieManagement.search(eCookie.REFRESH_TOKEN.getName(), cookies);
+        if(cook == null){
+            return null;
+        }
+        Map<String, Object> claims = loginTokenManagement.getClaims(cook.getValue());
+        if(claims == null){
+            return null;
+        }
+        Long index = ((Number)claims.get(LoginTokenManagement.REFRESH_TOKEN_INDEX)).longValue();
+        String accessToken = loginTokenManagement.refresh(index);
+        if (accessToken == null) {
+            return null;
+        }
+        claims = loginTokenManagement.getClaims(accessToken);
+        return claims;
+    }
+
     private Map<String, Object> exsistAccessToken(@NonNull HttpServletResponse response, @NonNull HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
         Cookie cook = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), cookies);
@@ -59,21 +81,27 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
             return null;
         }
         Map<String, Object> claims = loginTokenManagement.getClaims(cook.getValue());
-        if (claims == null) {
-            cook = CookieManagement.search(eCookie.REFRESH_TOKEN.getName(), cookies);
-            if(cook == null){
+        if(claims != null){
+            long memberId = ((Number) claims.get(LoginTokenManagement.ID)).longValue();
+            List<MemberDAO> memberDAOList = memberRepository.findByMemberId(memberId);
+            MemberDAO memberDAO = memberDAOList.get(0);
+            if(memberDAO == null){
                 return null;
             }
-            claims = loginTokenManagement.getClaims(cook.getValue());
-            if(claims == null){
+            MemberRole memberRole = memberDAO.getRole();
+            List tokenRoleList = (List)claims.get(LoginTokenManagement.ROLE);
+            try{
+                tokenRoleList = TransListMemberAuthority(tokenRoleList);
+            }catch (Exception e){
                 return null;
             }
-            Long index = ((Number)claims.get(LoginTokenManagement.REFRESH_TOKEN_INDEX)).longValue();
-            String accessToken = loginTokenManagement.refresh(index);
-            if (accessToken == null) {
-                return null;
+            MemberGrantAuthority tokenRole = (MemberGrantAuthority) tokenRoleList.get(0);
+            if(memberRole.getRole() != tokenRole.getAuthority()){
+                response.setHeader(MemberParam.ROLE, memberRole.getRole());
+                claims = refresh(cookies);
             }
-            claims = loginTokenManagement.getClaims(accessToken);
+        }else{
+            claims = refresh(cookies);
         }
         return claims;
     }

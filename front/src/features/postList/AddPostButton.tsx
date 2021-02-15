@@ -7,9 +7,11 @@ interface BoxInterface {
 }
 const ButtonWrapper = styled.div`
   position:fixed;
+  width: 100%;
+  max-width: 600px;
   z-index: 30;
   bottom: 100px;
-  right: 20px;
+  padding-right: 20px;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
@@ -46,7 +48,7 @@ const AddPostButton = ():JSX.Element => {
   }, [showBox]);
   return (
     <ButtonWrapper>
-      <NavLink to="/addPost/sale"><Box show={showBox}>구매글 작성하러가기</Box></NavLink>
+      <NavLink to="/addPost/sales"><Box show={showBox}>구매글 작성하러가기</Box></NavLink>
       <NavLink to="/addPost/purchase"><Box show={showBox}>판매글 작성하러가기</Box></NavLink>
       <Button onClick={onClickShowBox}>{showBox ? 'X' : <img src="/images/icons/write.png" alt="+_img" />}</Button>
     </ButtonWrapper>

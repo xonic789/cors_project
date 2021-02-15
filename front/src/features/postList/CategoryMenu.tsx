@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
-import CategoryJSON from './category.json';
+import CategoryJSON from './Category.json';
 import { loadBookPostRequest } from './postSlice';
 
 interface CategoryMenuPropsInterFace {
@@ -85,18 +85,22 @@ const CloseButtton = styled.button`
 function CategoryMenu({ onMenuClose }:CategoryMenuPropsInterFace):JSX.Element {
   const dispatch = useDispatch();
   const [categoryTab, setCategoryTab] = useState<number>(0);
+
   const onHandleCategoryTab = useCallback((index: number) => {
     setCategoryTab(index);
   }, []);
+
   const onChangeCategotyDetailTab = useCallback((index1: number, index:number) => {
     const CategotyFilter = `${CategoryJSON.Category[index1].title}>${CategoryJSON.Category[index1].depth[index].title}`;
-    dispatch(loadBookPostRequest({ division: 'sales', category: CategotyFilter }));
+    dispatch(loadBookPostRequest({ filtering: { division: 'sales', category: CategotyFilter } }));
     onMenuClose();
   }, [dispatch, onMenuClose]);
+
   const onHandleViewAll = useCallback(() => {
-    dispatch(loadBookPostRequest({ division: 'sales', category: `${CategoryJSON.Category[categoryTab].title}` }));
+    dispatch(loadBookPostRequest({ filtering: { division: 'sales', category: `${CategoryJSON.Category[categoryTab].title}` } }));
     onMenuClose();
   }, [categoryTab, dispatch, onMenuClose]);
+
   return (
     <BurgerMenuWrapper>
       <BurgerMenuHeader>

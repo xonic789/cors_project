@@ -15,11 +15,11 @@ const detailViewSlice = createSlice({
     loadDetailBookPostSuccess(state, action) {
       state.isLoadDetailBookPostLoading = false;
       state.isLoadDetailBookPostDone = true;
-      state.detailBookPost = action.payload;
+      state.detailBookPost = action.payload.data;
     },
     loadDetailBookPostError(state, action) {
       state.isLoadDetailBookPostLoading = false;
-      state.isLoadDetailBookPostError = action.payload.error;
+      state.isLoadDetailBookPostError = action.payload;
     },
   },
 });

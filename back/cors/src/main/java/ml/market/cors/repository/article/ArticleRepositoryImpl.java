@@ -27,11 +27,9 @@ import static ml.market.cors.domain.member.entity.QMemberDAO.memberDAO;
 public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
 
     private final JPAQueryFactory query;
-    private final BookCategoryRepository bookCategoryRepository;
 
-    public ArticleRepositoryImpl(EntityManager em,BookCategoryRepository bookCategoryRepository) {
+    public ArticleRepositoryImpl(EntityManager em) {
         this.query=new JPAQueryFactory(em);
-        this.bookCategoryRepository=bookCategoryRepository;
     }
 
     @Override

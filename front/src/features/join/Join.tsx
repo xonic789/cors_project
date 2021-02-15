@@ -5,15 +5,18 @@ import DaumPostCode, { AddressData } from 'react-daum-postcode';
 import { emailCertificationAsync, emailDuplicationAsync, joinRequestAsync, nicknameDuplicationAsync } from '../../api/joinApi';
 
 const Positional = styled.div`
-  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   height: 100vh;
   font-size: 4.5vw;
+  @media screen and (min-width: 460px) {
+    font-size: 20px;
+  }
 `;
 
 const Header = styled.header`
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -24,6 +27,12 @@ const Header = styled.header`
   & h1 {
     font-size: 4.5vw;
     font-weight: 400;
+  }
+  @media screen and (min-width: 460px) {
+    width: 460px;
+    & h1 {
+    font-size: 20px;
+  }
   }
 `;
 
@@ -53,6 +62,9 @@ const JoinForm = styled.form`
   & > div:last-child {
     margin-bottom: 1.5em;
   }
+  @media screen and (min-width: 460px) {
+    width: 414px;
+  }
   `;
 
 const JoinInputBox = styled.div`
@@ -63,7 +75,12 @@ const JoinInputBox = styled.div`
     font-size: 3.5vw;
     margin-bottom: 0.5em;
   }
-  `;
+  @media screen and (min-width: 460px) {
+    & label {
+      font-size: 16.1px;
+    }
+  }
+`;
 
 const JoinInput = styled.div`
   position: relative;
@@ -82,6 +99,9 @@ const Input = styled.input`
   background: none;
   border: none;
   outline: none;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 
 const CheckLogo = styled.img`
@@ -97,11 +117,14 @@ const CertificationRequest = styled.button`
   font-size: 3vw;
   font-weight: bold;
   padding: 1em 1.5em;
-  background: #265290;
+  background: ;
   color: #fff;
   border: none;
   border-radius: 5px;
   outline: none;
+  @media screen and (min-width: 460px) {
+    font-size: 13.8px;
+  }
 `;
 
 const CertificationBox = styled.div`
@@ -125,6 +148,9 @@ const CertificationInput = styled.input`
   border-radius: 5px;
   border: none;
   outline: none;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 const CertificationButton = styled.button`
   font-size: 4vw;
@@ -135,11 +161,17 @@ const CertificationButton = styled.button`
   border: none;
   border-radius: 5px;
   outline: none;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 
 const InputMessage = styled.p`
   font-size: 2vw;
   margin-top: 1em;
+  @media screen and (min-width: 460px) {
+    font-size: 9.2px;
+  }
 `;
 
 const SearchModal = styled.div`
@@ -161,6 +193,9 @@ const CloseButton = styled.img`
   top: 0.4em;
   right: 0.4em;
   font-size: 6vw;
+  @media screen and (min-width: 460px) {
+    font-size: 27.6px;
+  }
 `;
 
 const AddressFormBox = styled.div`
@@ -175,6 +210,12 @@ const AddressFormBox = styled.div`
   }
   & ${JoinInput} {
     padding: 0.5em;
+  }
+
+  @media screen and (min-width: 460px) {
+    & label {
+      font-size: 16.1px;
+    }
   }
 `;
 
@@ -193,6 +234,9 @@ const AddressSearchInput = styled.input`
   border-radius: 5px;
   margin-right: 0.5em;
   font-size: 4vw;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 const AddressSearchButton = styled.button`
   padding: 0.7em;
@@ -203,6 +247,9 @@ const AddressSearchButton = styled.button`
   outline: none;
   border-radius: 5px;
   font-size: 3.5vw;
+  @media screen and (min-width: 460px) {
+    font-size: 16.1px;
+  }
 `;
 
 const AgreementBox = styled.div`
@@ -210,6 +257,9 @@ const AgreementBox = styled.div`
   flex-direction: column;
   width: 90vw;
   margin-bottom: 2.5em;
+  @media screen and (min-width: 460px) {
+    width: 414px;
+  }
 `;
 const AllAgreeBox = styled.div`
   display: flex;
@@ -217,6 +267,9 @@ const AllAgreeBox = styled.div`
   font-size: 4.5vw;
   font-weight: bold;
   margin-bottom: 1em;
+  @media screen and (min-width: 460px) {
+    font-size: 20px;
+  }
 `;
 const AgreeCheckBox = styled.img`
   width: 1.5em;
@@ -235,6 +288,9 @@ const SubAgreeBox = styled.div`
   align-items: center;
   font-size: 4vw;
   margin-bottom: 1em;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+  }
 `;
 
 const AgreeDetail = styled.img`
@@ -260,6 +316,10 @@ const JoinButton = styled.button`
   border: none;
   outline: none;
   margin-bottom: 1.5em;
+  @media screen and (min-width: 460px) {
+    width: 368px;
+    font-size: 20px;
+  }
 `;
 
 function Join():JSX.Element {
@@ -375,27 +435,32 @@ function Join():JSX.Element {
 
   const onClickEmailDuplication = async () => {
     try {
-      await emailDuplicationAsync(email.value);
-      setInputs({
-        ...inputs,
-        email: {
-          ...email,
-          duplicationCheck: true,
-        },
-      });
-      if (emailCertificationBox.current != null) {
-        emailCertificationBox.current.style.display = 'flex';
+      const result = await emailDuplicationAsync(email.value);
+
+      if (result) {
+        setInputs({
+          ...inputs,
+          email: {
+            ...email,
+            duplicationCheck: true,
+          },
+        });
+        if (emailCertificationBox.current != null) {
+          emailCertificationBox.current.style.display = 'flex';
+        }
+      } else {
+        setInputs({
+          ...inputs,
+          email: {
+            ...email,
+            message: '이미 사용중인 이메일입니다.',
+            color: 'red',
+            duplicationCheck: false,
+          },
+        });
       }
-    } catch {
-      setInputs({
-        ...inputs,
-        email: {
-          ...email,
-          message: '이미 사용중인 이메일입니다.',
-          color: 'red',
-          duplicationCheck: false,
-        },
-      });
+    } catch (error) {
+      alert('서버 통신중 오류가 발생하였습니다.');
     }
   };
 
@@ -411,29 +476,34 @@ function Join():JSX.Element {
 
   const onClickEmailCertification = async () => {
     try {
-      await emailCertificationAsync(email.value, email.code);
-      setInputs({
-        ...inputs,
-        email: {
-          ...email,
-          message: '인증이 완료되었습니다.',
-          color: 'blue',
-          certificationCheck: true,
-        },
-      });
-      if (emailCertificationBox.current != null) {
-        emailCertificationBox.current.style.display = 'none';
+      const result = await emailCertificationAsync(email.value, email.code);
+
+      if (result) {
+        setInputs({
+          ...inputs,
+          email: {
+            ...email,
+            message: '인증이 완료되었습니다.',
+            color: 'blue',
+            certificationCheck: true,
+          },
+        });
+        if (emailCertificationBox.current != null) {
+          emailCertificationBox.current.style.display = 'none';
+        }
+      } else {
+        setInputs({
+          ...inputs,
+          email: {
+            ...email,
+            message: '코드를 확인해주세요.',
+            color: 'red',
+            certificationCheck: false,
+          },
+        });
       }
     } catch {
-      setInputs({
-        ...inputs,
-        email: {
-          ...email,
-          message: '코드를 확인해주세요.',
-          color: 'red',
-          certificationCheck: false,
-        },
-      });
+      alert('서버 통신중 오류가 발생하였습니다.');
     }
   };
 

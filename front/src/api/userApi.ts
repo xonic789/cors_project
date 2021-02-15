@@ -1,7 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { memberInterface, modifyProfileInterface } from '../interfaces/UserInterface';
 
-export function postLoginAsync(user: { email: string, passwd: string }): Promise<memberInterface> {
+export const LOGIN_ERROR = 'LOGIN_ERROR';
+export const SERVER_ERROR = 'SERVER_ERROR';
+
+export function postLoginAsync(user: { email: string, passwd: string }): Promise<memberInterface> | Promise<AxiosResponse> {
   return axios({
     method: 'post',
     url: '/api/login',
@@ -12,7 +15,10 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
   }).then((result) => {
     const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist } = result.headers;
 
+    console.log(result.headers);
+
     const loginUser: memberInterface = {
+      email: '',
       nickname,
       profileImg,
       latitude,
@@ -22,27 +28,49 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       wishList: wishlist === undefined ? [] : JSON.parse(wishlist),
     };
     return loginUser;
+  }).catch((error) => {
+    if (error.response.status === 400) {
+      throw new Error(LOGIN_ERROR);
+    } else if (error.response.status === 500) {
+      throw new Error(SERVER_ERROR);
+    }
+    return error;
   });
 }
 
-export function socialLoginAsync(social: string): Promise<AxiosResponse> {
+export function socialLoginAsync(social: string): Promise<boolean> {
   return axios({
-    method: 'get',
+    method: 'post',
     url: `/oauth2/authorization/${social}`,
-  }).then((result) => result.data);
+  }).then((result) => true).catch((error) => {
+    if (error.response.status !== 400) {
+      throw new Error('서버 통신 에러');
+    }
+    return false;
+  });
 }
 
-export function logoutAsync(): Promise<AxiosResponse> {
+export function logoutAsync(): Promise<boolean> {
   return axios({
     method: 'post',
     url: '/api/logout',
+  }).then((result) => true).catch((error) => {
+    if (error.response.status !== 400) {
+      throw new Error('서버 통신 에러');
+    }
+    return false;
   });
 }
 
 export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
   return axios({
-    method: 'post',
-    url: '/api/change/mypage',
-    params: modifyProfile,
+    method: 'put',
+    url: '/api/change/eeee',
+    data: modifyProfile,
+  }).then((res) => true).catch((error) => {
+    if (error.response.status !== 400) {
+      throw new Error('서버통신에러');
+    }
+    return error;
   });
 }

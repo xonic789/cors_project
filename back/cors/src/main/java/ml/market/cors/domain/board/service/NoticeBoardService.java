@@ -6,7 +6,9 @@ import ml.market.cors.domain.board.enums.eNoticeBoardKey;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.board.NoticeBoardRepository;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -68,14 +70,15 @@ public class NoticeBoardService {
             noticeBoardItem.put(eNoticeBoardKey.title, noticeBoardDAO.getTitle());
             noticeBoardItem.put(eNoticeBoardKey.content, noticeBoardDAO.getContent());
             noticeBoardItem.put(eNoticeBoardKey.writeDate, noticeBoardDAO.getWriteDate().toString());
-            noticeBoardItem.put(eNoticeBoardKey.email, noticeBoardDAO.getMember().getEmail());
+            noticeBoardItem.put(eNoticeBoardKey.active, "false");
         } catch (Exception e){
             return null;
         }
         return noticeBoardItem;
     }
 
-    public List<Map<eNoticeBoardKey, String>> list(Pageable pageable){
+    public List<Map<eNoticeBoardKey, String>> list(int pageIndex){
+        Pageable pageable = PageRequest.of(pageIndex,10, Sort.by("writeDate").descending());
         Page<Notic_boardDAO> noticeBoardPage = noticeBoardRepository.findAll(pageable);
         List<Notic_boardDAO> noticeBoardList = noticeBoardPage.getContent();
         List<Map<eNoticeBoardKey, String>> itemList = new ArrayList<>();
@@ -83,10 +86,15 @@ public class NoticeBoardService {
         for (Notic_boardDAO item : noticeBoardList) {
             itemMap = new HashMap<>();
             itemMap.put(eNoticeBoardKey.noticeId, item.getNoticeId().toString());
+            itemMap.put(eNoticeBoardKey.content, item.getContent());
             itemMap.put(eNoticeBoardKey.writeDate, item.getWriteDate().toString());
             itemMap.put(eNoticeBoardKey.title, item.getTitle());
+            itemMap.put(eNoticeBoardKey.active, "false");
             itemList.add(itemMap);
         }
+        itemMap = new HashMap<>();
+        itemMap.put(eNoticeBoardKey.totalPage, Integer.toString(noticeBoardPage.getTotalPages()));
+        itemList.add(itemMap);
         return itemList;
     }
 }

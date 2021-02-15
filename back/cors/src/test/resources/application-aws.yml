@@ -1,7 +1,7 @@
 cloud:
   aws:
     s3:
-      bucket: corsmarket-bucket
+      bucket: corsmarketbucket
     region:
       static: ap-northeast-2
     stack:
