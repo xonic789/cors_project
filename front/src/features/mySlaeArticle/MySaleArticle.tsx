@@ -267,33 +267,6 @@ function MySaleArticle():JSX.Element | null {
                       </MySaleItem>
                     ))
                   }
-                  <MySaleItem>
-                    <ItemImage />
-                    <ItemInfo>
-                      <p style={{ background: progressForm('COMPLETED').background }} className="my_state">{progressForm('COMPLETED').text}</p>
-                      <p className="my_category">테스트중</p>
-                      <h2 className="my_title">테스트중</h2>
-                      <p className="my_price">200000</p>
-                    </ItemInfo>
-                  </MySaleItem>
-                  <MySaleItem>
-                    <ItemImage />
-                    <ItemInfo>
-                      <p style={{ background: progressForm('HIDE').background }} className="my_state">{progressForm('HIDE').text}</p>
-                      <p className="my_category">테스트중</p>
-                      <h2 className="my_title">테스트중</h2>
-                      <p className="my_price">200000</p>
-                    </ItemInfo>
-                  </MySaleItem>
-                  <MySaleItem>
-                    <ItemImage />
-                    <ItemInfo>
-                      <p style={{ background: progressForm('TRADING').background }} className="my_state">{progressForm('TRADING').text}</p>
-                      <p className="my_category">테스트중</p>
-                      <h2 className="my_title">테스트중</h2>
-                      <p className="my_price">200000</p>
-                    </ItemInfo>
-                  </MySaleItem>
                 </MySaleItems>
                 <Pagenation>
                   <PrevLink onClick={onClickPrevPage} to={`/mypage/sales?page=${page - 1}`}>

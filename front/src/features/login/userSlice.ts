@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { memberInterface } from '../../interfaces/UserInterface';
 
 const initialUser: memberInterface = {
-  userId: '',
+  userId: '', // 고유번호
   nickname: '', // 닉네임
   profileImg: '', // 프로필 이미지
   latitude: 0, // 위도
@@ -37,13 +37,9 @@ const userSlice = createSlice({
   reducers: {
     postLoginRequest: (state, action) => {
       state.isLoginLoading = true;
-      state.isLoginSucceed = false;
-      state.isLoginError = null;
     },
     postSocialLoginRequest: (state, action) => {
       state.isLoginLoading = true;
-      state.isLoginSucceed = false;
-      state.isLoginError = null;
     },
     postLoginRequestSuccess: (state, action) => {
       state.isLoginLoading = false;
@@ -52,22 +48,19 @@ const userSlice = createSlice({
     },
     postLoginRequestError: (state, action) => {
       state.isLoginLoading = false;
+      state.isLoginSucceed = false;
       state.isLoginError = action.payload;
     },
     postLogoutRequest: (state, action) => {
       state.isLogoutLoading = true;
-      state.isLogoutSucceed = false;
-      state.isLogoutError = null;
     },
     postLogoutRequestSuccess: (state, action) => {
       state.isLogoutLoading = false;
       state.isLogoutSucceed = true;
-      state.isLogoutError = null;
       state = initialState;
     },
     postLogoutRequestError: (state, action) => {
       state.isLogoutLoading = false;
-      state.isLogoutSucceed = false;
       state.isLogoutError = action.payload;
     },
     postModifyProfileRequest: (state, action) => {
