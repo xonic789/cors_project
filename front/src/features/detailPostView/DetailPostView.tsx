@@ -5,6 +5,10 @@ import styled from 'styled-components';
 import { loadDetailBookPostRequest } from './detailViewSlice';
 import DetailPostContent from './DetailPostContent';
 
+interface ParamTypes {
+  id: string
+}
+
 const DetailPostViewContainer = styled.div`
   max-width: 600px;
   margin: 0 auto;
@@ -23,15 +27,17 @@ const Header = styled.div`
 function DetailPostView({ history }: RouteComponentProps):JSX.Element {
   const dispatch = useDispatch();
   const { detailBookPost } = useSelector((state) => state.detailViewSlice);
-  const id = useParams();
+  const { id } = useParams<ParamTypes>();
 
   const goback = () => {
     history.goBack();
   };
+  console.log('DetailPostView', id);
+  const postIdNumber = Number(id);
 
   useEffect(() => {
-    dispatch(loadDetailBookPostRequest(id));
-  }, [dispatch, id]);
+    dispatch(loadDetailBookPostRequest(postIdNumber));
+  }, [dispatch, postIdNumber]);
 
   return (
     <DetailPostViewContainer>

@@ -16,6 +16,7 @@ public class ArticleForm {
 
     private Long articleId;
     private Long memberId;
+    private String category;
     private String content;
     private String title;
     private String image;
@@ -24,6 +25,5 @@ public class ArticleForm {
     private int rprice;
     private int tprice;
     private Division division;
-
 
 }
