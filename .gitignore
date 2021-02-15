@@ -4,3 +4,4 @@ cors-0.0.1-SNAPSHOT.jar
 back/cors/cors-0.0.1-SNAPSHOT.jar
 back/cors/awscli-bundle/
 back/cors/awscli-bundle.zip
+back/cors/src/test/resources/application-credentials.yml
