@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { LOGIN_ERROR, SERVER_ERROR } from '../../api/userApi';
 import LoginForm from './LoginForm';
 import SocialLogin from './SocialLogin';
 import { postLogoutRequest } from './userSlice';
@@ -67,8 +68,10 @@ function Login():JSX.Element {
   }, [dispatch]);
 
   useEffect(() => {
-    if (isLoginError !== null) {
-      alert(isLoginError);
+    if (isLoginError === LOGIN_ERROR) {
+      alert('로그인 정보를 확인해주세요.');
+    } else if (isLoginError === SERVER_ERROR) {
+      alert('서버 통신중 에러 발생');
     }
   }, [isLoginError]);
 

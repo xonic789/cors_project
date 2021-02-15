@@ -30,16 +30,11 @@ function* postLoginRequestSaga(action: { payload: { user: { email: string, passw
         type: postLoginRequestSuccess,
         payload: loginUser,
       });
-    } else {
-      yield put({
-        type: postLoginRequestError,
-        payload: '로그인 정보를 확인해주세요.',
-      });
     }
   } catch (error) {
     yield put({
       type: postLoginRequestError,
-      payload: error,
+      payload: error.message,
     });
   }
 }

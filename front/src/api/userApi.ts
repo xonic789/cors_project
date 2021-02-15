@@ -1,7 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { memberInterface, modifyProfileInterface } from '../interfaces/UserInterface';
 
-export function postLoginAsync(user: { email: string, passwd: string }): Promise<memberInterface> {
+export const LOGIN_ERROR = 'LOGIN_ERROR';
+export const SERVER_ERROR = 'SERVER_ERROR';
+
+export function postLoginAsync(user: { email: string, passwd: string }): Promise<memberInterface> | Promise<AxiosResponse> {
   return axios({
     method: 'post',
     url: '/api/login',
@@ -26,8 +29,10 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
     };
     return loginUser;
   }).catch((error) => {
-    if (error.response.status !== 400) {
-      throw new Error('서버 통신 에러');
+    if (error.response.status === 400) {
+      throw new Error(LOGIN_ERROR);
+    } else if (error.response.status === 500) {
+      throw new Error(SERVER_ERROR);
     }
     return error;
   });
@@ -60,8 +65,8 @@ export function logoutAsync(): Promise<boolean> {
 export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
   return axios({
     method: 'put',
-    url: '/api/change/profile',
-    params: modifyProfile,
+    url: '/api/change/eeee',
+    data: modifyProfile,
   }).then((res) => true).catch((error) => {
     if (error.response.status !== 400) {
       throw new Error('서버통신에러');
