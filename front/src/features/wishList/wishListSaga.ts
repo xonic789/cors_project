@@ -18,7 +18,7 @@ function* getWishListRequestSaga(action: { payload: number }) {
   } catch (error) {
     yield put({
       type: getWishListRequestError,
-      payload: error,
+      payload: error.message,
     });
   }
 }

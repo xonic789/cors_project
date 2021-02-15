@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { myArticleInterface } from '../../interfaces/MyArticle.interface';
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
@@ -193,8 +193,9 @@ const EmptyArticle = styled.div`
 
 function WishList():JSX.Element {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [page, setPage] = useState<number>(0);
-  const { wishList, totalPage } = useSelector((state) => state.wishListSlice);
+  const { wishList, totalPage, isGetWishListsError } = useSelector((state) => state.wishListSlice);
   const progressForm = (progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING'): { text: string, background: string } => {
     const resultProgress = {
       COMPLETED: { text: '거래완료', background: '#1e1e1e' },
@@ -228,6 +229,15 @@ function WishList():JSX.Element {
   useEffect(() => {
     dispatch(getWishListRequest(page));
   }, [dispatch, page]);
+
+  useEffect(() => {
+    if (isGetWishListsError === 'NON_LOGIN') {
+      alert('로그인이 필요한 서비스입니다. 로그인 후 더 많은 혜택을 받으세요.');
+      history.push('/');
+    } else if (isGetWishListsError === 'SERVER_ERROR') {
+      alert('서버 통신중 오류 발생');
+    }
+  }, [isGetWishListsError, history]);
 
   return (
     <>

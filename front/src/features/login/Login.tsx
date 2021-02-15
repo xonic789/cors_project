@@ -70,14 +70,12 @@ function Login():JSX.Element {
     if (isLoginError !== null) {
       alert(isLoginError);
     }
-    console.log(2);
   }, [isLoginError]);
 
   useEffect(() => {
     if (isLoginSucceed) {
       history.push('/home');
     }
-    console.log(3);
   }, [isLoginSucceed, history]);
 
   return (

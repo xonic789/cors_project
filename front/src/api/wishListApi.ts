@@ -8,6 +8,13 @@ const getWishListAsync = (page: number): Promise<AxiosResponse> => {
     params: {
       page,
     },
+  }).catch((error) => {
+    if (error.response.status === 403) {
+      throw new Error('NON_LOGIN');
+    } else if (error.response.status === 500) {
+      throw new Error('SERVER_ERROR');
+    }
+    return error;
   });
 };
 
