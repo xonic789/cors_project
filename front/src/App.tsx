@@ -16,6 +16,7 @@ import Review from './features/review/Review';
 import WishList from './features/wishList/WishList';
 import ChattingList from './features/chatting/ChattingList';
 import Chatting from './features/chatting/Chatting';
+import Market from './features/market/Market';
 
 function App():JSX.Element {
   return (
@@ -30,6 +31,7 @@ function App():JSX.Element {
             <Route path="/addPost/:division" exact component={AddPostPage} />
             <Route path="/chatting" exact component={ChattingList} />
             <Route path="/chatting/:id" exact component={Chatting} />
+            <Route path="/market" exact component={Market} />
             <Route path="/join" exact component={Join} />
             <Route path="/mypage" exact component={MyPage} />
             <Route path="/mypage/modify" exact component={ModifyProfile} />
