@@ -12,6 +12,7 @@ import MySaleArticle from './features/mySlaeArticle/MySaleArticle';
 import MyPurchaseArticle from './features/myPurchaseArticle/MyPurchaseArticle';
 import Notice from './features/notice/Notice';
 import Review from './features/review/Review';
+import WishList from './features/wishList/WishList';
 
 function App():JSX.Element {
   return (
@@ -29,6 +30,7 @@ function App():JSX.Element {
             <Route path="/mypage/modify" exact component={ModifyProfile} />
             <Route path="/mypage/sales" exact component={MySaleArticle} />
             <Route path="/mypage/purchase" exact component={MyPurchaseArticle} />
+            <Route path="/mypage/wishs" exact component={WishList} />
             <Route path="/notice" exact component={Notice} />
             <Route path="/review" exact component={Review} />
           </Switch>

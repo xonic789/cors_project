@@ -7,7 +7,16 @@ import userSaga from './features/login/userSaga';
 import mySaleArticleSaga from './features/mySlaeArticle/mySaleArticleSaga';
 import myPurchaseArticleSaga from './features/myPurchaseArticle/myPurchaseArticleSaga';
 import noticeSaga from './features/notice/noticeSaga';
+import wishListSaga from './features/wishList/wishListSaga';
 
 export default function* rootSaga(): Generator {
-  yield all([fork(postSaga), fork(detailPostSaga), fork(userSaga), fork(addPostSaga), fork(mySaleArticleSaga), fork(myPurchaseArticleSaga), fork(noticeSaga)]);
+  yield all([
+    fork(postSaga),
+    fork(detailPostSaga),
+    fork(userSaga),
+    fork(addPostSaga),
+    fork(mySaleArticleSaga),
+    fork(myPurchaseArticleSaga),
+    fork(noticeSaga),
+    fork(wishListSaga)]);
 }
