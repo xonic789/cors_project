@@ -1,8 +1,11 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { LOGIN_ERROR, SERVER_ERROR } from '../../api/userApi';
 import LoginForm from './LoginForm';
 import SocialLogin from './SocialLogin';
+import { postLogoutRequest } from './userSlice';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -31,7 +34,9 @@ const TitleBox = styled.div`
 const Logo = styled.img`
   width: auto;
   height: 18vw;
-  margin-right: 0.5em;
+  @media screen and (min-width: 460px) {
+    height: 82.8px;
+  }
 `;
 
 const LinkBox = styled.div`
@@ -41,6 +46,10 @@ const LinkBox = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 2em;
+  @media screen and (min-width: 460px) {
+    font-size: 18.4px;
+    margin-bottom: 36.8px;
+  }
 `;
 
 const StyledLink = styled(Link)`
@@ -50,6 +59,28 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
+  const { isLoginSucceed, isLoginError } = useSelector((state) => state.userSlice);
+  const dispatch = useDispatch();
+  const history = useHistory();
+
+  useEffect(() => {
+    dispatch(postLogoutRequest({}));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isLoginError === LOGIN_ERROR) {
+      alert('로그인 정보를 확인해주세요.');
+    } else if (isLoginError === SERVER_ERROR) {
+      alert('서버 통신중 에러 발생');
+    }
+  }, [isLoginError]);
+
+  useEffect(() => {
+    if (isLoginSucceed) {
+      history.push('/home');
+    }
+  }, [isLoginSucceed, history]);
+
   return (
     <Wrapper>
       <Layout>

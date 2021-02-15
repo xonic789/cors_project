@@ -1,4 +1,4 @@
-import { all, call, fork, put, takeLatest, getContext } from 'redux-saga/effects';
+import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   logoutAsync,
   modifyProfileAsync,
@@ -14,43 +14,46 @@ import {
   postLogoutRequestSuccess,
   postLogoutRequestError,
   postModifyProfileRequest,
-  getWishListRequest,
   postAddWishListRequest,
   postRemoveWishListRequest,
-  getMySaleArticleRequest,
-  getMyPurchaseArticleRequest,
   postModifyProfileRequestError,
   postModifyProfileRequestSuccess,
 } from './userSlice';
 import { modifyProfileInterface } from '../../interfaces/UserInterface';
 
-function* postLoginRequestSaga(action: { payload: { user: { email: string, passwd: string }, history: any } }) {
+function* postLoginRequestSaga(action: { payload: { user: { email: string, passwd: string } } }) {
   try {
     const loginUser = yield call(postLoginAsync, action.payload.user);
 
-    yield put({
-      type: postLoginRequestSuccess,
-      payload: loginUser,
-    });
-
-    action.payload.history.push('/home');
+    if (loginUser.nickname) {
+      yield put({
+        type: postLoginRequestSuccess,
+        payload: loginUser,
+      });
+    }
   } catch (error) {
     yield put({
       type: postLoginRequestError,
-      payload: error,
+      payload: error.message,
     });
-    alert('로그인 정보를 확인하세요.');
   }
 }
 
 function* postSocialLoginRequestSaga(action: { payload: { social: string } }) {
   try {
-    yield call(socialLoginAsync, action.payload.social);
+    const result = yield call(socialLoginAsync, action.payload.social);
 
-    yield put({
-      type: postLoginRequestSuccess,
-      payload: 'social',
-    });
+    if (result) {
+      yield put({
+        type: postLoginRequestSuccess,
+        payload: 'social',
+      });
+    } else {
+      yield put({
+        type: postLoginRequestError,
+        payload: '소셜 로그인 실패',
+      });
+    }
   } catch (error) {
     yield put({
       type: postLoginRequestError,
@@ -61,11 +64,18 @@ function* postSocialLoginRequestSaga(action: { payload: { social: string } }) {
 
 function* postLogoutRequestSaga() {
   try {
-    yield call(logoutAsync);
-
-    yield put({
-      type: postLogoutRequestSuccess,
-    });
+    const result = yield call(logoutAsync);
+    console.log(1);
+    if (result) {
+      yield put({
+        type: postLogoutRequestSuccess,
+      });
+    } else {
+      yield put({
+        type: postLogoutRequestError,
+        payload: '로그아웃 실패',
+      });
+    }
   } catch (error) {
     yield put({
       type: postLogoutRequestError,
@@ -74,13 +84,21 @@ function* postLogoutRequestSaga() {
   }
 }
 
-function* postModifyProfileRequestSaga(action: {payload: modifyProfileInterface}) {
+function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: modifyProfileInterface}}) {
   try {
-    yield call(modifyProfileAsync, action.payload);
-
-    yield put({
-      type: postModifyProfileRequestSuccess,
-    });
+    const result = yield call(modifyProfileAsync, action.payload.modifyProfile);
+    console.log(result);
+    if (result) {
+      yield put({
+        type: postModifyProfileRequestSuccess,
+        payload: action.payload.modifyProfile.nickname,
+      });
+    } else {
+      yield put({
+        type: postModifyProfileRequestError,
+        payload: '비밀번호 불일치',
+      });
+    }
   } catch (error) {
     yield put({
       type: postModifyProfileRequestError,
@@ -89,24 +107,12 @@ function* postModifyProfileRequestSaga(action: {payload: modifyProfileInterface}
   }
 }
 
-function* getWishListRequestSaga() {
-  yield console.log('찜목록 불러오기');
-}
-
 function* postAddWishListRequestSaga() {
   yield console.log('찜하기');
 }
 
 function* postRemoveWishListRequestSaga() {
   yield console.log('찜 해제하기');
-}
-
-function* getMySaleArticleRequestSaga() {
-  yield console.log('내 판매글 불러오기');
-}
-
-function* getMyPurchaseArticleRequestSaga() {
-  yield console.log('내 구매글 불러오기');
 }
 
 function* watchLogin(): Generator {
@@ -120,14 +126,8 @@ function* watchProfile(): Generator {
 }
 
 function* watchWishList(): Generator {
-  yield takeLatest(getWishListRequest, getWishListRequestSaga);
   yield takeLatest(postAddWishListRequest, postAddWishListRequestSaga);
   yield takeLatest(postRemoveWishListRequest, postRemoveWishListRequestSaga);
-}
-
-function* watchMyArticles(): Generator {
-  yield takeLatest(getMySaleArticleRequest, getMySaleArticleRequestSaga);
-  yield takeLatest(getMyPurchaseArticleRequest, getMyPurchaseArticleRequestSaga);
 }
 
 export default function* loginSaga(): Generator {
@@ -135,6 +135,5 @@ export default function* loginSaga(): Generator {
     fork(watchLogin),
     fork(watchProfile),
     fork(watchWishList),
-    fork(watchMyArticles),
   ]);
 }

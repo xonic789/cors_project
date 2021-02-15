@@ -6,7 +6,14 @@ import DetailPostView from './features/detailPostView/DetailPostView';
 import Login from './features/login/Login';
 import PostList from './features/postList/PostList';
 import Join from './features/join/Join';
+import ModifyProfile from './features/modifyProfile/ModifyProfile';
 import GlobalStyle from './styles/GlobalStyles';
+import MyPage from './features/mypage/MyPage';
+import MySaleArticle from './features/mySlaeArticle/MySaleArticle';
+import MyPurchaseArticle from './features/myPurchaseArticle/MyPurchaseArticle';
+import Notice from './features/notice/Notice';
+import Review from './features/review/Review';
+import WishList from './features/wishList/WishList';
 import ChattingList from './features/chatting/ChattingList';
 import Chatting from './features/chatting/Chatting';
 
@@ -24,6 +31,13 @@ function App():JSX.Element {
             <Route path="/chatting" exact component={ChattingList} />
             <Route path="/chatting/:id" exact component={Chatting} />
             <Route path="/join" exact component={Join} />
+            <Route path="/mypage" exact component={MyPage} />
+            <Route path="/mypage/modify" exact component={ModifyProfile} />
+            <Route path="/mypage/sales" exact component={MySaleArticle} />
+            <Route path="/mypage/purchase" exact component={MyPurchaseArticle} />
+            <Route path="/mypage/wishs" exact component={WishList} />
+            <Route path="/notice" exact component={Notice} />
+            <Route path="/review" exact component={Review} />
             <Route component={NotFound} />
           </Switch>
         </HashRouter>
