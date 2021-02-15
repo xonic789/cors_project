@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { noticeInterface } from '../../interfaces/NoticeInterface';
-import dummyNoticeList from './mockdata';
+import numberArrayUtill from '../../utils/numberArrayUtill';
 import { getNoticeRequest, toggleActiveNotice } from './noticeSlice';
 
 const Layout = styled.div`
@@ -145,7 +145,7 @@ const NextPage = styled.img`
 function Notice():JSX.Element {
   const [page, setPage] = useState<number>(1);
   const dispatch = useDispatch();
-  const { noticeList } = useSelector((state) => state.noticeSlice);
+  const { noticeList, totalPage } = useSelector((state) => state.noticeSlice);
 
   useEffect(() => {
     dispatch(getNoticeRequest(page));
@@ -184,15 +184,13 @@ function Notice():JSX.Element {
       <PaginationBox>
         <PrevPage src="/images/icons/back.png" />
         <PageNumbers>
-          <PageNumber>
-            <PageLink onClick={() => setPage(0)} to="/notice?page=0">1</PageLink>
-          </PageNumber>
-          <PageNumber>
-            <PageLink onClick={() => setPage(1)} to="/notice?page=1">2</PageLink>
-          </PageNumber>
-          <PageNumber>
-            <PageLink onClick={() => setPage(2)} to="/notice?page=2">3</PageLink>
-          </PageNumber>
+          {
+            numberArrayUtill(totalPage).map((i) => (
+              <PageNumber>
+                <PageLink onClick={() => setPage(i - 1)} to={`/notice?page=${i - 1}`}>{i}</PageLink>
+              </PageNumber>
+            ))
+          }
         </PageNumbers>
         <NextPage src="/images/icons/back.png" />
       </PaginationBox>
