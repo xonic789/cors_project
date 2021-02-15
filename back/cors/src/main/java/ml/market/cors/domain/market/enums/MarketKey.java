@@ -1,7 +1,7 @@
 package ml.market.cors.domain.market.enums;
 
 public class MarketKey {
-    public static final String marketid = "marketid";
+    public static final String marketId = "marketId";
     public static final String member = "member";
     public static final String name = "name";
     public static final String intro = "intro";

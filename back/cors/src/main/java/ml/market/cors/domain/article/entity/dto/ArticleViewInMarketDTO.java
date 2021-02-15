@@ -1,13 +1,14 @@
-package ml.market.cors.domain.article.entity.vo;
+package ml.market.cors.domain.article.entity.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 
 import javax.persistence.Column;
 
 @AllArgsConstructor
-@Getter
-public class ArticleViewInMarketVO {
+@Data
+public class ArticleViewInMarketDTO {
     private long id;
     private String title;
     private int rprice;

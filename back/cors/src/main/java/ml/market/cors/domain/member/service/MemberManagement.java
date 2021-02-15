@@ -4,9 +4,16 @@ package ml.market.cors.domain.member.service;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ml.market.cors.controller.api.member.dto.ArticleDivisionPageDTO;
+import ml.market.cors.controller.api.member.dto.DivisionPageDTO;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
+import ml.market.cors.domain.article.entity.enums.Division;
+import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
+import ml.market.cors.domain.bookcategory.entity.dto.BookCategoryDTO;
 import ml.market.cors.domain.mail.entity.EmailStateDAO;
+import ml.market.cors.domain.market.entity.MarketDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.role.MemberRole;
@@ -15,10 +22,16 @@ import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
 import ml.market.cors.domain.util.kakao.dto.map.MapDocumentsDTO;
 import ml.market.cors.domain.util.kakao.KaKaoRestManagement;
 import ml.market.cors.domain.util.kakao.dto.map.KakaoResMapDTO;
+import ml.market.cors.repository.article.ArticleRepository;
+import ml.market.cors.repository.article.Image_info_Repository;
+import ml.market.cors.repository.bookcategory.BookCategoryRepository;
 import ml.market.cors.repository.mail.EmailStateRepository;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.upload.S3Uploader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -40,8 +53,26 @@ public class MemberManagement {
 
     private final S3Uploader s3Uploader;
 
+    private final ArticleRepository articleRepository;
+
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public DivisionPageDTO getDivisionList(long memberId, Division division, int pageIndex){
+        Pageable pageable = PageRequest.of(pageIndex,10);
+        Page<ArticleDAO> page = articleRepository.findAllByMemberIdAndDivision(memberId, division,pageable);
+        List<ArticleDAO> articleDAOList = page.getContent();
+        List<ArticleDivisionPageDTO> articleDivisionPageDTOList = new ArrayList<>();
+        Image_infoDAO image_infoDAO;
+        Book_CategoryDAO book_categoryDAO;
+        for (ArticleDAO item : articleDAOList) {
+            book_categoryDAO = articleRepository.getCategoryByArticleId(item.getArticle_id());
+            image_infoDAO = articleRepository.getImageByArticleId(item.getArticle_id());
+            articleDivisionPageDTOList.add(new ArticleDivisionPageDTO(item.getArticle_id(), item.getTitle(), image_infoDAO.getImage1(), item.getProgress(), item.getTprice(), new BookCategoryDTO(book_categoryDAO.getCid(),book_categoryDAO.getOneDepth(),book_categoryDAO.getTwoDepth(),book_categoryDAO.getThreeDepth(),book_categoryDAO.getFourDepth(),book_categoryDAO.getFiveDepth())));
+        }
+        DivisionPageDTO divisionPageDTO = new DivisionPageDTO(page.getTotalPages(), articleDivisionPageDTOList);
+        return divisionPageDTO;
+    }
 
     public Map<String, Object> setMember(long memberId){
         Map<String, Object> member = new HashMap<>();
@@ -71,7 +102,7 @@ public class MemberManagement {
         return member;
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public boolean change(@NonNull Map<String, Object> member, Long id, MultipartFile multipartFile){
         if(id == 0){
             return false;
@@ -89,7 +120,10 @@ public class MemberManagement {
         if (!bCryptPasswordEncoder.matches(passwd, memberDAO.getPassword())) {
             return false;
         }
-
+        if(member.containsKey(MemberParam.INTRO)) {
+            String intro = (String) member.get(MemberParam.INTRO);
+            memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getProfileKey(), memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType(), intro));
+        }
         if(member.containsKey(MemberParam.NICKNAME)) {
             String nickname = (String) member.get(MemberParam.NICKNAME);
             if (nickname.equals("")) {
@@ -99,7 +133,7 @@ public class MemberManagement {
                 if (existNickname(nickname)) {
                     return false;
                 }
-                memberDAO = memberRepository.save(new MemberDAO(memberDAO.getProfileKey(), id, memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), nickname, memberDAO.getESocialType()));
+                memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getProfileKey(), memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(),  memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), nickname, memberDAO.getESocialType(), memberDAO.getIntro()));
             }
         }
 
@@ -107,22 +141,24 @@ public class MemberManagement {
             String newPasswd = (String) member.get(MemberParam.NEWPASSWD);
             if(!newPasswd.equals("")){
                 newPasswd = bCryptPasswordEncoder.encode(newPasswd);
-                memberDAO = memberRepository.save(new MemberDAO(memberDAO.getProfileKey(), id, memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), newPasswd, memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType()));
+                memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getProfileKey(), memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(),  newPasswd, memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType(), memberDAO.getIntro()));
             }
         }
 
-        if(!multipartFile.isEmpty()){
-            try{
-                String fileName = System.currentTimeMillis() + multipartFile.getOriginalFilename();
-                Map<String, String> result = s3Uploader.upload(multipartFile, memberDAO.getEmail() ,System.currentTimeMillis(), multipartFile.getOriginalFilename(), fileName, memberDAO.getProfileKey());
-                if(result == null){
-                    return true;
+        if(multipartFile != null) {
+            if (!multipartFile.isEmpty()) {
+                try {
+                    String fileName = System.currentTimeMillis() + multipartFile.getOriginalFilename();
+                    Map<String, String> result = s3Uploader.upload(multipartFile, memberDAO.getEmail(), System.currentTimeMillis(), multipartFile.getOriginalFilename(), fileName, memberDAO.getProfileKey());
+                    if (result == null) {
+                        return true;
+                    }
+                    s3Uploader.deleteObject(memberDAO.getProfileKey());
+                    memberDAO = memberRepository.save(new MemberDAO(id, result.get("key"), result.get("url"), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType(), memberDAO.getIntro()));
+                } catch (Exception e) {
+                    log.debug("파일 업로드 실패");
+                    throw new RuntimeException();
                 }
-                s3Uploader.deleteObject(memberDAO.getProfileKey());
-                memberDAO = memberRepository.save(new MemberDAO(result.get("key"), id, result.get("url"), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType()));
-            }catch (Exception e){
-                log.debug("파일 업로드 실패");
-                throw new RuntimeException();
             }
         }
         return true;
@@ -153,10 +189,11 @@ public class MemberManagement {
         return memberRepository.existsByMemberIdAndNickname(id, nickname);
     }
 
-
     public boolean existEmail(String email){
         return memberRepository.existsByEmail(email);
     }
+
+
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public boolean create(MemberVO memberVo) throws RuntimeException {
@@ -188,7 +225,7 @@ public class MemberManagement {
         MapDocumentsDTO mapResMapDocumentsDTO = kakaoResMapDTO.getDocuments().get(0);
         double latitude = mapResMapDocumentsDTO.getY();
         double longitude = mapResMapDocumentsDTO.getX();
-        MemberDAO memberDAO = new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, email, MemberParam.DEFAULT_PROFILE_IMG_DIR, MemberRole.USER, passwd
+        MemberDAO memberDAO = new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, MemberParam.DEFAULT_PROFILE_IMG_DIR, email, MemberRole.USER, null, passwd
                 ,address, latitude, longitude, nickname, eSocialType.NORMAL);
         memberRepository.save(memberDAO);
         emailStateRepository.deleteById(email);
@@ -209,6 +246,7 @@ public class MemberManagement {
         Map result = new HashMap();
         result.put(MemberParam.NICKNAME, memberDAO.getNickname());
         result.put(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
+        result.put(MemberParam.INTRO, memberDAO.getIntro());
         return result;
     }
 }
