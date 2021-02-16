@@ -37,7 +37,7 @@ DEFAULT_LOGIN_REDIRECT_URL: code를 권한서버에서 redirection해줄 url 양
         }
     };
 
-    private static final String DEFAULT_LOGIN_REDIRECT_URL = "{baseUrl}/login/oauth2/code/{registrationId}";
+    public static final String DEFAULT_LOGIN_REDIRECT_URL = "{baseUrl}/api/login/oauth2/code/{registrationId}";
 
     protected final ClientRegistration.Builder getBuilder(
             String registrationId, ClientAuthenticationMethod method, String redirectUri) {

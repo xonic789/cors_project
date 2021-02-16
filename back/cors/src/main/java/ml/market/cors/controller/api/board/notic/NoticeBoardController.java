@@ -1,5 +1,6 @@
 package ml.market.cors.controller.api.board.notic;
 
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.board.service.NoticeBoardService;
 import ml.market.cors.domain.board.enums.eNoticeBoardKey;
@@ -12,8 +13,15 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+@Data
+class NoticeBoardList{
+    private final List<Map<eNoticeBoardKey, String>> noticeList;
+    private final String totalPage;
+}
 
 @RestController
 @RequestMapping("/api/notice")
@@ -35,10 +43,20 @@ public class NoticeBoardController {
         return messageResponseEntity;
     }
 
+
     @GetMapping()
-    public ResponseEntity<Message<Object>> list(Pageable pageable){
-        List<Map<eNoticeBoardKey, String>> noticeBoardList= noticeBoardService.list(pageable);
-        ResponseEntity<Message<Object>> messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(noticeBoardList);
+    public ResponseEntity<Message<Object>> list(@RequestParam("page") int pageIndex){
+        List<Map<eNoticeBoardKey, String>> noticeBoardList= noticeBoardService.list(pageIndex);
+        int noticeBoardSz = noticeBoardList.size();
+        Map<eNoticeBoardKey, String> tempMap;
+        if(noticeBoardSz > 0){
+            noticeBoardSz = noticeBoardSz - 1;
+        }
+        tempMap = noticeBoardList.get(noticeBoardSz);
+        noticeBoardList.remove(noticeBoardSz);
+        String totalPage = tempMap.get(eNoticeBoardKey.totalPage);
+        NoticeBoardList result = new NoticeBoardList(noticeBoardList, totalPage);
+        ResponseEntity<Message<Object>> messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(result);
         return messageResponseEntity;
     }
 

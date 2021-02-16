@@ -43,6 +43,34 @@ public class Book_CategoryDAO {
     @Column(name = "five_depth")
     private String fiveDepth;
 
+    protected void setCid(Long cid) {
+        this.cid = cid;
+    }
+
+    protected void setArticles(List<ArticleDAO> articles) {
+        this.articles = articles;
+    }
+
+    protected void setOneDepth(String oneDepth) {
+        this.oneDepth = oneDepth;
+    }
+
+    protected void setTwoDepth(String twoDepth) {
+        this.twoDepth = twoDepth;
+    }
+
+    protected void setThreeDepth(String threeDepth) {
+        this.threeDepth = threeDepth;
+    }
+
+    protected void setFourDepth(String fourDepth) {
+        this.fourDepth = fourDepth;
+    }
+
+    protected void setFiveDepth(String fiveDepth) {
+        this.fiveDepth = fiveDepth;
+    }
+
     public Book_CategoryDAO(Long cid, String oneDepth, String twoDepth, String threeDepth, String fourDepth, String fiveDepth) {
         this.cid = cid;
         this.oneDepth = oneDepth;
@@ -56,14 +84,13 @@ public class Book_CategoryDAO {
         String[] split = articleForm.getCategory().split(">");
         Book_CategoryDAO book_categoryDAO= null;
         try {
-            book_categoryDAO = new Book_CategoryDAO(
-                    articleForm.getCid(),
-                    split[0],
-                    split[1],
-                    split[2],
-                    split[3],
-                    split[4]
-            );
+            book_categoryDAO = new Book_CategoryDAO();
+            book_categoryDAO.setCid(articleForm.getCid());
+            book_categoryDAO.setOneDepth(split[0]);
+            book_categoryDAO.setTwoDepth(split[1]);
+            book_categoryDAO.setThreeDepth(split[2]);
+            book_categoryDAO.setFourDepth(split[3]);
+            book_categoryDAO.setFiveDepth(split[4]);
         }catch (IndexOutOfBoundsException e){
             return book_categoryDAO;
         }

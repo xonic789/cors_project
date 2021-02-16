@@ -87,5 +87,14 @@ public class ChattingRoomJoinRepositoryImpl implements ChattingRoomJoinCustom{
                 .fetchOne();
     }
 
-
+    @Override
+    public long ownerArticleMember(Long memberId,Long articleId) {
+        return query
+                .selectFrom(articleDAO)
+                .where(
+                        articleDAO.member.member_id.eq(memberId),
+                        articleDAO.article_id.eq(articleId)
+                )
+                .fetchCount();
+    }
 }

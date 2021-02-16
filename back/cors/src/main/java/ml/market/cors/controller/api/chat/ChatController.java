@@ -17,7 +17,7 @@ public class ChatController {
     private final SimpMessageSendingOperations messagingTemplate;
 
     @MessageMapping("/chat/message")
-    public void message(ChatMessage chatMessage, @Header("token") String token){
+    public void message(ChatMessage chatMessage){
         log.info("메시지"+chatMessage);
         System.out.println("ChatController.message"+chatMessage);
         messagingTemplate.convertAndSend("api/sub/chat/room/"+chatMessage.getJoinId(),chatMessage);

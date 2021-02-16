@@ -14,5 +14,6 @@ public interface ChattingRoomJoinCustom {
 
     ChattingRoomDTO findByMemberIdAndArticleId(Long memberId,Long articleId);
 
+    long ownerArticleMember(Long memberId,Long articleId);
 
 }
