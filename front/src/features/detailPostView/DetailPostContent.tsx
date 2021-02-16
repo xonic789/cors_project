@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
@@ -6,6 +6,7 @@ import CategoryFormatUtil from '../../utils/categoryFormatUtil';
 import countUtil from '../../utils/countDaoUtil';
 import ProgressUtil from '../../utils/progressUtil';
 import { deleteBookPostRequest } from '../postList/postSlice';
+import { postAddWishListRequest, postRemoveWishListRequest } from '../login/userSlice';
 import ImageSlide from './ImageSlide';
 
 interface DetailPostInterface {
@@ -138,12 +139,20 @@ function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
   const dispatch = useDispatch();
   const [heart, setHeart] = useState(false);
   const { detailBookPost } = useSelector((state) => state.detailViewSlice);
+  const { wishList } = useSelector((state) => state.userSlice).user;
   const HandleHeartButton = () => {
-    setHeart(!heart);
+    if (heart) {
+      dispatch(postRemoveWishListRequest(detailBookPost.articleId));
+    } else {
+      dispatch(postAddWishListRequest(detailBookPost.articleId));
+    }
   };
   const DeletePost = () => {
     dispatch(deleteBookPostRequest(id));
   };
+  useEffect(() => {
+    setHeart(wishList.includes(detailBookPost.articleId));
+  }, [wishList, detailBookPost]);
   return (
     <>
       <ImageSlide images={detailBookPost.image} />

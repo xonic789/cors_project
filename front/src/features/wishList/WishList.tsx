@@ -62,19 +62,33 @@ const MyPurchaseItems = styled.div`
 `;
 
 const MyPurchaseItem = styled.div`
+  
+`;
+
+const ItemLink = styled(Link)`
   display: flex;
   align-items: center;
   padding: 1em;
 `;
 
-const ItemImage = styled.img`
-  width: 10em;
+const ItemImgBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 9em;
   height: 10em;
-  margin-right: 1em;
+  margin-right: 1.5em;
+  border: 1px solid #eeeeee;
   border-radius: 10px;
+  overflow: hidden;
   @media screen and (min-width: 455px) {
     font-size: 18.208px;
   }
+`;
+
+const ItemImage = styled.img`
+  width: 10em;
+  height: auto;
 `;
 
 const ItemInfo = styled.div`
@@ -265,43 +279,20 @@ function WishList():JSX.Element {
                   {
                     wishList.map((item: myArticleInterface) => (
                       <MyPurchaseItem key={item.articleId}>
-                        <ItemImage src={item.thumbnail} />
-                        <ItemInfo>
-                          <p style={{ background: progressForm(item.progress).background }} className="my_state">{progressForm(item.progress).text}</p>
-                          <p className="my_category">{CategoryFormatUtil(item.category)}</p>
-                          <h2 className="my_title">{item.title}</h2>
-                          <p className="my_price">{item.tprice}</p>
-                        </ItemInfo>
+                        <ItemLink to="/post/325">
+                          <ItemImgBox>
+                            <ItemImage src={item.thumbnail} />
+                          </ItemImgBox>
+                          <ItemInfo>
+                            <p style={{ background: progressForm(item.progress).background }} className="my_state">{progressForm(item.progress).text}</p>
+                            <p className="my_category">{CategoryFormatUtil(item.category)}</p>
+                            <h2 className="my_title">{item.title}</h2>
+                            <p className="my_price">{item.tprice}</p>
+                          </ItemInfo>
+                        </ItemLink>
                       </MyPurchaseItem>
                     ))
                   }
-                  <MyPurchaseItem>
-                    <ItemImage />
-                    <ItemInfo>
-                      <p style={{ background: progressForm('COMPLETED').background }} className="my_state">{progressForm('COMPLETED').text}</p>
-                      <p className="my_category">테스트중</p>
-                      <h2 className="my_title">테스트중</h2>
-                      <p className="my_price">200000</p>
-                    </ItemInfo>
-                  </MyPurchaseItem>
-                  <MyPurchaseItem>
-                    <ItemImage />
-                    <ItemInfo>
-                      <p style={{ background: progressForm('HIDE').background }} className="my_state">{progressForm('HIDE').text}</p>
-                      <p className="my_category">테스트중</p>
-                      <h2 className="my_title">테스트중</h2>
-                      <p className="my_price">200000</p>
-                    </ItemInfo>
-                  </MyPurchaseItem>
-                  <MyPurchaseItem>
-                    <ItemImage />
-                    <ItemInfo>
-                      <p style={{ background: progressForm('TRADING').background }} className="my_state">{progressForm('TRADING').text}</p>
-                      <p className="my_category">테스트중</p>
-                      <h2 className="my_title">테스트중</h2>
-                      <p className="my_price">200000</p>
-                    </ItemInfo>
-                  </MyPurchaseItem>
                 </MyPurchaseItems>
                 <Pagenation>
                   <PrevLink onClick={onClickPrevPage} to={`/mypage/Purchase?page=${page - 1}`}>
