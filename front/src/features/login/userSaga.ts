@@ -67,18 +67,10 @@ function* postSocialLoginRequestSaga(action: { payload: { social: string } }) {
 
 function* postLogoutRequestSaga() {
   try {
-    const result = yield call(logoutAsync);
-    console.log(1);
-    if (result) {
-      yield put({
-        type: postLogoutRequestSuccess,
-      });
-    } else {
-      yield put({
-        type: postLogoutRequestError,
-        payload: '로그아웃 실패',
-      });
-    }
+    yield call(logoutAsync);
+    yield put({
+      type: postLogoutRequestSuccess,
+    });
   } catch (error) {
     yield put({
       type: postLogoutRequestError,

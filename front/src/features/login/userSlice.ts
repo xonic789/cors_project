@@ -12,7 +12,7 @@ const initialUser: memberInterface = {
   wishList: [], // 아이디 만
 };
 
-const initialState = {
+const initialUserState = {
   user: initialUser,
   isLoginLoading: false, // 로그인
   isLoginSucceed: false,
@@ -33,7 +33,7 @@ const initialState = {
 
 const userSlice = createSlice({
   name: 'user',
-  initialState,
+  initialState: initialUserState,
   reducers: {
     postLoginRequest: (state, action) => {
       state.isLoginLoading = true;
@@ -57,7 +57,7 @@ const userSlice = createSlice({
     postLogoutRequestSuccess: (state, action) => {
       state.isLogoutLoading = false;
       state.isLogoutSucceed = true;
-      state = initialState;
+      state.user = initialUserState.user;
     },
     postLogoutRequestError: (state, action) => {
       state.isLogoutLoading = false;
