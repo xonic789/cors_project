@@ -13,12 +13,11 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       passwd: user.passwd,
     },
   }).then((result) => {
-    const { userId, nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist } = result.headers;
-
-    console.log(result.headers);
+    console.log(result);
+    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist } = result.headers;
 
     const loginUser: memberInterface = {
-      userId,
+      email: user.email,
       nickname,
       profileImg,
       latitude,
@@ -54,18 +53,19 @@ export function logoutAsync(): Promise<boolean> {
   return axios({
     method: 'post',
     url: '/api/logout',
-  }).then((result) => true).catch((error) => {
-    if (error.response.status !== 400) {
-      throw new Error('서버 통신 에러');
-    }
-    return false;
-  });
+  }).then((result) => {
+    console.log(result);
+    return true;
+  }).catch((error) => false);
 }
 
 export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
   return axios({
     method: 'put',
     url: '/api/change/profile',
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
     data: modifyProfile,
   }).then((res) => true).catch((error) => {
     if (error.response.status !== 400) {

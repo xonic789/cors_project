@@ -59,27 +59,13 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
-  const { isLoginSucceed, isLoginError } = useSelector((state) => state.userSlice);
+  const { isLoginSucceed, isLoginError } = useSelector((state: any) => state.userSlice);
   const dispatch = useDispatch();
   const history = useHistory();
 
   useEffect(() => {
     dispatch(postLogoutRequest({}));
   }, [dispatch]);
-
-  useEffect(() => {
-    if (isLoginError === LOGIN_ERROR) {
-      alert('로그인 정보를 확인해주세요.');
-    } else if (isLoginError === SERVER_ERROR) {
-      alert('서버 통신중 에러 발생');
-    }
-  }, [isLoginError]);
-
-  useEffect(() => {
-    if (isLoginSucceed) {
-      history.push('/home');
-    }
-  }, [isLoginSucceed, history]);
 
   return (
     <Wrapper>

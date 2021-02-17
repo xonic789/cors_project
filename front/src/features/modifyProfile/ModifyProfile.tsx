@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
@@ -70,22 +70,76 @@ const ImageBox = styled.div`
   }
 `;
 
-const BackgroundImg = styled.div`
+const BackgroundImgBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
   width: 100%;
   height: 11em;
-  background: #000;
   @media screen and (min-width: 430px) {
     width: 430.4px;
   }
 `;
 
-const ProfileImg = styled.img`
+const BackgroundImg = styled.img`
+  width: 100%;
+  height: auto;
+`;
+
+const ProfileImgWrapper = styled.div`
   position: absolute;
   bottom: -1.5em;
   width:5.5em;
   height: 5.5em;
-  background: #464646;
+`;
+
+const ProfileImgBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  width:5.5em;
+  height: 5.5em;
+  background: #eee;
   border-radius: 50%;
+`;
+
+const ChangeImageButton = styled.button`
+  cursor: pointer;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2.5em;
+  height: 2.5em;
+  right: 0;
+  bottom: 0;
+  outline: none;
+  border: none;
+  border-radius: 50%;
+  background: #000;
+  & label {
+    cursor: pointer;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+  }
+`;
+
+const ChangeImageButtonImg = styled.img`
+  width: 1.5em;
+  height: auto;
+  font-size: 3vw;
+  @media screen and (min-width: 430px) {
+    font-size: 12.912px;
+  }
+`;
+
+const ProfileImg = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `;
 
 const InputBox = styled.div`
@@ -191,7 +245,7 @@ const RemoveBox = styled.div`
 `;
 
 function ModifyProfile():JSX.Element {
-  const { user, isModifyProfileError } = useSelector((state) => state.userSlice);
+  const { user, isModifyProfileError } = useSelector((state: any) => state.userSlice);
   const { nickname, profileImg } = user;
   const dispatch = useDispatch();
   const history = useHistory();
@@ -324,6 +378,17 @@ function ModifyProfile():JSX.Element {
             },
             newPasswdCheck: passwdChekInput,
           });
+        } else if (value === '') {
+          setModifInputs({
+            ...modifyInputs,
+            newPasswd: {
+              ...modifyInputs.newPasswd,
+              value,
+              state: 'none',
+              message: '',
+            },
+            newPasswdCheck: passwdChekInput,
+          });
         } else {
           setModifInputs({
             ...modifyInputs,
@@ -367,30 +432,71 @@ function ModifyProfile():JSX.Element {
 
   const onSubmitModifyProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (modifyInputs.nickname.state !== 'check') {
+    if (modifyInputs.nickname.state === 'fail') {
       alert('닉네임을 확인해주세요.');
-    } else if (modifyInputs.passwd.state !== 'check') {
-      alert('비밀번호를 확인해주세요.');
-    } else if (modifyInputs.newPasswd.state !== 'check') {
+    } else if (modifyInputs.passwd.value === '') {
+      alert('비밀번호는 반드시 입력해야 합니다.');
+    } else if (modifyInputs.newPasswd.state === 'fail') {
       alert('새비밀번호를 확인해주세요.');
-    } else if (modifyInputs.newPasswdCheck.state !== 'check') {
+    } else if (modifyInputs.newPasswdCheck.state === 'fail') {
       alert('비밀번호가 일치하지 않습니다.');
     } else {
       try {
         const result = await nicknameDuplicationAsync(modifyInputs.nickname.value);
-        console.log(result);
+        const formData = new FormData();
+        if (imageFileState.file !== null) {
+          console.log('프로필이미지 저장');
+          formData.append('profileImg', imageFileState.file);
+        }
+        if (modifyInputs.nickname.value !== null) {
+          console.log('닉네임 저장');
+          formData.append('nickname', modifyInputs.nickname.value);
+        }
+        if (modifyInputs.passwd.value !== null) {
+          console.log('패스워드 저장');
+          formData.append('passwd', modifyInputs.passwd.value);
+        }
+        if (modifyInputs.newPasswd.value !== null) {
+          formData.append('newPasswd', modifyInputs.newPasswd.value);
+        }
         if (result) {
           dispatch(postModifyProfileRequest({
-            modifyProfile: { nickname: modifyInputs.nickname.value, passwd: modifyInputs.passwd.value, newPasswd: modifyInputs.newPasswd.value },
-            modifyInputs,
-            setModifInputs,
+            modifyProfile: formData,
           }));
+        } else {
+          console.log('닉네임 중복');
         }
       } catch {
         alert('서버통신중 에러발생');
       }
     }
   };
+
+  const [imageFileState, setImageFileState] = useState<{file: File | null, previewURL: any}>({ file: null, previewURL: null });
+  const profileImageView = useRef<HTMLImageElement>(null);
+
+  const onChangeProfileImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files !== null) {
+      const reader = new FileReader();
+      const file = e.target.files[0];
+      reader.onloadend = () => {
+        setImageFileState({
+          ...imageFileState,
+          file,
+          previewURL: reader.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  useEffect(() => {
+    if (imageFileState.previewURL !== null) {
+      if (profileImageView.current !== null) {
+        profileImageView.current.src = imageFileState.previewURL;
+      }
+    }
+  }, [imageFileState.previewURL]);
 
   return (
     <FormLayout method="post" onSubmit={onSubmitModifyProfile}>
@@ -400,8 +506,19 @@ function ModifyProfile():JSX.Element {
         <ModifyButton type="submit">완료</ModifyButton>
       </Header>
       <ImageBox>
-        <BackgroundImg />
-        <ProfileImg src={profileImg} />
+        <BackgroundImgBox>
+          <BackgroundImg src="/images/icons/profileBack.png" />
+        </BackgroundImgBox>
+        <ProfileImgWrapper>
+          <ProfileImgBox>
+            <ProfileImg src={profileImg} ref={profileImageView} />
+            <ChangeImageButton type="button">
+              <label htmlFor="profileImage" />
+              <input id="profileImage" accept="image/jpg,image/png,image/jpeg" name="file" style={{ visibility: 'hidden' }} type="file" onChange={onChangeProfileImage} />
+              <ChangeImageButtonImg src="/images/icons/camera_white.png" />
+            </ChangeImageButton>
+          </ProfileImgBox>
+        </ProfileImgWrapper>
       </ImageBox>
       <InputBox>
         <InputGroup>

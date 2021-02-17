@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
 import countUtil from '../../utils/countDaoUtil';
 import ProgressUtil from '../../utils/progressUtil';
-import { deleteBookPostRequest } from '../postList/postSlice';
+import { deleteBookPostRequest } from '../postListSlice';
+import { postAddWishListRequest, postRemoveWishListRequest } from '../login/userSlice';
 import ImageSlide from './ImageSlide';
 
 interface DetailPostInterface {
@@ -137,13 +139,27 @@ const UploadeTime = styled.div`
 function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
   const dispatch = useDispatch();
   const [heart, setHeart] = useState(false);
-  const { detailBookPost } = useSelector((state) => state.detailViewSlice);
+  const { wishList } = useSelector((state: any) => state.userSlice).user;
+  const { detailBookPost } = useSelector((state: any) => state.detailViewSlice);
+  const history = useHistory();
   const HandleHeartButton = () => {
-    setHeart(!heart);
+    if (heart) {
+      dispatch(postRemoveWishListRequest(detailBookPost.articleId));
+    } else {
+      dispatch(postAddWishListRequest(detailBookPost.articleId));
+    }
   };
-  const DeletePost = () => {
+  const DeletePost = useCallback(() => {
     dispatch(deleteBookPostRequest(id));
   };
+  useEffect(() => {
+    setHeart(wishList.includes(detailBookPost.articleId));
+  }, [wishList, detailBookPost]);
+    ToastsStore.success('삭제완료');
+    setTimeout(() => {
+      history.push('/home');
+    }, 700);
+  }, [dispatch, history, id]);
   return (
     <>
       <ImageSlide images={detailBookPost.image} />
@@ -180,6 +196,7 @@ function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
             <ChattingButton>채팅하기</ChattingButton>
           </NavLink>
         </ContentBottom>
+        <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
       </ContentWrapper>
     </>
   );

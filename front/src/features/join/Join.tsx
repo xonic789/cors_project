@@ -117,7 +117,7 @@ const CertificationRequest = styled.button`
   font-size: 3vw;
   font-weight: bold;
   padding: 1em 1.5em;
-  background: ;
+  background: #265290;
   color: #fff;
   border: none;
   border-radius: 5px;
