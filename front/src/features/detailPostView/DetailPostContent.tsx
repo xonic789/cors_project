@@ -6,7 +6,7 @@ import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toa
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
 import countUtil from '../../utils/countDaoUtil';
 import ProgressUtil from '../../utils/progressUtil';
-import { deleteBookPostRequest } from '../postListSlice';
+import { deleteBookPostRequest } from '../postList/postSlice';
 import { postAddWishListRequest, postRemoveWishListRequest } from '../login/userSlice';
 import ImageSlide from './ImageSlide';
 
@@ -136,10 +136,10 @@ const UploadeTime = styled.div`
   padding: 10px 0;
 `;
 
-function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
+function DetailPostContent({ id } :DetailPostInterface):JSX.Element {
   const dispatch = useDispatch();
   const [heart, setHeart] = useState(false);
-  const { wishList } = useSelector((state: any) => state.userSlice).user;
+  const { wishList } = useSelector((state: any) => state.userSlice.user);
   const { detailBookPost } = useSelector((state: any) => state.detailViewSlice);
   const history = useHistory();
   const HandleHeartButton = () => {
@@ -151,15 +151,14 @@ function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
   };
   const DeletePost = useCallback(() => {
     dispatch(deleteBookPostRequest(id));
-  };
-  useEffect(() => {
-    setHeart(wishList.includes(detailBookPost.articleId));
-  }, [wishList, detailBookPost]);
     ToastsStore.success('삭제완료');
     setTimeout(() => {
       history.push('/home');
     }, 700);
   }, [dispatch, history, id]);
+  useEffect(() => {
+    setHeart(wishList.includes(detailBookPost.articleId));
+  }, [wishList, detailBookPost]);
   return (
     <>
       <ImageSlide images={detailBookPost.image} />
