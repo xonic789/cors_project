@@ -269,7 +269,7 @@ function WishList():JSX.Element {
                 <EmptyArticle>
                   <h2>찜한 책이 없습니다.</h2>
                   <p>관심있는 상품을 찜해보아요.</p>
-                  <button type="button">판매책 보러가기</button>
+                  <button type="button" onClick={() => history.push('/home')}>판매책 보러가기</button>
                 </EmptyArticle>
               </>
             )

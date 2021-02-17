@@ -108,9 +108,9 @@ function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: modifyP
   }
 }
 
-function* postAddWishListRequestSaga(action: {payload: { articelId: string }}) {
+function* postAddWishListRequestSaga(action: {payload: string }) {
   try {
-    const result = yield addWishs(action.payload.articelId);
+    const result = yield addWishs(action.payload);
     if (result) {
       yield put({
         type: postAddWishListRequestSuccess,
@@ -127,9 +127,9 @@ function* postAddWishListRequestSaga(action: {payload: { articelId: string }}) {
   }
 }
 
-function* postRemoveWishListRequestSaga(action: {payload: { articelId: string }}) {
+function* postRemoveWishListRequestSaga(action: {payload: string}) {
   try {
-    const result = yield removeWishs(action.payload.articelId);
+    const result = yield removeWishs(action.payload);
     if (result) {
       yield put({
         type: postRemoveWishListRequestSuccess,

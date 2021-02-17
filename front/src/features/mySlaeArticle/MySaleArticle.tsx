@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { myArticleInterface } from '../../interfaces/MyArticle.interface';
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
@@ -195,6 +195,7 @@ const EmptyArticle = styled.div`
 
 function MySaleArticle():JSX.Element | null {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [page, setPage] = useState<number>(0);
   const { mySaleArticle, totalPage, isGetMyPurchaseArticlesLoading } = useSelector((state) => state.mySaleArticleSlice);
   const progressForm = (progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING'): { text: string, background: string } => {
@@ -247,7 +248,7 @@ function MySaleArticle():JSX.Element | null {
                 <EmptyArticle>
                   <h2>등록한 판매글이 없습니다.</h2>
                   <p>다 보신 책들을 나누어 보아요.</p>
-                  <button type="button">책 판매하러 가기</button>
+                  <button type="button" onClick={() => history.push('/addPost/purchase')}>책 판매하러 가기</button>
                 </EmptyArticle>
               </>
             )

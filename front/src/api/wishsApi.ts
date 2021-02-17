@@ -10,7 +10,7 @@ export const addWishs = (articleId: string): Promise<boolean> => (
   }).then((res) => true).catch((error) => false)
 );
 
-export const removeWishs = (articleId: string) => {
+export const removeWishs = (articleId: string): Promise<boolean> => (
   axios({
     method: 'post',
     url: '/api/wish/delete',
@@ -18,4 +18,4 @@ export const removeWishs = (articleId: string) => {
       articleId,
     },
   }).then((res) => true).catch((error) => false)
-};
+);

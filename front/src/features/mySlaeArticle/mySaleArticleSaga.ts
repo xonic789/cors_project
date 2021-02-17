@@ -11,11 +11,11 @@ import {
 function* getMySaleArticleRequestSaga(action: { payload: number }) {
   try {
     const result = yield call(mySalesArtilceAsync, action.payload);
-    const { myAricleList, pageTotal } = result.data.data;
+    const { myAricleList, totalPage } = result.data.data;
 
     yield put({
       type: getMySaleArticleRequestSuccess,
-      payload: { myAricleList, pageTotal },
+      payload: { myAricleList, totalPage },
     });
   } catch (error) {
     yield put({
