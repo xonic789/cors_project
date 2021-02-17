@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 
 export function loadMarketAPI(): Promise<AxiosResponse> {
-  return axios.get('http://local.corsmarket.ml/api/market');
+  return axios.get('http://local.corsmarket.ml/api/markets');
 }
 export function loadMarketDetailAPI(marketId: number): Promise<AxiosResponse> {
   return axios.get(`http://local.corsmarket.ml/api/market/${marketId}`);

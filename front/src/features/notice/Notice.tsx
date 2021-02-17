@@ -145,7 +145,7 @@ const NextPage = styled.img`
 function Notice():JSX.Element {
   const [page, setPage] = useState<number>(1);
   const dispatch = useDispatch();
-  const { noticeList, totalPage } = useSelector((state) => state.noticeSlice);
+  const { noticeList, totalPage } = useSelector((state: any) => state.noticeSlice);
 
   useEffect(() => {
     dispatch(getNoticeRequest(page));

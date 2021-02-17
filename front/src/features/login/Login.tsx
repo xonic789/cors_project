@@ -59,7 +59,7 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
-  const { isLoginSucceed, isLoginError } = useSelector((state) => state.userSlice);
+  const { isLoginSucceed, isLoginError } = useSelector((state: any) => state.userSlice);
   const dispatch = useDispatch();
   const history = useHistory();
 

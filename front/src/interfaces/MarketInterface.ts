@@ -1,9 +1,24 @@
 export interface marketListInterface {
-  data: marketDetailInterface[],
+  data: marketInterface[],
+}
+export interface marketArticleInterface {
+  id: number,
+  title: string,
+  rprice: number,
+  tprice: number,
+  image: string,
+}
+export interface marketInterface {
+  marketId: number,
+  marketName: string,
+  marketIntro: string,
+  marketImage: string,
 }
 export interface marketDetailInterface {
-  id: number,
-  images: string,
-  title: string,
-  introduce: string,
+  marketId: number,
+  marketName: string,
+  marketIntro: string,
+  marketImage: string,
+  totalPage: number,
+  articleList: marketArticleInterface[],
 }
