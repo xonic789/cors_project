@@ -148,6 +148,10 @@ function AddPostPage():JSX.Element {
     getAladinBook(searchTitle).then(({ data }) => {
       const a = data.replace(/\\/ig, '\\\\', /;/g, '');
       const b = a.substr(0, a.length - 1);
+      console.log(b);
+      console.log(b[3970]);
+      console.log(b[3971]);
+      console.log(b[3972]);
       const parseData = JSON.parse(b);
       setSearchResult(parseData.item);
       if (parseData.item.length === 0) {
@@ -212,14 +216,10 @@ function AddPostPage():JSX.Element {
 
     dispatch(addBookPostRequest({ data: formData }));
 
-    if (isAddBookPostLoading === false && isAddBookPostDone) {
-      setContent('');
-      setImages([]);
-      setPrice('');
-    } else if (isAddBookPostLoading === false && isAddBookPostError !== null) {
+    if (isAddBookPostLoading === false && isAddBookPostError !== null) {
       ToastsStore.error('업로드에 실패했습니다.');
     }
-  }, [category, cid, content, dispatch, images, isAddBookPostDone, isAddBookPostError, isAddBookPostLoading, price, realPrice, thumbnail, title, upperCaseDivision]);
+  }, [category, cid, content, dispatch, images, isAddBookPostError, isAddBookPostLoading, price, realPrice, thumbnail, title, upperCaseDivision]);
   return (
     <>
       <AddPostWrapper>

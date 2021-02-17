@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { NavLink, RouteComponentProps, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Spinner from 'react-spinner-material';
 import { loadDetailBookPostRequest } from './detailViewSlice';
@@ -30,9 +30,6 @@ function DetailPostView({ history }: RouteComponentProps):JSX.Element {
   const { detailBookPost } = useSelector((state: any) => state.detailViewSlice);
   const { id } = useParams<ParamTypes>();
 
-  const goback = () => {
-    history.goBack();
-  };
   console.log('DetailPostView', id);
   const postIdNumber = Number(id);
 
@@ -42,11 +39,11 @@ function DetailPostView({ history }: RouteComponentProps):JSX.Element {
 
   return (
     <DetailPostViewContainer>
-      <NavLink to="home" onClick={goback}>
+      <Link to="/home">
         <Header>
           <img src="/images/icons/back.png" alt="back_icon" />
         </Header>
-      </NavLink>
+      </Link>
       {detailBookPost !== null ? <DetailPostContent id={detailBookPost.articleId} /> : <Spinner color="#004c9d" size={120} visible stroke={10} radius={50} />}
     </DetailPostViewContainer>
   );
