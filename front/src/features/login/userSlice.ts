@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { memberInterface } from '../../interfaces/UserInterface';
 
 const initialUser: memberInterface = {
-  userId: '', // 고유번호
+  email: '', // 고유번호
   nickname: '', // 닉네임
   profileImg: '', // 프로필 이미지
   latitude: 0, // 위도
@@ -12,7 +12,7 @@ const initialUser: memberInterface = {
   wishList: [], // 아이디 만
 };
 
-const initialState = {
+const initialUserState = {
   user: initialUser,
   isLoginLoading: false, // 로그인
   isLoginSucceed: false,
@@ -33,7 +33,7 @@ const initialState = {
 
 const userSlice = createSlice({
   name: 'user',
-  initialState,
+  initialState: initialUserState,
   reducers: {
     postLoginRequest: (state, action) => {
       state.isLoginLoading = true;
@@ -57,7 +57,7 @@ const userSlice = createSlice({
     postLogoutRequestSuccess: (state, action) => {
       state.isLogoutLoading = false;
       state.isLogoutSucceed = true;
-      state = initialState;
+      state.user = initialUserState.user;
     },
     postLogoutRequestError: (state, action) => {
       state.isLogoutLoading = false;
@@ -81,6 +81,7 @@ const userSlice = createSlice({
     postAddWishListRequestSuccess: (state, action) => {
       state.isAddWishListLoading = false;
       state.isAddWishListSuccess = true;
+      state.user.wishList = state.user.wishList.concat(action.payload);
     },
     postAddWishListRequestError: (state, action) => {
       state.isAddWishListLoading = false;
@@ -92,6 +93,7 @@ const userSlice = createSlice({
     postRemoveWishListRequestSuccess: (state, action) => {
       state.isRemoveWishListLoading = false;
       state.isRemoveWishListSuccess = true;
+      state.user.wishList = state.user.wishList.filter((item) => (item !== action.payload));
     },
     postRemoveWishListRequestError: (state, action) => {
       state.isRemoveWishListLoading = false;

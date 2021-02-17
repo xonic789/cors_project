@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { myArticleInterface } from '../../interfaces/MyArticle.interface';
 import CategoryFormatUtil from '../../utils/categoryFormatUtil';
@@ -62,6 +62,10 @@ const MyPurchaseItems = styled.div`
 `;
 
 const MyPurchaseItem = styled.div`
+  
+`;
+
+const ItemLink = styled(Link)`
   display: flex;
   align-items: center;
   padding: 1em;
@@ -69,12 +73,15 @@ const MyPurchaseItem = styled.div`
 
 const ItemImgBox = styled.div`
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
-  width: 10em;
+  width: 9em;
   height: 10em;
-  margin-right: 1em;
+  margin-right: 1.5em;
+  border: 1px solid #eeeeee;
   border-radius: 10px;
+  overflow: hidden;
   @media screen and (min-width: 455px) {
     font-size: 18.208px;
   }
@@ -88,37 +95,37 @@ const ItemImage = styled.img`
 const ItemInfo = styled.div`
   & p.my_state {
     display: inline-block;
-    font-size: 3vw;
+    font-size: 2.5vw;
     font-weight: bold;
-    padding: 0.5em;
+    padding: 0.5em 1em;
     border: 1px solid;
     border-radius: 10px;
     color: #fff;
     margin-bottom: 0.5em;
   }
   & p.my_category {
-    font-size: 3vw;
+    font-size: 2.5vw;
     margin-bottom: 0.5em;
   }
   & h2.my_title {
-    font-size: 4.5vw;
+    font-size: 4vw;
     margin-bottom: 0.8em;
   }
   & p.my_price {
-    font-size: 4.5vw;
+    font-size: 3.5vw;
   }
   @media screen and (min-width: 455px) {
     & p.my_state {
-      font-size: 13.656px;
+      font-size: 11.38px;
     }
     & p.my_category {
-      font-size: 13.656px;
+      font-size: 11.38px;
     }
     & h2.my_title {
-      font-size: 20.484px;
+      font-size: 18.208px;
     }
     & p.my_price {
-      font-size: 20.484px;
+      font-size: 15.932px;
     }
   }
 `;
@@ -201,6 +208,7 @@ const EmptyArticle = styled.div`
 
 function MyPurchaseArticle():JSX.Element {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [page, setPage] = useState<number>(0);
   const { myPurchaseArticle, totalPage } = useSelector((state: any) => state.myPurchaseArticleSlice);
   const progressForm = (progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING'): { text: string, background: string } => {
@@ -253,7 +261,7 @@ function MyPurchaseArticle():JSX.Element {
                 <EmptyArticle>
                   <h2>등록한 구매글이 없습니다.</h2>
                   <p>다른 유저들의 책을 구매해보아요.</p>
-                  <button type="button">책 구매하러 가기</button>
+                  <button type="button" onClick={() => history.push('/addPost/purchase')}>책 구매하러 가기</button>
                 </EmptyArticle>
               </>
             )
@@ -263,15 +271,17 @@ function MyPurchaseArticle():JSX.Element {
                   {
                     myPurchaseArticle.map((item: myArticleInterface) => (
                       <MyPurchaseItem key={item.articleId}>
-                        <ItemImgBox>
-                          <ItemImage src={item.thumbnail} />
-                        </ItemImgBox>
-                        <ItemInfo>
-                          <p style={{ background: progressForm(item.progress).background }} className="my_state">{progressForm(item.progress).text}</p>
-                          <p className="my_category">{CategoryFormatUtil(item.category)}</p>
-                          <h2 className="my_title">{item.title}</h2>
-                          <p className="my_price">{item.tprice}</p>
-                        </ItemInfo>
+                        <ItemLink to={`/post/${item.articleId}`}>
+                          <ItemImgBox>
+                            <ItemImage src={item.thumbnail} />
+                          </ItemImgBox>
+                          <ItemInfo>
+                            <p style={{ background: progressForm(item.progress).background }} className="my_state">{progressForm(item.progress).text}</p>
+                            <p className="my_category">{CategoryFormatUtil(item.category)}</p>
+                            <h2 className="my_title">{item.title}</h2>
+                            <p className="my_price">{item.tprice} 원</p>
+                          </ItemInfo>
+                        </ItemLink>
                       </MyPurchaseItem>
                     ))
                   }
