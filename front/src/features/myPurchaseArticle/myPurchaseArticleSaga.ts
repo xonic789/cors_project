@@ -12,11 +12,11 @@ function* getMyPurchaseArticleRequestSaga(action: { payload: number }) {
   try {
     const result = yield call(myPurchaseArtilceAsync, action.payload);
     console.log(result);
-    const { myAricleList, totalPage } = result.data.data;
+    const { myArticleList, totalPage } = result.data.data;
 
     yield put({
       type: getMyPurchaseArticleRequestSuccess,
-      payload: { myAricleList, totalPage },
+      payload: { myArticleList, totalPage },
     });
   } catch (error) {
     yield put({

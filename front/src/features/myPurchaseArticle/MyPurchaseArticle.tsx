@@ -279,7 +279,7 @@ function MyPurchaseArticle():JSX.Element {
                             <p style={{ background: progressForm(item.progress).background }} className="my_state">{progressForm(item.progress).text}</p>
                             <p className="my_category">{CategoryFormatUtil(item.category)}</p>
                             <h2 className="my_title">{item.title}</h2>
-                            <p className="my_price">{item.tprice}</p>
+                            <p className="my_price">{item.tprice} 원</p>
                           </ItemInfo>
                         </ItemLink>
                       </MyPurchaseItem>
