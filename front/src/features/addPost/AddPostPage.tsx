@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
+import { DefaultRootState, useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
@@ -126,7 +126,7 @@ function AddPostPage():JSX.Element {
   const [isOpenSearchBox, setIsOpenSearchBox] = useState<boolean>(false);
   const history = useHistory();
 
-  const { isAddBookPostLoading, isAddBookPostDone, isAddBookPostError } = useSelector((state) => state.addPostSlice);
+  const { isAddBookPostLoading, isAddBookPostDone, isAddBookPostError } = useSelector((state: any) => state.addPostSlice);
   const dispatch = useDispatch();
 
   const { division } = useParams<ParamTypes>();

@@ -27,7 +27,7 @@ const Header = styled.div`
 
 function DetailPostView({ history }: RouteComponentProps):JSX.Element {
   const dispatch = useDispatch();
-  const { detailBookPost } = useSelector((state) => state.detailViewSlice);
+  const { detailBookPost } = useSelector((state: any) => state.detailViewSlice);
   const { id } = useParams<ParamTypes>();
 
   const goback = () => {

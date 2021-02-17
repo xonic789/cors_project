@@ -13,7 +13,7 @@ const PostListWrapper = styled.div`
 `;
 function PostList(): JSX.Element {
   const dispatch = useDispatch();
-  const { bookPost, filtering } = useSelector((state) => state.postSlice);
+  const { bookPost, filtering } = useSelector((state: any) => state.postSlice);
   useEffect(() => {
     dispatch(loadBookPostRequest({ filtering: { division: filtering.division, category: filtering.category } }));
   }, [dispatch, filtering.category, filtering.division]);

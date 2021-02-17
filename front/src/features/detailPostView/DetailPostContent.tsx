@@ -138,7 +138,7 @@ const UploadeTime = styled.div`
 function DetailPostContent({ id } :DetailPostInterface): JSX.Element {
   const dispatch = useDispatch();
   const [heart, setHeart] = useState(false);
-  const { detailBookPost } = useSelector((state) => state.detailViewSlice);
+  const { detailBookPost } = useSelector((state: any) => state.detailViewSlice);
   const history = useHistory();
   const HandleHeartButton = () => {
     setHeart(!heart);

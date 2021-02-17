@@ -173,7 +173,7 @@ const LogoutButton = styled.button`
 function MyPage():JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.userSlice);
+  const { user } = useSelector((state: any) => state.userSlice);
   const { nickname, profileImg } = user;
 
   const onClickLogout = () => {

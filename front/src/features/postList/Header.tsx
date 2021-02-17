@@ -82,7 +82,7 @@ function Header(): JSX.Element {
   const dispatch = useDispatch();
   const [openMenu, setOpenMenu] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
-  const { filtering } = useSelector((state) => state.postSlice);
+  const { filtering } = useSelector((state: any) => state.postSlice);
   const onOpenMenuHandler = useCallback((e : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
     setOpenMenu(true);

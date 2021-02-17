@@ -51,7 +51,7 @@ const Categoty = styled.div`
 `;
 function InfiniteScrollList(): JSX.Element {
   const dispatch = useDispatch();
-  const { bookPost, hasMorePost, isLoadScrollBookPostLoading } = useSelector((state) => state.postSlice);
+  const { bookPost, hasMorePost, isLoadScrollBookPostLoading } = useSelector((state: any) => state.postSlice);
   const scrollListener = (params:OnScrollParams) => {
     if (params.scrollTop + params.clientHeight >= params.scrollHeight - 300) {
       if (hasMorePost && !isLoadScrollBookPostLoading) {
