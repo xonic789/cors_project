@@ -1,5 +1,6 @@
 package ml.market.cors.domain.article.entity.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -24,6 +25,10 @@ public class CountDAO {
 
     @Column(name = "wish_count")
     private int wishCount;
+
+    @JsonIgnore
+    @OneToOne(mappedBy = "countDAO", cascade = CascadeType.ALL)
+    private ArticleDAO article;
 
     public void updateViewCount(int views){
         this.views=views;

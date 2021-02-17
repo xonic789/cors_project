@@ -20,6 +20,7 @@ public class ArticleForm {
     private String content;
     private String title;
     private String image;
+    private Progress progress;
     private Long cid;
     private MultipartFile[] file;
     private int rprice;

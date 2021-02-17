@@ -137,7 +137,7 @@ public class MarketService {
         List<ArticleViewInMarketDTO> articleViewInMarketDTOList = new ArrayList<>();
         ArticleViewInMarketDTO articleViewInMarketDTO;
         for (ArticleDAO item : articleList) {
-            articleViewInMarketDTO = new ArticleViewInMarketDTO(item.getArticle_id(), item.getTitle(),item.getRprice(), item.getTprice(), item.getImage_info().getImage1());
+            articleViewInMarketDTO = new ArticleViewInMarketDTO(item.getArticle_id(), item.getTitle(),item.getRprice(), item.getTprice(), item.getImageInfo().getImage1());
             articleViewInMarketDTOList.add(articleViewInMarketDTO);
         }
         int totalPage = articleListPage.getTotalPages();
