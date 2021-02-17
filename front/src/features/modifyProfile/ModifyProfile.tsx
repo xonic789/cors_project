@@ -245,7 +245,7 @@ const RemoveBox = styled.div`
 `;
 
 function ModifyProfile():JSX.Element {
-  const { user, isModifyProfileError } = useSelector((state) => state.userSlice);
+  const { user, isModifyProfileError } = useSelector((state: any) => state.userSlice);
   const { nickname, profileImg } = user;
   const dispatch = useDispatch();
   const history = useHistory();

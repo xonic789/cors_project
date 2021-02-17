@@ -1,5 +1,5 @@
 import React from 'react';
-import { HashRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import NotFound from './components/NotFound';
 import AddPostPage from './features/addPost/AddPostPage';
 import DetailPostView from './features/detailPostView/DetailPostView';
@@ -23,7 +23,7 @@ function App():JSX.Element {
     <div className="App">
       <GlobalStyle />
       <div>
-        <HashRouter>
+        <BrowserRouter>
           <Switch>
             <Route path="/" exact component={Login} />
             <Route path="/home" exact component={PostList} />
@@ -42,7 +42,7 @@ function App():JSX.Element {
             <Route path="/review" exact component={Review} />
             <Route component={NotFound} />
           </Switch>
-        </HashRouter>
+        </BrowserRouter>
       </div>
     </div>
   );
