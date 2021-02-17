@@ -1,5 +1,6 @@
 package ml.market.cors.domain.article.entity.dao;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ml.market.cors.domain.article.entity.enums.Division;
@@ -23,6 +24,9 @@ public class Image_infoDAO {
     @Column(name = "image3")
     private String image3;
 
+    @JsonIgnore
+    @OneToOne(mappedBy = "imageInfo", cascade = CascadeType.ALL)
+    private ArticleDAO article;
 
     @Enumerated(EnumType.STRING)
     private Division image_division;

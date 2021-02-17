@@ -42,13 +42,13 @@ public class ArticleServiceImpl implements ArticleService{
             Book_CategoryDAO save = book_category_repository.save(Book_CategoryDAO.createBookCategory(articleForm));
             ArticleDAO createArticle = ArticleDAO.createArticle(articleForm,memberDAO,save);
             countRepository.save(createArticle.getCountDAO());
-            image_info_repository.save(createArticle.getImage_info());
+            image_info_repository.save(createArticle.getImageInfo());
             return articleRepository.save(createArticle);
         }
 
         ArticleDAO createArticle = ArticleDAO.createArticle(articleForm,memberDAO,optionalBookCategoryDAO.get());
         countRepository.save(createArticle.getCountDAO());
-        image_info_repository.save(createArticle.getImage_info());
+        image_info_repository.save(createArticle.getImageInfo());
         return articleRepository.save(createArticle);
     }
 
@@ -61,14 +61,14 @@ public class ArticleServiceImpl implements ArticleService{
             MarketDAO findMarket = marketRepository.findByMemberId(memberDAO.getMember_id());
             ArticleDAO createArticle = ArticleDAO.createArticleMarket(articleForm,memberDAO,saveBookCategory,findMarket);
             countRepository.save(createArticle.getCountDAO());
-            image_info_repository.save(createArticle.getImage_info());
+            image_info_repository.save(createArticle.getImageInfo());
             return articleRepository.save(createArticle);
         }
 
         MarketDAO findMarket = marketRepository.findByMemberId(memberDAO.getMember_id());
         ArticleDAO createArticle = ArticleDAO.createArticleMarket(articleForm,memberDAO,optionalBookCategoryDAO.get(),findMarket);
         countRepository.save(createArticle.getCountDAO());
-        image_info_repository.save(createArticle.getImage_info());
+        image_info_repository.save(createArticle.getImageInfo());
         return articleRepository.save(createArticle);
     }
 
@@ -93,7 +93,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional(readOnly = false)
     public ArticleDAO updateArticle(Long article_id,ArticleForm articleForm) {
         ArticleDAO findArticle = findById(article_id);
-        Image_infoDAO findImage = image_info_repository.findById(findArticle.getImage_info().getIndex_id()).get();
+        Image_infoDAO findImage = image_info_repository.findById(findArticle.getImageInfo().getIndex_id()).get();
         CountDAO countDAO = countRepository.findById(findArticle.getCountDAO().getCountId()).get();
         return findArticle.updateArticle(articleForm, findImage,countDAO);
     }
@@ -141,7 +141,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Transactional(readOnly = false)
     public void deleteArticle(Long article_id) {
         ArticleDAO findArticle = articleRepository.findByIdFetch(article_id);
-        image_info_repository.deleteById(findArticle.getImage_info().getIndex_id());
+        image_info_repository.deleteById(findArticle.getImageInfo().getIndex_id());
         countRepository.deleteById(findArticle.getCountDAO().getCountId());
         articleRepository.deleteById(article_id);
     }

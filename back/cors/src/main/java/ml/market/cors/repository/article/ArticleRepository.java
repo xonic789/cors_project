@@ -21,7 +21,7 @@ public interface ArticleRepository extends JpaRepository<ArticleDAO,Long>,Articl
     @Query("SELECT ArticleTb from ArticleDAO ArticleTb where ArticleTb.member.member_id=:memberId and ArticleTb.division=:division")
     Page<ArticleDAO> findAllByMemberIdAndDivision(@Param("memberId") long memberId, @Param("division") Division division, Pageable pageable);
 
-    @Query("SELECT ArticleTb.image_info from ArticleDAO ArticleTb where ArticleTb.article_id=:articleId")
+    @Query("SELECT ArticleTb.imageInfo from ArticleDAO ArticleTb where ArticleTb.article_id=:articleId")
     Image_infoDAO getImageByArticleId(@Param("articleId") long articleId);
 
     @Query("SELECT ArticleTb.category from ArticleDAO ArticleTb where ArticleTb.article_id=:articleId")

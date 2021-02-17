@@ -58,9 +58,10 @@ public class ArticleDAO {
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
+
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "index_id")
-    private Image_infoDAO image_info;
+    private Image_infoDAO imageInfo;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "market_id")
@@ -71,7 +72,7 @@ public class ArticleDAO {
      */
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
                       Progress progress, int tprice, Division division,
-                      Image_infoDAO image_info,String title,MemberDAO memberDAO,Book_CategoryDAO category) {
+                      Image_infoDAO imageInfo, String title, MemberDAO memberDAO, Book_CategoryDAO category) {
         this.countDAO = countDAO;
         this.content = content;
         this.rprice = rprice;
@@ -79,7 +80,7 @@ public class ArticleDAO {
         this.progress = progress;
         this.tprice = tprice;
         this.division = division;
-        this.image_info=image_info;
+        this.imageInfo = imageInfo;
         this.title=title;
         this.member=memberDAO;
         this.category=category;
@@ -90,7 +91,7 @@ public class ArticleDAO {
      */
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
                       Progress progress, int tprice, Division division,
-                      Image_infoDAO image_info,String title,MemberDAO member,Book_CategoryDAO category,MarketDAO market) {
+                      Image_infoDAO imageInfo, String title, MemberDAO member, Book_CategoryDAO category, MarketDAO market) {
         this.countDAO = countDAO;
         this.content = content;
         this.rprice = rprice;
@@ -99,7 +100,7 @@ public class ArticleDAO {
         this.tprice = tprice;
         this.division = division;
         this.member = member;
-        this.image_info=image_info;
+        this.imageInfo = imageInfo;
         this.title=title;
         this.category=category;
         this.market=market;
@@ -130,7 +131,7 @@ public class ArticleDAO {
         this.content = articleForm.getContent();
         this.tprice = articleForm.getTprice();
         this.division = articleForm.getDivision();
-        this.image_info=image_info;
+        this.imageInfo =image_info;
         this.countDAO=countDAO;
         return this;
     }
