@@ -16,8 +16,8 @@ const myPurchaseArticleSlice = createSlice({
     getMyPurchaseArticleRequestSuccess: (state, action) => {
       state.isGetMyPurchaseArticlesLoading = false;
       state.isGetMyPurchaseArticlesSuccess = true;
-      state.myPurchaseArticle = action.payload.myAricleList;
-      state.totalPage = action.payload.pageTotal;
+      state.myPurchaseArticle = action.payload.myArticleList;
+      state.totalPage = action.payload.totalPage;
     },
     getMyPurchaseArticleRequestError: (state, action) => {
       state.isGetMyPurchaseArticlesLoading = false;

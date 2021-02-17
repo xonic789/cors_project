@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
-import { postLoginRequest } from './userSlice';
+import { postLoginRequest, postLoginRequestError, postLoginRequestSuccess } from './userSlice';
+import { LOGIN_ERROR, postLoginAsync, SERVER_ERROR } from '../../api/userApi';
 
 interface inputFormInterface {
   email: string,
@@ -78,9 +79,20 @@ function LoginForm(): JSX.Element {
 
   const history = useHistory();
 
-  const onLogin = (e:React.FormEvent<HTMLFormElement>) => {
+  const onLogin = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    dispatch(postLoginRequest({ user: { email: inputs.email, passwd: inputs.passwd }, history }));
+    try {
+      const result = await postLoginAsync({ email: inputs.email, passwd: inputs.passwd });
+      dispatch(postLoginRequestSuccess(result));
+      history.push('/home');
+    } catch (error) {
+      dispatch(postLoginRequestError(error.message));
+      if (error.message === LOGIN_ERROR) {
+        alert('로그인 정보를 확인해주세요.');
+      } else if (error.message === SERVER_ERROR) {
+        alert('서버 통신중 에러 발생');
+      }
+    }
   };
 
   return (

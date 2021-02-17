@@ -27,7 +27,7 @@ public class MarketDAO {
     @JoinColumn(name = "member_id")
     private MemberDAO member;
 
-    @OneToMany(mappedBy = "market")
+    @OneToMany(mappedBy = "market",cascade = CascadeType.ALL)
     private List<ArticleDAO> articles = new ArrayList<>();
 
     @Column(name = "name")

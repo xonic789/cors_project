@@ -168,7 +168,7 @@ public class ArticleController {
                             article_id,
                             article_id + "에 해당하는 글이 없습니다."));
         }
-        String[] images = {findArticle.getImage_info().getImage2(),findArticle.getImage_info().getImage3()};
+        String[] images = {findArticle.getImageInfo().getImage2(),findArticle.getImageInfo().getImage3()};
 
         return responseEntityUtils.getMessageResponseEntityOK(
                 new ArticleOne(
@@ -187,7 +187,7 @@ public class ArticleController {
                         findArticle.getDivision(),
                         new BookCategoryDTO(findArticle.getCategory()),
                         new CountDTO(findArticle.getCountDAO()),
-                        findArticle.getImage_info().getImage1(),
+                        findArticle.getImageInfo().getImage1(),
                         images
                 )
         );
@@ -360,6 +360,7 @@ public class ArticleController {
                         article_id,
                         article_id + "에 해당하는 글이 없습니다."));
     }
+
 
 
 
