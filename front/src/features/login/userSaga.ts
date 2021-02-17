@@ -18,8 +18,13 @@ import {
   postRemoveWishListRequest,
   postModifyProfileRequestError,
   postModifyProfileRequestSuccess,
+  postAddWishListRequestSuccess,
+  postRemoveWishListRequestSuccess,
+  postAddWishListRequestError,
+  postRemoveWishListRequestError,
 } from './userSlice';
 import { modifyProfileInterface } from '../../interfaces/UserInterface';
+import { addWishs, removeWishs } from '../../api/wishsApi';
 
 function* postLoginRequestSaga(action: { payload: { user: { email: string, passwd: string } } }) {
   try {
@@ -103,12 +108,42 @@ function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: modifyP
   }
 }
 
-function* postAddWishListRequestSaga() {
-  yield console.log('찜하기');
+function* postAddWishListRequestSaga(action: {payload: { articelId: string }}) {
+  try {
+    const result = yield addWishs(action.payload.articelId);
+    if (result) {
+      yield put({
+        type: postAddWishListRequestSuccess,
+        payload: action.payload,
+      });
+    } else {
+      yield put({
+        type: postAddWishListRequestError,
+        paylose: '서버 통신 에러',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-function* postRemoveWishListRequestSaga() {
-  yield console.log('찜 해제하기');
+function* postRemoveWishListRequestSaga(action: {payload: { articelId: string }}) {
+  try {
+    const result = yield removeWishs(action.payload.articelId);
+    if (result) {
+      yield put({
+        type: postRemoveWishListRequestSuccess,
+        payload: action.payload,
+      });
+    } else {
+      yield put({
+        type: postRemoveWishListRequestError,
+        paylose: '서버 통신 에러',
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function* watchLogin(): Generator {

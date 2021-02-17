@@ -81,6 +81,7 @@ const userSlice = createSlice({
     postAddWishListRequestSuccess: (state, action) => {
       state.isAddWishListLoading = false;
       state.isAddWishListSuccess = true;
+      state.user.wishList = state.user.wishList.concat(action.payload);
     },
     postAddWishListRequestError: (state, action) => {
       state.isAddWishListLoading = false;
@@ -92,6 +93,7 @@ const userSlice = createSlice({
     postRemoveWishListRequestSuccess: (state, action) => {
       state.isRemoveWishListLoading = false;
       state.isRemoveWishListSuccess = true;
+      state.user.wishList = state.user.wishList.filter((item) => (item !== action.payload));
     },
     postRemoveWishListRequestError: (state, action) => {
       state.isRemoveWishListLoading = false;
