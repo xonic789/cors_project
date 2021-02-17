@@ -89,6 +89,7 @@ function* postLogoutRequestSaga() {
 
 function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: modifyProfileInterface}}) {
   try {
+    console.log(action.payload.modifyProfile);
     const result = yield call(modifyProfileAsync, action.payload.modifyProfile);
     console.log(result);
     if (result) {
