@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import Spinner from 'react-spinner-material';
+import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
 import AppLayout from '../../components/AppLayout';
 import Header from './Header';
 import { loadBookPostRequest } from './postSlice';
@@ -21,7 +23,8 @@ function PostList(): JSX.Element {
       <PostListWrapper>
         <Header />
         <AddPostButton />
-        { bookPost.length !== 0 ? <InfiniteScrollList /> : <div>Loading...</div>}
+        { bookPost.length !== 0 ? <InfiniteScrollList /> : <Spinner color="#004c9d" size={120} visible stroke={10} radius={50} />}
+        <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} />
       </PostListWrapper>
     </AppLayout>
   );

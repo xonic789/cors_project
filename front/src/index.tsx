@@ -18,6 +18,7 @@ const store = configureStore({
   reducer: rootReducer,
   middleware,
 });
+
 sagaMiddleware.run(rootSaga);
 
 ReactDOM.render(

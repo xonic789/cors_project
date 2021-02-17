@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, RouteComponentProps, useParams } from 'react-router-dom';
 import styled from 'styled-components';
+import Spinner from 'react-spinner-material';
 import { loadDetailBookPostRequest } from './detailViewSlice';
 import DetailPostContent from './DetailPostContent';
 
@@ -46,7 +47,7 @@ function DetailPostView({ history }: RouteComponentProps):JSX.Element {
           <img src="/images/icons/back.png" alt="back_icon" />
         </Header>
       </NavLink>
-      {detailBookPost !== null ? <DetailPostContent id={detailBookPost.articleId} /> : <div>Loading...</div>}
+      {detailBookPost !== null ? <DetailPostContent id={detailBookPost.articleId} /> : <Spinner color="#004c9d" size={120} visible stroke={10} radius={50} />}
     </DetailPostViewContainer>
   );
 }

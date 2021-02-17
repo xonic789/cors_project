@@ -72,7 +72,7 @@ const marketSlice = createSlice({
     deleteMarketPostRequest(state, action) {
       state.deleteMarketPostLoading = true;
       state.deleteMarketPostDone = false;
-      state.marketList.filter((data: marketDetailInterface) => data.id !== action.payload);
+      state.marketList.filter((data: marketDetailInterface) => data.marketId !== action.payload);
     },
     deleteMarketPostSuccess(state, action) {
       state.deleteMarketPostLoading = false;
