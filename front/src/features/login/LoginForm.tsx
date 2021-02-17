@@ -84,7 +84,7 @@ function LoginForm(): JSX.Element {
     try {
       const result = await postLoginAsync({ email: inputs.email, passwd: inputs.passwd });
       dispatch(postLoginRequestSuccess(result));
-      // history.push('/home');
+      history.push('/home');
     } catch (error) {
       dispatch(postLoginRequestError(error.message));
       if (error.message === LOGIN_ERROR) {
