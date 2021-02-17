@@ -7,6 +7,7 @@ import ml.market.cors.domain.article.entity.dao.ArticleDAO;
 import ml.market.cors.domain.article.entity.dto.ArticleDTO;
 import ml.market.cors.domain.article.entity.dto.QArticleDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
+import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.article.entity.search.ArticleSearchCondition;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.repository.bookcategory.BookCategoryRepository;
@@ -36,8 +37,6 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     public List<ArticleDTO> findByDivision(Division division, Pageable pageable, ArticleSearchCondition articleSearchCondition){
         String[] categoryList = getCategoryList(articleSearchCondition);
         String title = articleSearchCondition.getTitle();
-        System.out.println(title);
-
         return query
                     .select(new QArticleDTO(
                             articleDAO.article_id,
@@ -48,12 +47,12 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                             articleDAO.category,
                             articleDAO.member.nickname,
                             articleDAO.write_date,
-                            articleDAO.image_info.image1))
+                            articleDAO.imageInfo.image1))
                     .from(articleDAO)
                     .join(articleDAO.member, memberDAO)
                     .join(articleDAO.countDAO, countDAO)
                     .join(articleDAO.category, book_CategoryDAO)
-                    .join(articleDAO.image_info, image_infoDAO)
+                    .join(articleDAO.imageInfo, image_infoDAO)
                     .where(
                             titleLike(articleSearchCondition.getTitle()),
                             articleIdLt(articleSearchCondition.getLastId()),
@@ -68,8 +67,10 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                                     two_depthEq(categoryList[1]),
                                                     three_depthEq(categoryList[2]),
                                                     four_depthEq(categoryList[3]),
-                                                    five_depthEq(categoryList[4]))
-                    ))
+                                                    five_depthEq(categoryList[4]))),
+                            articleDAO.progress.eq(Progress.POSTING)
+                            .or(articleDAO.progress.eq(Progress.TRADING))
+                    )
                     .limit(10)
                     .orderBy(articleDAO.article_id.desc())
                     .fetch();
@@ -106,13 +107,13 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                         articleDAO.member.nickname,
                         articleDAO.market,
                         articleDAO.write_date,
-                        articleDAO.image_info.image1))
+                        articleDAO.imageInfo.image1))
                 .from(articleDAO)
                 .join(articleDAO.member, memberDAO)
                 .join(articleDAO.countDAO, countDAO)
                 .join(articleDAO.category, book_CategoryDAO)
                 .join(articleDAO.market, marketDAO)
-                .join(articleDAO.image_info, image_infoDAO)
+                .join(articleDAO.imageInfo, image_infoDAO)
                 .where(
                         titleLike(articleSearchCondition.getTitle()),
                         articleIdLt(articleSearchCondition.getLastId()),
@@ -127,8 +128,9 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                                 two_depthEq(categoryList[1]),
                                                 three_depthEq(categoryList[2]),
                                                 four_depthEq(categoryList[3]),
-                                                five_depthEq(categoryList[4]))
-                        ))
+                                                five_depthEq(categoryList[4]))),
+                        articleDAO.progress.eq(Progress.POSTING).or(articleDAO.progress.eq(Progress.TRADING))
+                )
                 .limit(10)
                 .orderBy(articleDAO.article_id.desc())
                 .fetch();
@@ -138,9 +140,8 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
     public ArticleDAO findByIdFetch(Long article_id){
         return query
                 .selectFrom(articleDAO)
-                .from(articleDAO)
                 .join(articleDAO.countDAO).fetchJoin()
-                .join(articleDAO.image_info).fetchJoin()
+                .join(articleDAO.imageInfo).fetchJoin()
                 .where(articleDAO.article_id.eq(article_id))
                 .fetchOne();
     }
@@ -161,12 +162,12 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                         articleDAO.category,
                         articleDAO.member.nickname,
                         articleDAO.write_date,
-                        articleDAO.image_info.image1))
+                        articleDAO.imageInfo.image1))
                 .from(articleDAO)
                 .join(articleDAO.member, memberDAO)
                 .join(articleDAO.countDAO, countDAO)
                 .join(articleDAO.category, book_CategoryDAO)
-                .join(articleDAO.image_info, image_infoDAO)
+                .join(articleDAO.imageInfo, image_infoDAO)
                 .where(
                         articleLatGoe(member),
                         articleLatLoe(member),
@@ -185,8 +186,9 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                                                 two_depthEq(categoryList[1]),
                                                 three_depthEq(categoryList[2]),
                                                 four_depthEq(categoryList[3]),
-                                                five_depthEq(categoryList[4]))
-                        ))
+                                                five_depthEq(categoryList[4]))),
+                        articleDAO.progress.eq(Progress.POSTING).or(articleDAO.progress.eq(Progress.TRADING))
+                )
                 .limit(10)
                 .orderBy(articleDAO.article_id.desc())
                 .fetch();

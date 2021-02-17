@@ -40,6 +40,8 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
+import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.LinkedList;
 import java.util.Objects;

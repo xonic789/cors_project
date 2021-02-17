@@ -9,11 +9,11 @@ import {
 function* getWishListRequestSaga(action: { payload: number }) {
   try {
     const result = yield call(getWishListAsync, action.payload);
-    const { myAricleList, totalPage } = result.data.data;
+    const { myWishList, totalPage } = result.data.data;
     console.log(result.data.data, 'asdasds');
     yield put({
       type: getWishListRequestSuccess,
-      payload: { myAricleList, totalPage },
+      payload: { myWishList, totalPage },
     });
   } catch (error) {
     yield put({

@@ -9,6 +9,8 @@ import ml.market.cors.domain.util.token.LoginTokenManagement;
 import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.Charset;
 import java.util.*;
 
 public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -78,6 +81,7 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
     }
 
     private void setHeader(HttpServletResponse response, MemberDAO memberDAO) {
+        response.setContentType("text/html;charset=UTF-8");
         response.setHeader(MemberParam.NICKNAME, memberDAO.getNickname());
         response.setHeader(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
         response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));

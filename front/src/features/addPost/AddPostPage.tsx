@@ -152,7 +152,9 @@ function AddPostPage():JSX.Element {
       console.log(b[3970]);
       console.log(b[3971]);
       console.log(b[3972]);
+
       const parseData = JSON.parse(b);
+      console.log(parseData);
       setSearchResult(parseData.item);
       if (parseData.item.length === 0) {
         ToastsStore.error('검색결과가 없습니다');
