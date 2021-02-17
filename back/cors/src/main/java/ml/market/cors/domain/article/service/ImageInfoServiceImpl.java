@@ -19,7 +19,7 @@ public class ImageInfoServiceImpl implements ImageInfoService {
     @Override
     @Transactional(readOnly = false)
     public void updateImage(ArticleDAO articleDAO, String... images) {
-        Image_infoDAO image_infoDAO = image_info_repository.findById(articleDAO.getImage_info().getIndex_id()).get();
+        Image_infoDAO image_infoDAO = image_info_repository.findById(articleDAO.getImageInfo().getIndex_id()).get();
         image_infoDAO.update_Image_info(images[0],images[1],articleDAO.getDivision());
     }
 

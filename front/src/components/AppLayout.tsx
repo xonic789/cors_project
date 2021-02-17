@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import PostList from '../features/postList/PostList';
-import MyPage from '../features/mypage/MyPage';
 
 interface AppLayoutInterface {
   children: JSX.Element;

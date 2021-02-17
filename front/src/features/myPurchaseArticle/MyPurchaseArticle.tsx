@@ -210,7 +210,7 @@ function MyPurchaseArticle():JSX.Element {
   const dispatch = useDispatch();
   const history = useHistory();
   const [page, setPage] = useState<number>(0);
-  const { myPurchaseArticle, totalPage } = useSelector((state) => state.myPurchaseArticleSlice);
+  const { myPurchaseArticle, totalPage } = useSelector((state: any) => state.myPurchaseArticleSlice);
   const progressForm = (progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING'): { text: string, background: string } => {
     const resultProgress = {
       COMPLETED: { text: '거래완료', background: '#1e1e1e' },
