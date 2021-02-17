@@ -1,8 +1,9 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { DefaultRootState, useDispatch, useSelector } from 'react-redux';
+import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
+import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
 import { addBookPostRequest } from './addPostSlice';
 import ImagePreView from './ImagePreView';
 import ImageFileReaderPromise from '../../utils/imageFileReader';
@@ -110,6 +111,7 @@ const SearchInput = styled.div`
     width: 20px;
   }
 `;
+
 function AddPostPage():JSX.Element {
   const [searchTitle, setSearchTitle] = useState<string>('');
   const [searchResult, setSearchResult] = useState<aladinIteminterface[]>([]);
@@ -124,7 +126,7 @@ function AddPostPage():JSX.Element {
   const [isOpenSearchBox, setIsOpenSearchBox] = useState<boolean>(false);
   const history = useHistory();
 
-  const { isAddBookPostLoading, isAddBookPostDone, isAddBookPostError } = useSelector((state) => state.addPostSlice);
+  const { isAddBookPostLoading, isAddBookPostDone, isAddBookPostError } = useSelector((state: any) => state.addPostSlice);
   const dispatch = useDispatch();
 
   const { division } = useParams<ParamTypes>();
@@ -136,7 +138,7 @@ function AddPostPage():JSX.Element {
       if (images.length < 2) {
         setImages(images.concat({ id: uuidv4(), url: image, image: file }));
       } else {
-        alert('최대 두장의 사진만 업로드 가능합니다.');
+        ToastsStore.error('최대 두장의 사진만 업로드 가능합니다.');
       }
     } catch (error) {
       console.error(error);
@@ -146,10 +148,14 @@ function AddPostPage():JSX.Element {
     getAladinBook(searchTitle).then(({ data }) => {
       const a = data.replace(/\\/ig, '\\\\', /;/g, '');
       const b = a.substr(0, a.length - 1);
+      console.log(b);
+      console.log(b[3970]);
+      console.log(b[3971]);
+      console.log(b[3972]);
       const parseData = JSON.parse(b);
       setSearchResult(parseData.item);
       if (parseData.item.length === 0) {
-        alert('검색결과가 없습니다');
+        ToastsStore.error('검색결과가 없습니다');
       } else {
         setIsOpenSearchBox(true);
       }
@@ -188,8 +194,11 @@ function AddPostPage():JSX.Element {
     setIsOpenSearchBox(false);
   };
   const handleSubmitPost = useCallback((e: React.FormEvent<HTMLFormElement>) => {
-    console.log(cid);
     e.preventDefault();
+    if (images.length < 2) {
+      ToastsStore.error('최소 두장의 사진이 업로드 되어야합니다');
+      return;
+    }
     const formData = new FormData();
     for (let i = 0; i < images.length; i++) {
       formData.append('file', images[i].image); // 사용자가 등록한 이미지
@@ -207,15 +216,10 @@ function AddPostPage():JSX.Element {
 
     dispatch(addBookPostRequest({ data: formData }));
 
-    if (!isAddBookPostLoading && isAddBookPostDone) {
-      setContent('');
-      setImages([]);
-      setPrice('');
-      history.push('/home');
-    } else if (!isAddBookPostLoading && isAddBookPostError !== null) {
-      alert('글 업로드에 실패했습니다.');
+    if (isAddBookPostLoading === false && isAddBookPostError !== null) {
+      ToastsStore.error('업로드에 실패했습니다.');
     }
-  }, [category, cid, content, dispatch, history, images, isAddBookPostDone, isAddBookPostError, isAddBookPostLoading, price, realPrice, thumbnail, title, upperCaseDivision]);
+  }, [category, cid, content, dispatch, images, isAddBookPostError, isAddBookPostLoading, price, realPrice, thumbnail, title, upperCaseDivision]);
   return (
     <>
       <AddPostWrapper>
@@ -255,6 +259,7 @@ function AddPostPage():JSX.Element {
             <textarea onChange={handleChangeContent} value={content} placeholder="상품설명을 입력하세요" />
           </BookDetailInputWrapper>
           <AddPostButton type="submit">등록하기</AddPostButton>
+          <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
         </FormWrapper>
       </AddPostWrapper>
     </>
