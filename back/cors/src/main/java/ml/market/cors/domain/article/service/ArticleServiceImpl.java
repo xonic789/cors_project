@@ -92,7 +92,7 @@ public class ArticleServiceImpl implements ArticleService{
     @Override
     @Transactional(readOnly = false)
     public ArticleDAO updateArticle(Long article_id,ArticleForm articleForm) {
-        ArticleDAO findArticle = findById(article_id);
+        ArticleDAO findArticle = articleRepository.findByIdFetch(article_id);
         Image_infoDAO findImage = image_info_repository.findById(findArticle.getImageInfo().getIndex_id()).get();
         CountDAO countDAO = countRepository.findById(findArticle.getCountDAO().getCountId()).get();
         return findArticle.updateArticle(articleForm, findImage,countDAO);

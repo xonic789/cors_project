@@ -131,6 +131,7 @@ public class ArticleDAO {
         this.content = articleForm.getContent();
         this.tprice = articleForm.getTprice();
         this.division = articleForm.getDivision();
+        this.progress = articleForm.getProgress();
         this.imageInfo =image_info;
         this.countDAO=countDAO;
         return this;
