@@ -13,6 +13,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       passwd: user.passwd,
     },
   }).then((result) => {
+    console.log(result);
     const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist } = result.headers;
 
     const loginUser: memberInterface = {
@@ -52,7 +53,10 @@ export function logoutAsync(): Promise<boolean> {
   return axios({
     method: 'post',
     url: '/api/logout',
-  }).then((result) => true).catch((error) => false);
+  }).then((result) => {
+    console.log(result);
+    return true;
+  }).catch((error) => false);
 }
 
 export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
