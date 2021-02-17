@@ -146,7 +146,10 @@ function AddPostPage():JSX.Element {
     getAladinBook(searchTitle).then(({ data }) => {
       const a = data.replace(/\\/ig, '\\\\', /;/g, '');
       const b = a.substr(0, a.length - 1);
+      console.log(data);
+      console.log(b);
       const parseData = JSON.parse(b);
+      console.log(parseData);
       setSearchResult(parseData.item);
       if (parseData.item.length === 0) {
         alert('검색결과가 없습니다');
