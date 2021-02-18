@@ -3,11 +3,8 @@ import { all, fork } from 'redux-saga/effects';
 import postSaga from './features/postList/postSaga';
 import addPostSaga from './features/addPost/addPostSaga';
 import detailPostSaga from './features/detailPostView/detailViewSaga';
-import userSaga from './features/login/userSaga';
-import mySaleArticleSaga from './features/mySlaeArticle/mySaleArticleSaga';
-import myPurchaseArticleSaga from './features/myPurchaseArticle/myPurchaseArticleSaga';
-import noticeSaga from './features/notice/noticeSaga';
-import wishListSaga from './features/wishList/wishListSaga';
+import userSaga from './pages/signIn/userSaga';
+import myPageSaga from './pages/myPage/myPageSaga';
 
 export default function* rootSaga(): Generator {
   yield all([
@@ -15,8 +12,5 @@ export default function* rootSaga(): Generator {
     fork(detailPostSaga),
     fork(userSaga),
     fork(addPostSaga),
-    fork(mySaleArticleSaga),
-    fork(myPurchaseArticleSaga),
-    fork(noticeSaga),
-    fork(wishListSaga)]);
+    fork(myPageSaga)]);
 }

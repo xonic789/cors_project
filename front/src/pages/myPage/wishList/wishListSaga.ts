@@ -1,5 +1,5 @@
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
-import getWishListAsync from '../../api/wishListApi';
+import getWishListAsync from '../../../api/wishListApi';
 import {
   getWishListRequest,
   getWishListRequestSuccess,
@@ -27,7 +27,7 @@ function* watchWishList(): Generator {
   yield takeLatest(getWishListRequest, getWishListRequestSaga);
 }
 
-export default function* loginSaga(): Generator {
+export default function* wishListSaga(): Generator {
   yield all([
     fork(watchWishList),
   ]);

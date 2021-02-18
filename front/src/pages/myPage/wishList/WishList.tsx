@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { myArticleInterface } from '../../interfaces/MyArticle.interface';
-import CategoryFormatUtil from '../../utils/categoryFormatUtil';
-import numberArrayUtill from '../../utils/numberArrayUtill';
-import { getMySaleArticleRequest } from './mySaleArticleSlice';
+import { myArticleInterface } from '../../../interfaces/MyArticle.interface';
+import CategoryFormatUtil from '../../../utils/categoryFormatUtil';
+import numberArrayUtill from '../../../utils/numberArrayUtill';
+import { getWishListRequest } from './wishListSlice';
 
 const Layout = styled.form`
   display: flex;
@@ -52,7 +52,7 @@ const BackImg = styled.img`
   }
 `;
 
-const MySaleItems = styled.div`
+const MyWishsItems = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -61,7 +61,7 @@ const MySaleItems = styled.div`
   }
 `;
 
-const MySaleItem = styled.div`
+const MyWishsItem = styled.div`
   
 `;
 
@@ -206,11 +206,11 @@ const EmptyArticle = styled.div`
   }
 `;
 
-function MySaleArticle():JSX.Element | null {
+function WishList():JSX.Element {
   const dispatch = useDispatch();
   const history = useHistory();
   const [page, setPage] = useState<number>(0);
-  const { mySaleArticle, totalPage, isGetMyPurchaseArticlesLoading } = useSelector((state: any) => state.mySaleArticleSlice);
+  const { wishList, totalPage, isGetWishListsError } = useSelector((state: any) => state.myPageSlice);
   const progressForm = (progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING'): { text: string, background: string } => {
     const resultProgress = {
       COMPLETED: { text: '거래완료', background: '#1e1e1e' },
@@ -242,8 +242,17 @@ function MySaleArticle():JSX.Element | null {
   };
 
   useEffect(() => {
-    dispatch(getMySaleArticleRequest(page));
+    dispatch(getWishListRequest(page));
   }, [dispatch, page]);
+
+  useEffect(() => {
+    if (isGetWishListsError === 'NON_LOGIN') {
+      alert('로그인이 필요한 서비스입니다. 로그인 후 더 많은 혜택을 받으세요.');
+      history.push('/');
+    } else if (isGetWishListsError === 'SERVER_ERROR') {
+      alert('서버 통신중 오류 발생');
+    }
+  }, [isGetWishListsError, history]);
 
   return (
     <>
@@ -252,25 +261,25 @@ function MySaleArticle():JSX.Element | null {
           <BackLink to="/mypage">
             <BackImg src="/images/icons/back.png" />
           </BackLink>
-          <h1>판매목록</h1>
+          <h1>찜목록</h1>
         </Header>
         {
-          (totalPage === 0
+          !totalPage
             ? (
               <>
                 <EmptyArticle>
-                  <h2>등록한 판매글이 없습니다.</h2>
-                  <p>다 보신 책들을 나누어 보아요.</p>
-                  <button type="button" onClick={() => history.push('/addPost/purchase')}>책 판매하러 가기</button>
+                  <h2>찜한 책이 없습니다.</h2>
+                  <p>관심있는 상품을 찜해보아요.</p>
+                  <button type="button" onClick={() => history.push('/home')}>판매책 보러가기</button>
                 </EmptyArticle>
               </>
             )
             : (
               <>
-                <MySaleItems>
+                <MyWishsItems>
                   {
-                    mySaleArticle.map((item: myArticleInterface) => (
-                      <MySaleItem key={item.articleId}>
+                    wishList.map((item: myArticleInterface) => (
+                      <MyWishsItem key={item.articleId}>
                         <ItemLink to={`/post/${item.articleId}`}>
                           <ItemImgBox>
                             <ItemImage src={item.thumbnail} />
@@ -282,31 +291,31 @@ function MySaleArticle():JSX.Element | null {
                             <p className="my_price">{item.tprice} 원</p>
                           </ItemInfo>
                         </ItemLink>
-                      </MySaleItem>
+                      </MyWishsItem>
                     ))
                   }
-                </MySaleItems>
+                </MyWishsItems>
                 <Pagenation>
-                  <PrevLink onClick={onClickPrevPage} to={`/mypage/sales?page=${page - 1}`}>
+                  <PrevLink onClick={onClickPrevPage} to={`/mypage/wishs?page=${page - 1}`}>
                     <Prev src="/images/icons/back.png" />
                   </PrevLink>
                   <PageItems>
                     {
                       numberArrayUtill(totalPage).map((i) => (
-                        <PageItem><Link onClick={() => setPage(i - 1)} to={`/mypage/sales?page=${i - 1}`}>{i}</Link></PageItem>
+                        <PageItem><Link onClick={() => setPage(i - 1)} to={`/mypage/wishs?page=${i - 1}`}>{i}</Link></PageItem>
                       ))
                     }
                   </PageItems>
-                  <NextLink onClick={onClickNextPage} to={`/mypage/sales?page=${page + 1}`}>
+                  <NextLink onClick={onClickNextPage} to={`/mypage/wishs?page=${page + 1}`}>
                     <Next src="/images/icons/back.png" />
                   </NextLink>
                 </Pagenation>
               </>
-            ))
+            )
         }
       </Layout>
     </>
   );
 }
 
-export default MySaleArticle;
+export default WishList;

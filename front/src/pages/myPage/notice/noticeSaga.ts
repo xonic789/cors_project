@@ -1,6 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
-import { getNoticeRequestAsync } from '../../api/noticeApi';
+import { getNoticeRequestAsync } from '../../../api/noticeApi';
 import {
   getNoticeRequest,
   getNoticeRequestSuccess,
@@ -27,7 +27,7 @@ function* watchNotice(): Generator {
   yield takeLatest(getNoticeRequest, getNoticeRequestSaga);
 }
 
-export default function* loginSaga(): Generator {
+export default function* noticeSaga(): Generator {
   yield all([
     fork(watchNotice),
   ]);
