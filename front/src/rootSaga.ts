@@ -8,6 +8,7 @@ import mySaleArticleSaga from './features/mySlaeArticle/mySaleArticleSaga';
 import myPurchaseArticleSaga from './features/myPurchaseArticle/myPurchaseArticleSaga';
 import noticeSaga from './features/notice/noticeSaga';
 import wishListSaga from './features/wishList/wishListSaga';
+import questionSaga from './features/question/questionSaga';
 
 export default function* rootSaga(): Generator {
   yield all([
@@ -18,5 +19,6 @@ export default function* rootSaga(): Generator {
     fork(mySaleArticleSaga),
     fork(myPurchaseArticleSaga),
     fork(noticeSaga),
-    fork(wishListSaga)]);
+    fork(wishListSaga),
+    fork(questionSaga)]);
 }

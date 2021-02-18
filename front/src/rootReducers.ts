@@ -7,6 +7,7 @@ import mySaleArticleSlice from './features/mySlaeArticle/mySaleArticleSlice';
 import myPurchaseArticleSlice from './features/myPurchaseArticle/myPurchaseArticleSlice';
 import noticeSlice from './features/notice/noticeSlice';
 import wishListSlice from './features/wishList/wishListSlice';
+import questionSlice from './features/question/questionSlice';
 
 export default combineReducers({
   postSlice,
@@ -17,4 +18,5 @@ export default combineReducers({
   myPurchaseArticleSlice,
   noticeSlice,
   wishListSlice,
+  questionSlice,
 });

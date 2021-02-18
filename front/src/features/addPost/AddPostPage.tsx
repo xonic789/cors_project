@@ -148,7 +148,7 @@ function AddPostPage():JSX.Element {
     getAladinBook(searchTitle).then(({ data }) => {
       const a = data.replace(/\\/ig, '\\\\', /;/g, '');
       const b = a.substr(0, a.length - 1);
-      console.log(b);
+      console.log(data);
       console.log(b[3970]);
       console.log(b[3971]);
       console.log(b[3972]);

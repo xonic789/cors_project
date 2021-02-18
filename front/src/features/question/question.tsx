@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { noticeInterface } from '../../interfaces/NoticeInterface';
+import { questionInterface } from '../../interfaces/Question.inteface';
 import numberArrayUtill from '../../utils/numberArrayUtill';
-import { getNoticeRequest, toggleActiveNotice } from './noticeSlice';
+import { getQuestionRequest } from './questionSlice';
 
 const Layout = styled.div`
   display: flex;
@@ -49,10 +49,10 @@ const BackLogo = styled.img`
   height: 1.8em;
 `;
 
-const NoticeList = styled.ul`
+const QuestionList = styled.ul`
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  overflow: auto;
   display: flex;
   flex-direction: column;
   @media screen and (min-width: 455px) {
@@ -60,21 +60,21 @@ const NoticeList = styled.ul`
   }
 `;
 
-const NoticeItem = styled.li`
+const QuestionItem = styled.li`
   width: 100%;
   display: flex;
   flex-direction: column;
   border-bottom: 1px solid #e0e0e0;
 `;
 
-const NoticeTitleBox = styled.div`
+const QuestionTitleBox = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
   padding: 0.5em 1.5em;
 `;
 
-const NoticeText = styled.div`
+const QuestionText = styled.div`
   & h2 {
     font-size: 3.5vw;
     font-weight: bold;
@@ -91,28 +91,6 @@ const NoticeText = styled.div`
       font-size: 13.656px;
     }
   }
-`;
-
-const DetailButton = styled.button`
-  cursor: pointer;
-  font-size: 3vw;
-  background: none;
-  border: none;
-  outline: none;
-  & img {
-      width: 1em;
-      height: 1em;
-  }
-  @media screen and (min-width: 455px) {
-    font-size: 13.656px;
-  }
-`;
-
-const NoticeDetail = styled.div`
-  padding: 0 1.6em;
-  overflow: hidden;
-  transition: 0.5s;
-  font-size: 0.8em;
 `;
 
 const PaginationBox = styled.div`
@@ -155,20 +133,41 @@ const EmptyArticle = styled.div`
     font-weight: bold;
     margin-bottom: 0.3em;
   }
+  & p {
+    font-size: 4vw;
+    margin-bottom: 1em;
+  }
+  & button{
+    font-size: 4vw;
+    padding: 0.5em 1em;
+    background: #265290;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    color: #fff;
+    font-weight: bold;
+  }
   @media screen and (min-width: 455px) {
     & h2 {
       font-size: 20.484px;
     }
+    & p {
+      font-size: 18.208px;
+    }
+    & button {
+      font-size: 18.208px;
+    }
   }
 `;
 
-function Notice():JSX.Element {
+function Question():JSX.Element {
   const [page, setPage] = useState<number>(0);
   const dispatch = useDispatch();
-  const { noticeList, totalPage } = useSelector((state: any) => state.noticeSlice);
+  const history = useHistory();
+  const { questionList, totalPage } = useSelector((state: any) => state.questionSlice);
 
   useEffect(() => {
-    dispatch(getNoticeRequest(page));
+    dispatch(getQuestionRequest(page));
   }, [page, dispatch]);
 
   return (
@@ -177,40 +176,34 @@ function Notice():JSX.Element {
         <BackLink to="/mypage">
           <BackLogo src="/images/icons/back.png" />
         </BackLink>
-        <h1>공지사항</h1>
+        <h1>문의사항</h1>
       </Header>
       {
-        totalPage === 0
+        !totalPage
           ? (
             <>
               <EmptyArticle>
-                <h2>등록된 공지사항이 없습니다.</h2>
+                <h2>등록된 문의사항이 없습니다.</h2>
+                <p>문의 사항을 작성해보세요.</p>
+                <button type="button" onClick={() => history.push('/question/save')}>문의사항 작성하기</button>
               </EmptyArticle>
             </>
           )
           : (
-            <NoticeList>
+            <QuestionList>
               {
-                noticeList.map((notice: noticeInterface) => (
-                  <NoticeItem key={notice.noticeId}>
-                    <NoticeTitleBox>
-                      <NoticeText>
-                        <h2>{notice.title}</h2>
-                        <p>{notice.writeDate}</p>
-                      </NoticeText>
-                      <DetailButton onClick={() => dispatch(toggleActiveNotice(notice.noticeId))}>
-                        <img src="/images/icons/back.png" alt="" style={{ transform: notice.active ? 'rotate(90deg)' : 'rotate(-90deg)' }} />
-                      </DetailButton>
-                    </NoticeTitleBox>
-                    <NoticeDetail style={{ height: notice.active ? 'auto' : '0', padding: notice.active ? '1em 1.5em' : '0 1.5em' }}>
-                      <p>
-                        {notice.content}
-                      </p>
-                    </NoticeDetail>
-                  </NoticeItem>
+                questionList.map((question: questionInterface) => (
+                  <QuestionItem key={question.questionId}>
+                    <QuestionTitleBox>
+                      <QuestionText>
+                        <h2>{question.title}</h2>
+                        <p>{question.writeDate}</p>
+                      </QuestionText>
+                    </QuestionTitleBox>
+                  </QuestionItem>
                 ))
               }
-            </NoticeList>
+            </QuestionList>
           )
       }
       <PaginationBox>
@@ -220,7 +213,7 @@ function Notice():JSX.Element {
             !totalPage
               ? (
                 <PageNumber>
-                  <PageLink to="/notice">1</PageLink>
+                  <PageLink to="/question">1</PageLink>
                 </PageNumber>
               )
               : (
@@ -228,7 +221,7 @@ function Notice():JSX.Element {
                   {
                     numberArrayUtill(totalPage).map((i) => (
                       <PageNumber>
-                        <PageLink onClick={() => setPage(i - 1)} to={`/notice?page=${i - 1}`}>{i}</PageLink>
+                        <PageLink onClick={() => setPage(i - 1)} to={`/question?page=${i - 1}`}>{i}</PageLink>
                       </PageNumber>
                     ))
                   }
@@ -242,4 +235,4 @@ function Notice():JSX.Element {
   );
 }
 
-export default Notice;
+export default Question;

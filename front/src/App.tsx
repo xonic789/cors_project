@@ -17,6 +17,7 @@ import WishList from './features/wishList/WishList';
 import ChattingList from './features/chatting/ChattingList';
 import Chatting from './features/chatting/Chatting';
 import Market from './features/market/Market';
+import Question from './features/question/question';
 
 function App():JSX.Element {
   return (
@@ -40,6 +41,7 @@ function App():JSX.Element {
             <Route path="/mypage/wishs" exact component={WishList} />
             <Route path="/notice" exact component={Notice} />
             <Route path="/review" exact component={Review} />
+            <Route path="/question" exact component={Question} />
             <Route component={NotFound} />
           </Switch>
         </BrowserRouter>
