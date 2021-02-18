@@ -2,7 +2,7 @@ import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
 import { loadDetailBookPostRequest, loadDetailBookPostSuccess, loadDetailBookPostError } from './detailViewSlice';
 
-import { getBookPostDetailViewAPI } from '../../api/postBookApi';
+import { getBookPostDetailViewAPI } from '../../../api/postBookApi';
 
 function* loadDetailBookPost(action: PayloadAction<number>) {
   try {

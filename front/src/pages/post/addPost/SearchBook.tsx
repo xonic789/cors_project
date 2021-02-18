@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import aladinIteminterface from '../../interfaces/AladinInterface';
+import aladinIteminterface from '../../../interfaces/AladinInterface';
 
 interface searchBookInterface {
   searchResult: aladinIteminterface[],
