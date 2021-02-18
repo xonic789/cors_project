@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { noticeInterface } from '../../interfaces/NoticeInterface';
-import numberArrayUtill from '../../utils/numberArrayUtill';
+import { noticeInterface } from '../../../interfaces/NoticeInterface';
+import numberArrayUtill from '../../../utils/numberArrayUtill';
 import { getNoticeRequest, toggleActiveNotice } from './noticeSlice';
 
 const Layout = styled.div`
@@ -165,7 +165,7 @@ const EmptyArticle = styled.div`
 function Notice():JSX.Element {
   const [page, setPage] = useState<number>(0);
   const dispatch = useDispatch();
-  const { noticeList, totalPage } = useSelector((state: any) => state.noticeSlice);
+  const { noticeList, totalPage } = useSelector((state: any) => state.myPageSlice);
 
   useEffect(() => {
     dispatch(getNoticeRequest(page));

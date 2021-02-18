@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { myArticleInterface } from '../../interfaces/MyArticle.interface';
-import CategoryFormatUtil from '../../utils/categoryFormatUtil';
-import numberArrayUtill from '../../utils/numberArrayUtill';
-import { getMyPurchaseArticleRequest } from './myPurchaseArticleSlice';
+import { myArticleInterface } from '../../../interfaces/MyArticle.interface';
+import CategoryFormatUtil from '../../../utils/categoryFormatUtil';
+import numberArrayUtill from '../../../utils/numberArrayUtill';
+import { getMySaleArticleRequest } from './mySaleArticleSlice';
 
 const Layout = styled.form`
   display: flex;
@@ -52,7 +52,7 @@ const BackImg = styled.img`
   }
 `;
 
-const MyPurchaseItems = styled.div`
+const MySaleItems = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -61,7 +61,7 @@ const MyPurchaseItems = styled.div`
   }
 `;
 
-const MyPurchaseItem = styled.div`
+const MySaleItem = styled.div`
   
 `;
 
@@ -206,11 +206,11 @@ const EmptyArticle = styled.div`
   }
 `;
 
-function MyPurchaseArticle():JSX.Element {
+function MySaleArticle():JSX.Element | null {
   const dispatch = useDispatch();
   const history = useHistory();
   const [page, setPage] = useState<number>(0);
-  const { myPurchaseArticle, totalPage } = useSelector((state: any) => state.myPurchaseArticleSlice);
+  const { mySaleArticle, totalPage, isGetMyPurchaseArticlesLoading } = useSelector((state: any) => state.myPageSlice);
   const progressForm = (progress: 'COMPLETED' | 'HIDE' | 'TRADING' | 'POSTING'): { text: string, background: string } => {
     const resultProgress = {
       COMPLETED: { text: '거래완료', background: '#1e1e1e' },
@@ -242,7 +242,7 @@ function MyPurchaseArticle():JSX.Element {
   };
 
   useEffect(() => {
-    dispatch(getMyPurchaseArticleRequest(page));
+    dispatch(getMySaleArticleRequest(page));
   }, [dispatch, page]);
 
   return (
@@ -252,25 +252,25 @@ function MyPurchaseArticle():JSX.Element {
           <BackLink to="/mypage">
             <BackImg src="/images/icons/back.png" />
           </BackLink>
-          <h1>구매목록</h1>
+          <h1>판매목록</h1>
         </Header>
         {
-          totalPage === 0
+          (!totalPage
             ? (
               <>
                 <EmptyArticle>
-                  <h2>등록한 구매글이 없습니다.</h2>
-                  <p>다른 유저들의 책을 구매해보아요.</p>
-                  <button type="button" onClick={() => history.push('/addPost/purchase')}>책 구매하러 가기</button>
+                  <h2>등록한 판매글이 없습니다.</h2>
+                  <p>다 보신 책들을 나누어 보아요.</p>
+                  <button type="button" onClick={() => history.push('/addPost/purchase')}>책 판매하러 가기</button>
                 </EmptyArticle>
               </>
             )
             : (
               <>
-                <MyPurchaseItems>
+                <MySaleItems>
                   {
-                    myPurchaseArticle.map((item: myArticleInterface) => (
-                      <MyPurchaseItem key={item.articleId}>
+                    mySaleArticle.map((item: myArticleInterface) => (
+                      <MySaleItem key={item.articleId}>
                         <ItemLink to={`/post/${item.articleId}`}>
                           <ItemImgBox>
                             <ItemImage src={item.thumbnail} />
@@ -282,31 +282,31 @@ function MyPurchaseArticle():JSX.Element {
                             <p className="my_price">{item.tprice} 원</p>
                           </ItemInfo>
                         </ItemLink>
-                      </MyPurchaseItem>
+                      </MySaleItem>
                     ))
                   }
-                </MyPurchaseItems>
+                </MySaleItems>
                 <Pagenation>
-                  <PrevLink onClick={onClickPrevPage} to={`/mypage/Purchase?page=${page - 1}`}>
+                  <PrevLink onClick={onClickPrevPage} to={`/mypage/sales?page=${page - 1}`}>
                     <Prev src="/images/icons/back.png" />
                   </PrevLink>
                   <PageItems>
                     {
                       numberArrayUtill(totalPage).map((i) => (
-                        <PageItem><Link onClick={() => setPage(i - 1)} to={`/mypage/Purchase?page=${i - 1}`}>{i}</Link></PageItem>
+                        <PageItem><Link onClick={() => setPage(i - 1)} to={`/mypage/sales?page=${i - 1}`}>{i}</Link></PageItem>
                       ))
                     }
                   </PageItems>
-                  <NextLink onClick={onClickNextPage} to={`/mypage/Purchase?page=${page + 1}`}>
+                  <NextLink onClick={onClickNextPage} to={`/mypage/sales?page=${page + 1}`}>
                     <Next src="/images/icons/back.png" />
                   </NextLink>
                 </Pagenation>
               </>
-            )
+            ))
         }
       </Layout>
     </>
   );
 }
 
-export default MyPurchaseArticle;
+export default MySaleArticle;

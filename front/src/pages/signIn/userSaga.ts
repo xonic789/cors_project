@@ -161,7 +161,7 @@ function* watchWishList(): Generator {
   yield takeLatest(postRemoveWishListRequest, postRemoveWishListRequestSaga);
 }
 
-export default function* loginSaga(): Generator {
+export default function* userSaga(): Generator {
   yield all([
     fork(watchLogin),
     fork(watchProfile),

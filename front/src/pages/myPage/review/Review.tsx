@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import { reviewInterface } from '../../interfaces/ReviewInterface';
+import { reviewInterface } from '../../../interfaces/ReviewInterface';
 import dummy from './mockdata';
 
 const Positional = styled.div`

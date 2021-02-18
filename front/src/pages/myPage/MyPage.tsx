@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AppLayout from '../../components/AppLayout';
-import { postLogoutRequest } from '../login/userSlice';
+import { postLogoutRequest } from '../signIn/userSlice';
 
 const Wrapper = styled.div`
   position: relative;
