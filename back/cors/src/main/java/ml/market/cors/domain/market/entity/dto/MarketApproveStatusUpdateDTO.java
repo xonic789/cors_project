@@ -35,8 +35,7 @@ public class MarketApproveStatusUpdateDTO {
 
     private String canclecause;
 
-    public MarketApproveStatusUpdateDTO(@NonNull Long marketId, @NonNull MarketStatus status, String canclecause) {
-        this.marketId = marketId;
+    public MarketApproveStatusUpdateDTO(@NonNull MarketStatus status, String canclecause) {
         this.status = status;
         this.canclecause = canclecause;
     }

@@ -66,11 +66,14 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
         String email = getEmail(authentication);
         if (email == null) {
-            throw new IOException();
+            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "인증은 됐지만 이메일이 넘어오지 않음");
+            response.sendRedirect("/");
+            return;
         }
 
         OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
         String socialTypeName = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
+        MemberDAO memberDAO;
         boolean bResult = memberRepository.existsByEmail(email);
         if (!bResult) {
             for(eSocialType type : eSocialType.values()){
@@ -79,21 +82,29 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
                     break;
                 }
             }
+        } else{
+            memberDAO = memberRepository.findByEmail(email);
+            if(memberDAO.getESocialType() == eSocialType.NORMAL){
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "이미 가입된 아이디");
+                response.sendRedirect("/");
+                return;
+            }
         }
 
-        MemberDAO memberDAO = memberRepository.findByEmail(email);
+        memberDAO = memberRepository.findByEmail(email);
         loginTokenManagement.logout(request, response);
         Map<String, Object> claims = new HashMap<>();
         claims.put(LoginTokenManagement.ID, memberDAO.getMember_id());
         claims.put(LoginTokenManagement.EMAIL, memberDAO.getEmail());
         claims.put(LoginTokenManagement.IAT, System.currentTimeMillis());
-        claims.put(LoginTokenManagement.ROLE, memberDAO.getRole());
+        List role = new LinkedList();
+        role.add(memberDAO.getRole());
+        claims.put(LoginTokenManagement.ROLE, role);
         Map<String, Object> tokenPair = loginTokenManagement.createTokenPair(claims);
         if(tokenPair == null){
             throw new RuntimeException();
         }
         try {
-            response.setContentType("application/json");
             eCookie cookAttr = eCookie.ACCESS_TOKEN;
             String accessToken = (String)tokenPair.get(LoginTokenManagement.ACCESS_TOKEN);
             Cookie cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), accessToken);
@@ -104,6 +115,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
             String refreshTokenIndexToken = loginTokenManagement.create(index);
             cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), refreshTokenIndexToken);
             response.addCookie(cookie);
+            response.sendRedirect("/");
         } catch(Exception e) {
             response.reset();
             throw new RuntimeException();

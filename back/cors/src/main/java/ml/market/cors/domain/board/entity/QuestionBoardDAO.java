@@ -29,4 +29,15 @@ public class QuestionBoardDAO {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private MemberDAO member;
+
+    public QuestionBoardDAO(String title, String content, LocalDateTime writeDate, MemberDAO member) {
+        this.title = title;
+        this.content = content;
+        this.writeDate = writeDate;
+        this.member = member;
+    }
+
+    public QuestionBoardDAO(Long questionId) {
+        this.questionId = questionId;
+    }
 }
