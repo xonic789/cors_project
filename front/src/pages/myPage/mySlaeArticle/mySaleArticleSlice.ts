@@ -16,8 +16,8 @@ const mySaleArticleSlice = createSlice({
     getMySaleArticleRequestSuccess: (state, action) => {
       state.isGetMySaleArticlesLoading = false;
       state.isGetMySaleArticlesSuccess = true;
-      state.mySaleArticle = action.payload.myArticleList;
-      state.totalPage = action.payload.totalPage;
+      state.mySaleArticle = action.payload.myAricleList;
+      state.totalPage = action.payload.pageTotal;
     },
     getMySaleArticleRequestError: (state, action) => {
       state.isGetMySaleArticlesLoading = false;
