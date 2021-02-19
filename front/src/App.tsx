@@ -17,7 +17,7 @@ import WishList from './pages/myPage/wishList/WishList';
 import ChattingList from './features/chatting/ChattingList';
 import Chatting from './features/chatting/Chatting';
 import Market from './features/market/Market';
-import MyMarket from './features/myMarket/MyMarket';
+import MyMarket from './pages/myPage/myMarket/MyMarket';
 import Question from './pages/myPage/question/question';
 
 function App():JSX.Element {
