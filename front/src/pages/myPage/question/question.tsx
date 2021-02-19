@@ -164,7 +164,7 @@ function Question():JSX.Element {
   const [page, setPage] = useState<number>(0);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { questionList, totalPage } = useSelector((state: any) => state.myPageSlice);
+  const { questionList, totalPage } = useSelector((state: any) => state.myPageSlice.questionSlice);
 
   useEffect(() => {
     dispatch(getQuestionRequest(page));

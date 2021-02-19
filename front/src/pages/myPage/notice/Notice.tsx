@@ -165,7 +165,7 @@ const EmptyArticle = styled.div`
 function Notice():JSX.Element {
   const [page, setPage] = useState<number>(0);
   const dispatch = useDispatch();
-  const { noticeList, totalPage } = useSelector((state: any) => state.myPageSlice);
+  const { noticeList, totalPage } = useSelector((state: any) => state.myPageSlice.noticeSlice);
 
   useEffect(() => {
     dispatch(getNoticeRequest(page));
