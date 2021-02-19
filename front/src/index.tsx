@@ -31,6 +31,7 @@ const middleware = [ReduxThunk.withExtraArgument({ history: customHistory }), ..
 const persistConfig = {
   key: 'root',
   storage,
+  whitelist: ['userSlice'],
 };
 
 const store = configureStore({

@@ -16,7 +16,7 @@ const wishListSlice = createSlice({
     getWishListRequestSuccess: (state, action) => {
       state.isGetWishListsLoading = false;
       state.isGetWishListsSuccess = true;
-      state.wishList = action.payload.myWishList;
+      state.wishList = action.payload.myArticleList;
       state.totalPage = action.payload.totalPage;
     },
     getWishListRequestError: (state, action) => {
