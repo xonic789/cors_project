@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { questionInterface } from '../../interfaces/Question.inteface';
+import { questionInterface } from '../../../interfaces/Question.inteface';
 
 const initialquestionList: questionInterface[] = [];
 

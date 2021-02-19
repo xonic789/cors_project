@@ -180,7 +180,7 @@ function Notice():JSX.Element {
         <h1>공지사항</h1>
       </Header>
       {
-        totalPage === 0
+        !totalPage
           ? (
             <>
               <EmptyArticle>

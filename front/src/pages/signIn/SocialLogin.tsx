@@ -32,9 +32,9 @@ function SocialLogin():JSX.Element {
   };
   return (
     <SocialLoginBox>
-      <SocialItem src="/images/icons/p.png" onClick={() => onClickLoginHandler('facebook')} />
-      <SocialItem src="/images/icons/g.png" onClick={() => onClickLoginHandler('google')} />
+      <SocialItem src="/images/icons/n.png" onClick={() => onClickLoginHandler('naver')} />
       <SocialItem src="/images/icons/k.png" onClick={() => onClickLoginHandler('kakao')} />
+      <SocialItem src="/images/icons/g.png" onClick={() => onClickLoginHandler('google')} />
     </SocialLoginBox>
   );
 }

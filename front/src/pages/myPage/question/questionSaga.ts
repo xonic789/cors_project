@@ -1,6 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
-import { getQuestionRequestAsync } from '../../api/questionAsync';
+import { getQuestionRequestAsync } from '../../../api/questionAsync';
 import {
   getQuestionRequest,
   getQuestionRequestSuccess,

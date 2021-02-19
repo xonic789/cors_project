@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { LOGIN_ERROR, SERVER_ERROR } from '../../api/userApi';
 import LoginForm from './LoginForm';
 import SocialLogin from './SocialLogin';
 import { postLogoutRequest } from './userSlice';
@@ -59,9 +58,7 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
-  const { isLoginSucceed, isLoginError } = useSelector((state: any) => state.userSlice);
   const dispatch = useDispatch();
-  const history = useHistory();
 
   useEffect(() => {
     dispatch(postLogoutRequest({}));

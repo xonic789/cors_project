@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { questionInterface } from '../../interfaces/Question.inteface';
-import numberArrayUtill from '../../utils/numberArrayUtill';
+import { questionInterface } from '../../../interfaces/Question.inteface';
+import numberArrayUtill from '../../../utils/numberArrayUtill';
 import { getQuestionRequest } from './questionSlice';
 
 const Layout = styled.div`
@@ -164,7 +164,7 @@ function Question():JSX.Element {
   const [page, setPage] = useState<number>(0);
   const dispatch = useDispatch();
   const history = useHistory();
-  const { questionList, totalPage } = useSelector((state: any) => state.questionSlice);
+  const { questionList, totalPage } = useSelector((state: any) => state.myPageSlice);
 
   useEffect(() => {
     dispatch(getQuestionRequest(page));
