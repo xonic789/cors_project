@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import { noticeInterface } from '../../interfaces/NoticeInterface';
-import numberArrayUtill from '../../utils/numberArrayUtill';
+import { noticeInterface } from '../../../interfaces/NoticeInterface';
+import numberArrayUtill from '../../../utils/numberArrayUtill';
 import { getNoticeRequest, toggleActiveNotice } from './noticeSlice';
 
 const Layout = styled.div`
@@ -51,6 +51,8 @@ const BackLogo = styled.img`
 
 const NoticeList = styled.ul`
   width: 100%;
+  height: 100%;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   @media screen and (min-width: 455px) {
@@ -142,10 +144,28 @@ const NextPage = styled.img`
   transform: rotate(180deg);
 `;
 
+const EmptyArticle = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  & h2 {
+    font-size: 4.5vw;
+    font-weight: bold;
+    margin-bottom: 0.3em;
+  }
+  @media screen and (min-width: 455px) {
+    & h2 {
+      font-size: 20.484px;
+    }
+  }
+`;
+
 function Notice():JSX.Element {
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const dispatch = useDispatch();
-  const { noticeList, totalPage } = useSelector((state: any) => state.noticeSlice);
+  const { noticeList, totalPage } = useSelector((state: any) => state.myPageSlice);
 
   useEffect(() => {
     dispatch(getNoticeRequest(page));
@@ -159,37 +179,61 @@ function Notice():JSX.Element {
         </BackLink>
         <h1>공지사항</h1>
       </Header>
-      <NoticeList>
-        {
-          noticeList.map((notice: noticeInterface) => (
-            <NoticeItem key={notice.noticeId}>
-              <NoticeTitleBox>
-                <NoticeText>
-                  <h2>{notice.title}</h2>
-                  <p>{notice.writeDate}</p>
-                </NoticeText>
-                <DetailButton onClick={() => dispatch(toggleActiveNotice(notice.noticeId))}>
-                  <img src="/images/icons/back.png" alt="" style={{ transform: notice.active ? 'rotate(90deg)' : 'rotate(-90deg)' }} />
-                </DetailButton>
-              </NoticeTitleBox>
-              <NoticeDetail style={{ height: notice.active ? 'auto' : '0', padding: notice.active ? '1em 1.5em' : '0 1.5em' }}>
-                <p>
-                  {notice.content}
-                </p>
-              </NoticeDetail>
-            </NoticeItem>
-          ))
-        }
-      </NoticeList>
+      {
+        !totalPage
+          ? (
+            <>
+              <EmptyArticle>
+                <h2>등록된 공지사항이 없습니다.</h2>
+              </EmptyArticle>
+            </>
+          )
+          : (
+            <NoticeList>
+              {
+                noticeList.map((notice: noticeInterface) => (
+                  <NoticeItem key={notice.noticeId}>
+                    <NoticeTitleBox>
+                      <NoticeText>
+                        <h2>{notice.title}</h2>
+                        <p>{notice.writeDate}</p>
+                      </NoticeText>
+                      <DetailButton onClick={() => dispatch(toggleActiveNotice(notice.noticeId))}>
+                        <img src="/images/icons/back.png" alt="" style={{ transform: notice.active ? 'rotate(90deg)' : 'rotate(-90deg)' }} />
+                      </DetailButton>
+                    </NoticeTitleBox>
+                    <NoticeDetail style={{ height: notice.active ? 'auto' : '0', padding: notice.active ? '1em 1.5em' : '0 1.5em' }}>
+                      <p>
+                        {notice.content}
+                      </p>
+                    </NoticeDetail>
+                  </NoticeItem>
+                ))
+              }
+            </NoticeList>
+          )
+      }
       <PaginationBox>
         <PrevPage src="/images/icons/back.png" />
         <PageNumbers>
           {
-            numberArrayUtill(totalPage).map((i) => (
-              <PageNumber>
-                <PageLink onClick={() => setPage(i - 1)} to={`/notice?page=${i - 1}`}>{i}</PageLink>
-              </PageNumber>
-            ))
+            !totalPage
+              ? (
+                <PageNumber>
+                  <PageLink to="/notice">1</PageLink>
+                </PageNumber>
+              )
+              : (
+                <>
+                  {
+                    numberArrayUtill(totalPage).map((i) => (
+                      <PageNumber>
+                        <PageLink onClick={() => setPage(i - 1)} to={`/notice?page=${i - 1}`}>{i}</PageLink>
+                      </PageNumber>
+                    ))
+                  }
+                </>
+              )
           }
         </PageNumbers>
         <NextPage src="/images/icons/back.png" />

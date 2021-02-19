@@ -1,7 +1,7 @@
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   myPurchaseArtilceAsync,
-} from '../../api/myArticleApi';
+} from '../../../api/myArticleApi';
 import {
   getMyPurchaseArticleRequest,
   getMyPurchaseArticleRequestSuccess,
@@ -30,7 +30,7 @@ function* watchMyPurchaseArticle(): Generator {
   yield takeLatest(getMyPurchaseArticleRequest, getMyPurchaseArticleRequestSaga);
 }
 
-export default function* loginSaga(): Generator {
+export default function* myPurchaseArticleSaga(): Generator {
   yield all([
     fork(watchMyPurchaseArticle),
   ]);

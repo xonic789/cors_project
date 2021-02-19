@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import AppLayout from '../../components/AppLayout';
-import { postLogoutRequest } from '../login/userSlice';
+import { postLogoutRequest } from '../signIn/userSlice';
 
 const Wrapper = styled.div`
   position: relative;
@@ -231,7 +231,7 @@ function MyPage():JSX.Element {
             <UtilMenuItem><UtilLink to="/question">문의하기</UtilLink></UtilMenuItem>
             <UtilMenuItem><UtilLink to="/notice">공지사항</UtilLink></UtilMenuItem>
             <UtilMenuItem><UtilLink to="/review">한줄평</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink to="/mymarket">나의마켓</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/mypage/markets">나의마켓</UtilLink></UtilMenuItem>
           </UtilMenuList>
         </Layout>
       </Wrapper>

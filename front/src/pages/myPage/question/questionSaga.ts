@@ -1,30 +1,30 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
-import { getNoticeRequestAsync } from '../../api/noticeApi';
+import { getQuestionRequestAsync } from '../../../api/questionAsync';
 import {
-  getNoticeRequest,
-  getNoticeRequestSuccess,
-  getNoticeRequestError,
-} from './noticeSlice';
+  getQuestionRequest,
+  getQuestionRequestSuccess,
+  getQuestionRequestError,
+} from './questionSlice';
 
 function* getNoticeRequestSaga(action: PayloadAction<number>) {
   try {
-    const result = yield call(getNoticeRequestAsync, action.payload);
+    const result = yield call(getQuestionRequestAsync, action.payload);
 
     yield put({
-      type: getNoticeRequestSuccess,
+      type: getQuestionRequestSuccess,
       payload: result,
     });
   } catch (error) {
     yield put({
-      type: getNoticeRequestError,
+      type: getQuestionRequestError,
       payload: error,
     });
   }
 }
 
 function* watchNotice(): Generator {
-  yield takeLatest(getNoticeRequest, getNoticeRequestSaga);
+  yield takeLatest(getQuestionRequest, getNoticeRequestSaga);
 }
 
 export default function* loginSaga(): Generator {
