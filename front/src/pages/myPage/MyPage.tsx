@@ -231,7 +231,7 @@ function MyPage():JSX.Element {
             <UtilMenuItem><UtilLink to="/question">문의하기</UtilLink></UtilMenuItem>
             <UtilMenuItem><UtilLink to="/notice">공지사항</UtilLink></UtilMenuItem>
             <UtilMenuItem><UtilLink to="/review">한줄평</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink to="/mymarket">나의마켓</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink to="/mypage/markets">나의마켓</UtilLink></UtilMenuItem>
           </UtilMenuList>
         </Layout>
       </Wrapper>
