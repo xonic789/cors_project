@@ -59,14 +59,14 @@ const StyledLink = styled(Link)`
 `;
 
 function Login():JSX.Element {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    console.log(cookie.load('ACCESS_TOKEN') !== undefined);
-    if (cookie.load('ACCESS_TOKEN') !== undefined || cookie.load('REFRESH_TOKEN') !== undefined) {
-      dispatch(postLogoutRequest({}));
-    }
-  }, [dispatch]);
+  // useEffect(() => {
+  //   console.log(cookie.load('ACCESS_TOKEN') !== undefined);
+  //   if (cookie.load('ACCESS_TOKEN') !== undefined || cookie.load('REFRESH_TOKEN') !== undefined) {
+  //     dispatch(postLogoutRequest({}));
+  //   }
+  // }, [dispatch]);
 
   return (
     <Wrapper>
