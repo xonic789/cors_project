@@ -106,6 +106,10 @@ public class ArticleDAO {
         this.market=market;
     }
 
+    public ArticleDAO(Long article_id) {
+        this.article_id = article_id;
+    }
+
     public static ArticleDAO createArticle(ArticleForm articleForm, MemberDAO member, Book_CategoryDAO book_categoryDAO){
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),

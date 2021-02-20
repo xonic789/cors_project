@@ -105,6 +105,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/market/view").authenticated()
                     .antMatchers("/api/market/update").authenticated()
                     .antMatchers("/api/market/save").authenticated()
+                    .antMatchers("/api/wish/delete").authenticated()
+                    .antMatchers("/api/wish/save").authenticated()
                     .antMatchers("/api/mypage/**").authenticated()
                     .antMatchers("/api/question/**").authenticated()
                     .antMatchers("/api/change/profile").authenticated()
