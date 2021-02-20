@@ -2,12 +2,12 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
-import AppLayout from '../../components/AppLayout';
+import AppLayout from '../../../components/AppLayout';
 import Header from './Header';
-import { loadBookPostRequest } from './postSlice';
+import { loadBookPostRequest } from '../postSlice';
 import InfiniteScrollList from './InfiniteScrollList';
-import AddPostButton from './AddPostButton';
-import Loading from '../../components/Loading';
+import AddPostButton from '../addPost/AddPostButton';
+import Loading from '../../../components/Loading';
 
 const PostListWrapper = styled.div`
   margin-top: 150px;

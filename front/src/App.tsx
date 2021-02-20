@@ -17,6 +17,7 @@ import WishList from './pages/wishList/WishList';
 import ChattingList from './pages/chatting/ChattingList';
 import Chatting from './pages/chatting/Chatting';
 import Market from './pages/market/Market';
+import MarketDetail from './pages/market/MarketDetail';
 
 function App():JSX.Element {
   return (
@@ -32,6 +33,7 @@ function App():JSX.Element {
             <Route path="/chatting" exact component={ChattingList} />
             <Route path="/chatting/:id" exact component={Chatting} />
             <Route path="/market" exact component={Market} />
+            <Route path="/market/:id" exact component={MarketDetail} />
             <Route path="/join" exact component={Join} />
             <Route path="/mypage" exact component={MyPage} />
             <Route path="/mypage/modify" exact component={ModifyProfile} />
