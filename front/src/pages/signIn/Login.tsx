@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import cookie from 'react-cookies';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import LoginForm from './LoginForm';
@@ -61,7 +62,10 @@ function Login():JSX.Element {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(postLogoutRequest({}));
+    console.log(cookie.load('ACCESS_TOKEN') !== undefined);
+    if (cookie.load('ACCESS_TOKEN') !== undefined || cookie.load('REFRESH_TOKEN') !== undefined) {
+      dispatch(postLogoutRequest({}));
+    }
   }, [dispatch]);
 
   return (

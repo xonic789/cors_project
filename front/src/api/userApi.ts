@@ -18,7 +18,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
 
     const loginUser: memberInterface = {
       email: user.email,
-      nickname,
+      nickname: atob(nickname),
       profileImg,
       latitude,
       longitude,
