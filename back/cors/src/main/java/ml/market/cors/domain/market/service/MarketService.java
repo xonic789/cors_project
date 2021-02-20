@@ -213,12 +213,11 @@ private Map<String, Object> setClaims(long member_id, List memberRoles, String e
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public boolean updateStatus(MarketApproveStatusUpdateDTO marketApproveStatusUpdateDTO) {
+    public boolean updateStatus(long marketId, MarketApproveStatusUpdateDTO marketApproveStatusUpdateDTO) {
         if(marketApproveStatusUpdateDTO == null){
             return false;
         }
 
-        long marketId = marketApproveStatusUpdateDTO.getMarketId();
         String cancleCause = null;
         Optional<MarketDAO> optional = marketRepository.findById(marketId);
         MarketDAO marketDAO;
@@ -256,17 +255,15 @@ private Map<String, Object> setClaims(long member_id, List memberRoles, String e
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public boolean updateMyMarket(Map<MarketKey, Object> marketInfo, String email, long memberId, MultipartFile imageFile) {
+    public boolean updateMyMarket(long marketId, Map<MarketKey, Object> marketInfo, String email, long memberId, MultipartFile imageFile) {
         if(memberId == 0){
             return false;
         }
-        boolean bResult = marketInfo.containsKey(MarketKey.marketId);
-        if(!bResult){
+        if(marketId == 0){
             return false;
         }
 
-        long marketId = Long.decode(((String)marketInfo.get(MarketKey.marketId))).longValue();
-        bResult = marketRepository.existsByMarketIdAndMemberId(marketId, memberId);
+        boolean bResult = marketRepository.existsByMarketIdAndMemberId(marketId, memberId);
         if(!bResult){
             return false;
         }

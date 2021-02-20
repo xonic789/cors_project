@@ -1,5 +1,6 @@
 package ml.market.cors.domain.comment.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ml.market.cors.domain.board.entity.QuestionBoardDAO;
@@ -33,6 +34,15 @@ public class CommentBoardDAO {
     @JoinColumn(name = "questionid")
     private QuestionBoardDAO question;
 
-    @Enumerated(EnumType.STRING)
-    private eBoardType boardType;
+    public CommentBoardDAO(String content, LocalDateTime writeDate, MemberDAO member, QuestionBoardDAO question) {
+        this.content = content;
+        this.writeDate = writeDate;
+        this.member = member;
+        this.question = question;
+    }
+
+    public String updateContent(String content){
+        this.content = content;
+        return this.content;
+    }
 }

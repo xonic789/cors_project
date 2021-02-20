@@ -18,6 +18,8 @@ import java.util.List;
 public interface ArticleRepository extends JpaRepository<ArticleDAO,Long>,ArticleRepositoryCustom {
     Page<ArticleDAO> findAllByMarket(Pageable pageable, MarketDAO market);
 
+    ArticleDAO findById(long articleId);
+
     @Query("SELECT ArticleTb from ArticleDAO ArticleTb where ArticleTb.member.member_id=:memberId and ArticleTb.division=:division")
     Page<ArticleDAO> findAllByMemberIdAndDivision(@Param("memberId") long memberId, @Param("division") Division division, Pageable pageable);
 
