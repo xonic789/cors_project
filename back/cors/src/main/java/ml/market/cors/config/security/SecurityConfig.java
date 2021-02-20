@@ -41,6 +41,9 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.csrf.CsrfFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
 import java.util.LinkedList;
@@ -71,10 +74,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureAuthentication(AuthenticationManagerBuilder builder, ParentProviderManager parentProviderManager) {
         builder.parentAuthenticationManager(parentProviderManager);
     }
-
+/*
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        //configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+*/
     @Override
     protected void configure(HttpSecurity http) throws Exception {
             http.httpBasic().disable()
+                    //.cors().and()
                     .csrf().disable()
                     .headers()
                         .frameOptions().sameOrigin()
@@ -88,7 +105,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/api/market/view").authenticated()
                     .antMatchers("/api/market/update").authenticated()
                     .antMatchers("/api/market/save").authenticated()
+                    .antMatchers("/api/wish/delete").authenticated()
+                    .antMatchers("/api/wish/save").authenticated()
                     .antMatchers("/api/mypage/**").authenticated()
+                    .antMatchers("/api/question/**").authenticated()
                     .antMatchers("/api/change/profile").authenticated()
                     .antMatchers("/**").permitAll()
                     .and()

@@ -1,5 +1,4 @@
 spring:
-  filter
   profiles:
     active: dev
     include:

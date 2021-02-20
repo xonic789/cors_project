@@ -10,12 +10,17 @@ import ml.market.cors.domain.article.entity.dto.MyWishListDTO;
 import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.bookcategory.entity.dto.BookCategoryDTO;
+import ml.market.cors.domain.member.entity.MemberDAO;
+import ml.market.cors.domain.member.entity.QMemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.article.Wish_list_Repository;
+import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +31,8 @@ public class WishService {
     private final Wish_list_Repository wish_list_repository;
 
     private final ArticleRepository articleRepository;
+
+    private final MemberRepository memberRepository;
 
     public MyWishListDTO getMyWishList(long memberId, int pageIndex){
         if(memberId == 0){
@@ -52,6 +59,45 @@ public class WishService {
         }
         MyWishListDTO myWishListDTO = new MyWishListDTO(wishList, wishPage.getTotalPages());
         return myWishListDTO;
+    }
+
+    public int getCount(long articleId) throws Exception{
+        if(articleId == 0){
+            throw new NullPointerException();
+        }
+        ArticleDAO articleDAO = new ArticleDAO(articleId);
+        int count = wish_list_repository.countByArticle(articleDAO);
+        return count;
+    }
+
+    public boolean save(long memberId, long articleId) {
+        if(memberId == 0 || articleId == 0){
+            return false;
+        }
+        try{
+            MemberDAO memberDAO = memberRepository.findById(memberId);
+            ArticleDAO articleDAO = articleRepository.findById(articleId);
+            Wish_listDAO wishListDAO = new Wish_listDAO(memberDAO, articleDAO);
+            wish_list_repository.save(wishListDAO);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public boolean delete(long articleId, long memberId) {
+        if(articleId == 0 || memberId == 0){
+            return false;
+        }
+        try{
+            MemberDAO memberDAO = memberRepository.findById(memberId);
+            ArticleDAO articleDAO = articleRepository.findById(articleId);
+            wish_list_repository.deleteByMemberAndArticle(memberDAO, articleDAO);
+        }catch (Exception e){
+            return false;
+        }
+        return true;
     }
 }
 
