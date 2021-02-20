@@ -3,20 +3,22 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import NotFound from './components/NotFound';
 import AddPostPage from './features/addPost/AddPostPage';
 import DetailPostView from './features/detailPostView/DetailPostView';
-import Login from './features/login/Login';
+import Login from './pages/signIn/Login';
 import PostList from './features/postList/PostList';
-import Join from './features/join/Join';
-import ModifyProfile from './features/modifyProfile/ModifyProfile';
+import Join from './pages/signUp/Join';
+import ModifyProfile from './pages/myPage/modifyProfile/ModifyProfile';
 import GlobalStyle from './styles/GlobalStyles';
-import MyPage from './features/mypage/MyPage';
-import MySaleArticle from './features/mySlaeArticle/MySaleArticle';
-import MyPurchaseArticle from './features/myPurchaseArticle/MyPurchaseArticle';
-import Notice from './features/notice/Notice';
-import Review from './features/review/Review';
-import WishList from './features/wishList/WishList';
+import MyPage from './pages/myPage/MyPage';
+import MySaleArticle from './pages/myPage/mySlaeArticle/MySaleArticle';
+import MyPurchaseArticle from './pages/myPage/myPurchaseArticle/MyPurchaseArticle';
+import Notice from './pages/myPage/notice/Notice';
+import Review from './pages/myPage/review/Review';
+import WishList from './pages/myPage/wishList/WishList';
 import ChattingList from './features/chatting/ChattingList';
 import Chatting from './features/chatting/Chatting';
 import Market from './features/market/Market';
+import MyMarket from './pages/myPage/myMarket/MyMarket';
+import Question from './pages/myPage/question/question';
 
 function App():JSX.Element {
   return (
@@ -40,6 +42,8 @@ function App():JSX.Element {
             <Route path="/mypage/wishs" exact component={WishList} />
             <Route path="/notice" exact component={Notice} />
             <Route path="/review" exact component={Review} />
+            <Route path="/mypage/markets" exact component={MyMarket} />
+            <Route path="/question" exact component={Question} />
             <Route component={NotFound} />
           </Switch>
         </BrowserRouter>

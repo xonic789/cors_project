@@ -7,7 +7,7 @@ import CategoryFormatUtil from '../../utils/categoryFormatUtil';
 import countUtil from '../../utils/countDaoUtil';
 import ProgressUtil from '../../utils/progressUtil';
 import { deleteBookPostRequest } from '../postList/postSlice';
-import { postAddWishListRequest, postRemoveWishListRequest } from '../login/userSlice';
+import { postAddWishListRequest, postRemoveWishListRequest } from '../../pages/signIn/userSlice';
 import ImageSlide from './ImageSlide';
 
 interface DetailPostInterface {
