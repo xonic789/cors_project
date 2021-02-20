@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
+import { Base64 } from 'js-base64';
 import { memberInterface, modifyProfileInterface } from '../interfaces/UserInterface';
 
 export const LOGIN_ERROR = 'LOGIN_ERROR';
@@ -18,7 +19,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
 
     const loginUser: memberInterface = {
       email: user.email,
-      nickname: atob(nickname),
+      nickname: Base64.decode(nickname),
       profileImg,
       latitude,
       longitude,
