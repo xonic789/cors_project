@@ -147,20 +147,9 @@ function AddPostPage():JSX.Element {
 
   const loadSearchResultBook = async () => {
     getAladinBook(searchTitle).then(({ data }) => {
-<<<<<<< HEAD:front/src/features/addPost/AddPostPage.tsx
-      const a = data.replace(/\\/ig, '\\\\', /;/g, '');
-      const b = a.substr(0, a.length - 1);
-      console.log(data);
-      console.log(b[3970]);
-      console.log(b[3971]);
-      console.log(b[3972]);
-
-      const parseData = JSON.parse(b);
-=======
       const rgexData = data.replace(/\\/ig, '\\\\', /;/g, '');
       const deleteEndSemiconlonInData = rgexData.substr(0, rgexData.length - 1);
       const parseData = JSON.parse(deleteEndSemiconlonInData);
->>>>>>> cksal/dev:front/src/pages/post/addPost/AddPostPage.tsx
       console.log(parseData);
       setSearchResult(parseData.item);
       if (parseData.item.length === 0) {
