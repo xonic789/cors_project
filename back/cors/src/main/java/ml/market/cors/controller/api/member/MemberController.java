@@ -9,8 +9,12 @@ import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.article.entity.dto.MyWishListDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.service.WishService;
+import ml.market.cors.domain.board.entity.dto.QuestionMemberDTO;
+import ml.market.cors.domain.board.service.QuestionService;
 import ml.market.cors.domain.mail.service.EmailManagement;
 import ml.market.cors.domain.mail.vo.MailVO;
+import ml.market.cors.domain.market.entity.dto.MarketViewDTO;
+import ml.market.cors.domain.market.enums.MarketKey;
 import ml.market.cors.domain.market.service.MarketService;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.map.MemberParam;
@@ -23,10 +27,12 @@ import ml.market.cors.repository.article.Wish_list_Repository;
 import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
@@ -43,6 +49,8 @@ public class MemberController {
     private final ResponseEntityUtils responseEntityUtils;
 
     private final WishService wishService;
+
+    private final QuestionService questionService;
 
     @PostMapping("/check/nickname")
     public ResponseEntity<Message<Object>> existNickname(@ModelAttribute MemberVO memberVO){
@@ -163,22 +171,89 @@ public class MemberController {
         return messageResponseEntity;
     }
 
-    @GetMapping("/mypage/market")
-    public ResponseEntity<Message<Object>> getMymarket(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
-    , @RequestParam("page") int page){
-        long memberId = (long)jwtCertificationToken.getCredentials();
+    @GetMapping("/mypage/markets/{page}")
+    public ResponseEntity<Message<Object>> getMymarket(@PathVariable("page") int page, @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken) {
+        long memberId = (long) jwtCertificationToken.getCredentials();
         Object result = marketService.getMyMarketList(memberId, page);
         ResponseEntity<Message<Object>> messageResponseEntity;
-        if(result == null) {
+        if (result == null) {
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("잘못된 아이디");
-        }else{
+        } else {
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(result);
         }
         return messageResponseEntity;
     }
 
-    @GetMapping("/mypage/question")
-    public void getMyArticle(){
+    @GetMapping("/mypage/market/detail/{marketId}")
+    public ResponseEntity<Message<Object>> view(@PathVariable("marketId") long marketId, @RequestParam("page") int pageIndex){
+        MarketViewDTO marketViewDTO = marketService.view(marketId, pageIndex);
+        ResponseEntity<Message<Object>> messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(marketViewDTO);
+        return messageResponseEntity;
+    }
 
+    @PutMapping("/mypage/market/{marketId}")
+    public ResponseEntity<Message<Object>> updateMyMarket(@PathVariable("marketId") long marketId, @RequestParam Map<MarketKey, Object> marketInfo, @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
+            , @RequestPart(value = "image", required = false) MultipartFile imageFile){
+        ResponseEntity<Message<Object>> messageResponseEntity = null;
+        String email = jwtCertificationToken.getName();
+        long memberId = (long)jwtCertificationToken.getCredentials();
+        try{
+            boolean bResult = marketService.updateMyMarket(marketId, marketInfo, email, memberId, imageFile);
+            if(!bResult){
+                throw new RuntimeException();
+            }
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("변경 성공");
+        }catch (Exception e){
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("변경 실패");
+        }
+        return messageResponseEntity;
+    }
+
+    @PostMapping("/mypage/market")
+    public ResponseEntity<Message<Object>> requestRegisterMarket(@RequestParam Map<MarketKey, Object> marketInfo, @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
+            , @RequestPart("image") MultipartFile imageFile){
+        ResponseEntity<Message<Object>> messageResponseEntity = null;
+        String email = jwtCertificationToken.getName();
+        long memberId = (long)jwtCertificationToken.getCredentials();
+        try{
+            boolean bResult = marketService.save(marketInfo, email, memberId, imageFile);
+            if(!bResult){
+                throw new RuntimeException();
+            }
+        }catch (Exception e){
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("마켓 승인 요청 실패");
+        }
+        return messageResponseEntity;
+    }
+
+    @DeleteMapping("/mypage/market/{marketId}")
+    @Secured("ROLE_CEO")
+    public ResponseEntity<Message<Object>> delete(HttpServletResponse response, HttpServletRequest request, @PathVariable("marketId") long marketId, @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken){
+        long memberId = (long)jwtCertificationToken.getCredentials();
+        String email = jwtCertificationToken.getName();
+        boolean bResult = marketService.delete(email, marketId, memberId, response, request);
+        ResponseEntity<Message<Object>> messageResponseEntity;
+        if(!bResult){
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("삭제 실패");
+        } else{
+
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("삭제 성공");
+        }
+
+        return messageResponseEntity;
+    }
+
+    @GetMapping("/mypage/question")
+    public ResponseEntity<Message<Object>> getMyQuestionArticle(@RequestParam("page") int page, @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken){
+        long memberId = (long)jwtCertificationToken.getCredentials();
+        String email = jwtCertificationToken.getName();
+        ResponseEntity<Message<Object>> messageResponseEntity;
+        QuestionMemberDTO questionMemberDTO = questionService.getMyQuestion(page, memberId, email);
+        if(questionMemberDTO == null){
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("나의페이지 문의하기 목록 가져오기 실패");
+        } else{
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(questionMemberDTO);
+        }
+        return messageResponseEntity;
     }
 }

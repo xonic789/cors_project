@@ -8,6 +8,7 @@ import ml.market.cors.domain.util.cookie.CookieManagement;
 import ml.market.cors.domain.util.token.LoginTokenManagement;
 import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.repository.member.TokenInfoRepository;
+import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,7 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
@@ -80,9 +83,9 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    private void setHeader(HttpServletResponse response, MemberDAO memberDAO) {
-        response.setContentType("text/html;charset=UTF-8");
-        response.setHeader(MemberParam.NICKNAME, memberDAO.getNickname());
+    private void setHeader(HttpServletResponse response, MemberDAO memberDAO) throws UnsupportedEncodingException {
+        String nickname = Base64.encodeBase64String(memberDAO.getNickname().getBytes(StandardCharsets.UTF_8));
+        response.setHeader(MemberParam.NICKNAME, nickname);
         response.setHeader(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
         response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
         response.setHeader(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
