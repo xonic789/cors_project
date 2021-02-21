@@ -3,22 +3,23 @@ import { HashRouter, Switch, Route, BrowserRouter } from 'react-router-dom';
 import NotFound from './components/NotFound';
 import AddPostPage from './pages/post/addPost/AddPostPage';
 import DetailPostView from './pages/post/detailPostView/DetailPostView';
-import Login from './pages/signIn/Login';
 import PostList from './pages/post/postList/PostList';
-import Join from './pages/signUp/Join';
-import ModifyProfile from './pages/mypage/modifyProfile/ModifyProfile';
 import GlobalStyle from './styles/GlobalStyles';
-import MyPage from './pages/mypage/MyPage';
-import MySaleArticle from './pages/mypage/mySlaeArticle/MySaleArticle';
-import MyPurchaseArticle from './pages/mypage/myPurchaseArticle/MyPurchaseArticle';
-import Notice from './pages/mypage/notice/Notice';
-import Review from './pages/mypage/review/Review';
-import WishList from './pages/mypage/wishList/WishList';
 import ChattingList from './pages/chatting/ChattingList';
 import Chatting from './pages/chatting/Chatting';
 import Market from './pages/market/Market';
 import MarketDetail from './pages/market/MarketDetail';
+import Login from './pages/signIn/Login';
+import Join from './pages/signUp/Join';
+import MyPage from './pages/myPage/MyPage';
+import ModifyProfile from './pages/myPage/modifyProfile/ModifyProfile';
+import MySaleArticle from './pages/myPage/mySlaeArticle/MySaleArticle';
+import MyPurchaseArticle from './pages/myPage/myPurchaseArticle/MyPurchaseArticle';
+import WishList from './pages/myPage/wishList/WishList';
+import Notice from './pages/myPage/notice/Notice';
+import Review from './pages/myPage/review/Review';
 import Question from './pages/myPage/question/question';
+import AddMarket from './pages/myPage/myMarket/MyMarket';
 
 function App():JSX.Element {
   return (
@@ -44,6 +45,7 @@ function App():JSX.Element {
             <Route path="/notice" exact component={Notice} />
             <Route path="/review" exact component={Review} />
             <Route path="/question" exact component={Question} />
+            <Route path="/addMarket" exact component={AddMarket} />
             <Route component={NotFound} />
           </Switch>
         </BrowserRouter>
