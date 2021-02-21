@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.member.map.MemberParam;
+import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enums.eSocialType;
 import ml.market.cors.domain.util.cookie.CookieManagement;
@@ -64,6 +65,13 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
+        Cookie accessCookie = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), request.getCookies());
+        Cookie refreshCookie = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), request.getCookies());
+        if(accessCookie != null || refreshCookie != null){
+            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "로그아웃하고 와라");
+            response.sendRedirect("/");
+            return;
+        }
         String email = getEmail(authentication);
         if (email == null) {
             response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "인증은 됐지만 이메일이 넘어오지 않음");
@@ -92,13 +100,12 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         }
 
         memberDAO = memberRepository.findByEmail(email);
-        loginTokenManagement.logout(request, response);
         Map<String, Object> claims = new HashMap<>();
         claims.put(LoginTokenManagement.ID, memberDAO.getMember_id());
         claims.put(LoginTokenManagement.EMAIL, memberDAO.getEmail());
         claims.put(LoginTokenManagement.IAT, System.currentTimeMillis());
-        List role = new LinkedList();
-        role.add(memberDAO.getRole());
+        List<GrantedAuthority> role = new LinkedList();
+        role.add(new MemberGrantAuthority(memberDAO.getRole()));
         claims.put(LoginTokenManagement.ROLE, role);
         Map<String, Object> tokenPair = loginTokenManagement.createTokenPair(claims);
         if(tokenPair == null){

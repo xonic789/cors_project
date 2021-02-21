@@ -63,7 +63,6 @@ public abstract class JwtTokenManagement {
         if (key == null) {
             return null;
         }
-
         JwtBuilder builder = Jwts.builder()
                     .setHeader(header)
                     .setClaims(claims)
