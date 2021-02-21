@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class MarketMenuController {
+public class MarketController {
 
     private final MarketMenuService marketMenuService;
     private final ResponseEntityUtils responseEntityUtils;
