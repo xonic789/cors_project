@@ -3,12 +3,20 @@ import { all, takeLatest, put, fork, call, throttle, select } from 'redux-saga/e
 import { AddBookPostInterface } from '../../interfaces/PostList.interface';
 import { generateDummyPost } from '../../interfaces/mockdata';
 import { addBookPostAPI, deleteBookPostAPI, getBookPostAPI, getBookPostDetailViewAPI } from '../../api/postBookApi';
-import { loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
-  loadScrollBookPostRequest, loadScrollBookPostSuccess, loadScrollBookPostError, deleteBookPostSuccess, deleteBookPostError, deleteBookPostRequest } from './postSlice';
+import {
+  loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
+  loadScrollBookPostRequest, loadScrollBookPostSuccess, loadScrollBookPostError,
+  deleteBookPostSuccess, deleteBookPostError, deleteBookPostRequest,
+  addBookPostRequest, addBookPostError,
+} from './postSlice';
+import { push } from '../../utils/historyUtil';
 
 interface loadBookPost {
   filtering: { division:string, category:string },
   lastId?: number
+}
+interface addBookPostPayloadInterface {
+  data: AddBookPostInterface
 }
 
 function* loadBookPost(action: PayloadAction<loadBookPost>) {
@@ -33,6 +41,16 @@ function* loadScrollBookPost(action: PayloadAction<loadBookPost>) {
     yield put(loadScrollBookPostError({ error }));
   }
 }
+function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {
+  try {
+    const result = yield call(addBookPostAPI, action.payload.data);
+    yield put(addBookPostRequest({ result }));
+    yield call(push, '/home');
+  } catch (error) {
+    yield put(addBookPostError({ error: error.response.data }));
+  }
+}
+
 function* deleteBookPost(action: PayloadAction<number>) {
   try {
     yield call(deleteBookPostAPI, action.payload);
@@ -44,6 +62,9 @@ function* deleteBookPost(action: PayloadAction<number>) {
 function* watchLoadBookPost() {
   yield takeLatest(loadBookPostRequest, loadBookPost);
 }
+function* watchAddBookPost() {
+  yield takeLatest(addBookPostRequest, addBookPost);
+}
 function* watchloadScrollBookPost() {
   yield throttle(2000, loadScrollBookPostRequest, loadScrollBookPost);
 }
@@ -54,6 +75,7 @@ function* watchdeleteBookPost() {
 export default function* postSaga():Generator {
   yield all([
     fork(watchloadScrollBookPost),
+    fork(watchAddBookPost),
     fork(watchLoadBookPost),
     fork(watchdeleteBookPost),
   ]);

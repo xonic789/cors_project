@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
-import CategoryFormatUtil from '../../utils/categoryFormatUtil';
-import countUtil from '../../utils/countDaoUtil';
-import ProgressUtil from '../../utils/progressUtil';
-import { deleteBookPostRequest } from '../postList/postSlice';
-import { postAddWishListRequest, postRemoveWishListRequest } from '../login/userSlice';
+import CategoryFormatUtil from '../../../utils/categoryFormatUtil';
+import countUtil from '../../../utils/countDaoUtil';
+import ProgressUtil from '../../../utils/progressUtil';
+import { deleteBookPostRequest } from '../postSlice';
+import { postAddWishListRequest, postRemoveWishListRequest } from '../../login/userSlice';
 import ImageSlide from './ImageSlide';
 
 interface DetailPostInterface {

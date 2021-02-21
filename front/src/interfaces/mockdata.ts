@@ -82,12 +82,12 @@ export const dummyMarket:marketListInterface = {
     marketId: 1,
     marketName: '찬미마켓',
     marketIntro: '저렴하게 파는 친절한 마켓입니다',
-    marketImage: 'https://post-phinf.pstatic.net/MjAxNzA4MDVfMTIx/MDAxNTAxOTE2MzM0MDgz.nttKTl9M6abrzvwG-GPeedh606JPCAI-FeIOoooYVfQg.mNUGyps1wVC027zi3XVMVlzc502OXoipDD2cQ6Mj2jsg.JPEG/mug_obj_201708051558546888.jpg?type=w1080',
+    marketImage: 'https://pbs.twimg.com/profile_images/968000221543202817/f92oypNr.jpg',
   },
   {
     marketId: 2,
     marketName: '오이마켓',
     marketIntro: '저렴하게 파는 친절한 마켓입니다',
-    marketImage: 'https://post-phinf.pstatic.net/MjAxNzA4MDVfMTIx/MDAxNTAxOTE2MzM0MDgz.nttKTl9M6abrzvwG-GPeedh606JPCAI-FeIOoooYVfQg.mNUGyps1wVC027zi3XVMVlzc502OXoipDD2cQ6Mj2jsg.JPEG/mug_obj_201708051558546888.jpg?type=w1080',
+    marketImage: 'https://pbs.twimg.com/profile_images/968000221543202817/f92oypNr.jpg',
   }],
 };

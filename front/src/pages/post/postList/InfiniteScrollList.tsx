@@ -3,8 +3,9 @@ import { List, AutoSizer } from 'react-virtualized';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink } from 'react-router-dom';
 import styled from 'styled-components';
-import CategoryFormatUtil from '../../utils/categoryFormatUtil';
-import { loadScrollBookPostRequest } from './postSlice';
+import CategoryFormatUtil from '../../../utils/categoryFormatUtil';
+import { loadScrollBookPostRequest } from '../postSlice';
+import NodataPage from '../../../components/NodataPage';
 
 interface IndexInterface {
   index: number;
@@ -22,7 +23,6 @@ const ListWrapper = styled.div`
   display: flex;
   max-width: 100%;
   flex-wrap: wrap;
-  margin-top: 150px;
   overflow: hidden;
 `;
 const Content = styled.div`
@@ -81,19 +81,23 @@ function InfiniteScrollList(): JSX.Element {
 
   return (
     <ListWrapper>
-      <AutoSizer disableHeight>
-        {({ width }) => (
-          <List
-            rowCount={bookPost.length} // 항목의 개수
-            height={700} // 실제 렌더링 되는 높이범위
-            rowHeight={200} // 항목의높이
-            width={width} // 항목의 너비
-            rowRenderer={rowRanderer} // 항목렌더링할때쓰는 함수
-            onScroll={scrollListener} // scroll 함수
-            overscanRowCount={10} // 다음에 로드해올 항목 미리 컨텐츠 높이 잡기
-          />
-        )}
-      </AutoSizer>
+      {bookPost.length !== 0
+        ? (
+          <AutoSizer disableHeight>
+            {({ width }) => (
+              <List
+                rowCount={bookPost.length} // 항목의 개수
+                height={600} // 실제 렌더링 되는 높이범위
+                rowHeight={200} // 항목의높이
+                width={width} // 항목의 너비
+                rowRenderer={rowRanderer} // 항목렌더링할때쓰는 함수
+                onScroll={scrollListener} // scroll 함수
+                overscanRowCount={10} // 다음에 로드해올 항목 미리 컨텐츠 높이 잡기
+              />
+            )}
+          </AutoSizer>
+        )
+        : <NodataPage />}
     </ListWrapper>
   );
 }
