@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import AppLayout from '../../components/AppLayout';
 import { dummyMarket } from '../../interfaces/mockdata';
@@ -26,17 +27,30 @@ const MarketHeader = styled.div`
     width: 30px;
   }
 `;
+const MarketFilterList = styled.ul`
+  margin-top: 70px;
+  display: flex;
+  width: 200px;
+  justify-content: space-around;
+  align-items: center;
+  padding: 10px;
+`;
+const MarketFilterItem = styled.li`
+  border: 2px solid #e8e8e8;
+  padding: 5px;
+  border-radius: 10px;
+`;
 const MatrketList = styled.ul`
-  margin-top: 80px;
 `;
 const MarketItem = styled.li`
   padding: 10px;
   display: flex;
   align-items: center;
+  border-bottom: 1px solid #e8e8e8;
 `;
 const MarketThumbnail = styled.img`
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   margin-right: 20px;
 `;
@@ -54,15 +68,21 @@ function Market():JSX.Element {
           <span>마켓</span>
           <img src="/images/icons/market.png" alt="market_logo" />
         </MarketHeader>
+        <MarketFilterList>
+          <MarketFilterItem>가까운순</MarketFilterItem>
+          <MarketFilterItem>찜많은순</MarketFilterItem>
+        </MarketFilterList>
         <MatrketList>
           {dummyMarket.data.map((v) => (
-            <MarketItem>
-              <MarketThumbnail src={v.marketImage} alt={`${v.marketName}_thumbnail`} />
-              <MarketIntroduce>
-                <h1>{v.marketName}</h1>
-                <p>{v.marketIntro}</p>
-              </MarketIntroduce>
-            </MarketItem>
+            <Link to="/market/sd">
+              <MarketItem>
+                <MarketThumbnail src={v.marketImage} alt={`${v.marketName}_thumbnail`} />
+                <MarketIntroduce>
+                  <h1>{v.marketName}</h1>
+                  <p>{v.marketIntro}</p>
+                </MarketIntroduce>
+              </MarketItem>
+            </Link>
           ))}
         </MatrketList>
       </MarketWrapper>

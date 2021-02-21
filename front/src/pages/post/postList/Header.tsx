@@ -2,7 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import CategoryMenu from './CategoryMenu';
-import { loadBookPostRequest } from './postSlice';
+import { loadBookPostRequest } from '../postSlice';
 
 interface PostTabItemInterface {
   tab: number,

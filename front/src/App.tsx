@@ -1,23 +1,23 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { HashRouter, Switch, Route, BrowserRouter } from 'react-router-dom';
 import NotFound from './components/NotFound';
-import AddPostPage from './features/addPost/AddPostPage';
-import DetailPostView from './features/detailPostView/DetailPostView';
+import AddPostPage from './pages/post/addPost/AddPostPage';
+import DetailPostView from './pages/post/detailPostView/DetailPostView';
 import Login from './pages/signIn/Login';
-import PostList from './features/postList/PostList';
+import PostList from './pages/post/postList/PostList';
 import Join from './pages/signUp/Join';
-import ModifyProfile from './pages/myPage/modifyProfile/ModifyProfile';
+import ModifyProfile from './pages/mypage/modifyProfile/ModifyProfile';
 import GlobalStyle from './styles/GlobalStyles';
-import MyPage from './pages/myPage/MyPage';
-import MySaleArticle from './pages/myPage/mySlaeArticle/MySaleArticle';
-import MyPurchaseArticle from './pages/myPage/myPurchaseArticle/MyPurchaseArticle';
-import Notice from './pages/myPage/notice/Notice';
-import Review from './pages/myPage/review/Review';
-import WishList from './pages/myPage/wishList/WishList';
-import ChattingList from './features/chatting/ChattingList';
-import Chatting from './features/chatting/Chatting';
-import Market from './features/market/Market';
-import MyMarket from './pages/myPage/myMarket/MyMarket';
+import MyPage from './pages/mypage/MyPage';
+import MySaleArticle from './pages/mypage/mySlaeArticle/MySaleArticle';
+import MyPurchaseArticle from './pages/mypage/myPurchaseArticle/MyPurchaseArticle';
+import Notice from './pages/mypage/notice/Notice';
+import Review from './pages/mypage/review/Review';
+import WishList from './pages/mypage/wishList/WishList';
+import ChattingList from './pages/chatting/ChattingList';
+import Chatting from './pages/chatting/Chatting';
+import Market from './pages/market/Market';
+import MarketDetail from './pages/market/MarketDetail';
 import Question from './pages/myPage/question/question';
 
 function App():JSX.Element {
@@ -34,6 +34,7 @@ function App():JSX.Element {
             <Route path="/chatting" exact component={ChattingList} />
             <Route path="/chatting/:id" exact component={Chatting} />
             <Route path="/market" exact component={Market} />
+            <Route path="/market/:id" exact component={MarketDetail} />
             <Route path="/join" exact component={Join} />
             <Route path="/mypage" exact component={MyPage} />
             <Route path="/mypage/modify" exact component={ModifyProfile} />
@@ -42,7 +43,6 @@ function App():JSX.Element {
             <Route path="/mypage/wishs" exact component={WishList} />
             <Route path="/notice" exact component={Notice} />
             <Route path="/review" exact component={Review} />
-            <Route path="/mypage/markets" exact component={MyMarket} />
             <Route path="/question" exact component={Question} />
             <Route component={NotFound} />
           </Switch>

@@ -1,14 +1,14 @@
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { DefaultRootState, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
-import { addBookPostRequest } from './addPostSlice';
+import { addBookPostRequest } from '../postSlice';
 import ImagePreView from './ImagePreView';
-import ImageFileReaderPromise from '../../utils/imageFileReader';
-import { getAladinBook } from '../../api/postBookApi';
-import aladinIteminterface from '../../interfaces/AladinInterface';
+import ImageFileReaderPromise from '../../../utils/imageFileReader';
+import { getAladinBook } from '../../../api/postBookApi';
+import aladinIteminterface from '../../../interfaces/AladinInterface';
 import SearchBook from './SearchBook';
 
 interface ParamTypes {
@@ -126,7 +126,7 @@ function AddPostPage():JSX.Element {
   const [isOpenSearchBox, setIsOpenSearchBox] = useState<boolean>(false);
   const history = useHistory();
 
-  const { isAddBookPostLoading, isAddBookPostDone, isAddBookPostError } = useSelector((state: any) => state.addPostSlice);
+  const { isAddBookPostLoading } = useSelector((state: any) => state.addPostSlice);
   const dispatch = useDispatch();
 
   const { division } = useParams<ParamTypes>();
@@ -144,8 +144,10 @@ function AddPostPage():JSX.Element {
       console.error(error);
     }
   };
+
   const loadSearchResultBook = async () => {
     getAladinBook(searchTitle).then(({ data }) => {
+<<<<<<< HEAD:front/src/features/addPost/AddPostPage.tsx
       const a = data.replace(/\\/ig, '\\\\', /;/g, '');
       const b = a.substr(0, a.length - 1);
       console.log(data);
@@ -154,6 +156,11 @@ function AddPostPage():JSX.Element {
       console.log(b[3972]);
 
       const parseData = JSON.parse(b);
+=======
+      const rgexData = data.replace(/\\/ig, '\\\\', /;/g, '');
+      const deleteEndSemiconlonInData = rgexData.substr(0, rgexData.length - 1);
+      const parseData = JSON.parse(deleteEndSemiconlonInData);
+>>>>>>> cksal/dev:front/src/pages/post/addPost/AddPostPage.tsx
       console.log(parseData);
       setSearchResult(parseData.item);
       if (parseData.item.length === 0) {
@@ -165,9 +172,10 @@ function AddPostPage():JSX.Element {
       console.log(error);
     });
   };
-  const handleChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+  const handleChangeSearch = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTitle(e.target.value);
-  };
+  }, []);
   const handleClickSearch = () => {
     loadSearchResultBook();
   };
@@ -197,11 +205,11 @@ function AddPostPage():JSX.Element {
   };
   const handleSubmitPost = useCallback((e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const formData = new FormData();
     if (images.length < 2) {
       ToastsStore.error('최소 두장의 사진이 업로드 되어야합니다');
       return;
     }
-    const formData = new FormData();
     for (let i = 0; i < images.length; i++) {
       formData.append('file', images[i].image); // 사용자가 등록한 이미지
     }
@@ -214,18 +222,13 @@ function AddPostPage():JSX.Element {
     formData.append('tprice', price); // 사용자가 입력한 정보
     formData.append('division', upperCaseDivision); // 사용자가 입력한 정보
 
-    console.log(formData.keys(), formData.getAll('file'));
-
     dispatch(addBookPostRequest({ data: formData }));
-
-    if (isAddBookPostLoading === false && isAddBookPostError !== null) {
-      ToastsStore.error('업로드에 실패했습니다.');
-    }
-  }, [category, cid, content, dispatch, images, isAddBookPostError, isAddBookPostLoading, price, realPrice, thumbnail, title, upperCaseDivision]);
+  }, [category, cid, content, dispatch, images, price, realPrice, thumbnail, title, upperCaseDivision]);
   return (
     <>
       <AddPostWrapper>
         {isOpenSearchBox && <SearchBook searchResult={searchResult} onClickItem={handleClickItem} />}
+        <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
         <AddPostHeader>
           <Logo src="/images/icons/logo.jpeg" alt="logo" />
           <button type="button" onClick={handleXButtonClick}>
@@ -260,8 +263,9 @@ function AddPostPage():JSX.Element {
             <input type="text" pattern="[0-9]+" placeholder="₩ 가격입력" onChange={handleChangePrice} value={price} />
             <textarea onChange={handleChangeContent} value={content} placeholder="상품설명을 입력하세요" />
           </BookDetailInputWrapper>
-          <AddPostButton type="submit">등록하기</AddPostButton>
-          <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
+          <AddPostButton type="submit" disabled={isAddBookPostLoading}>
+            {isAddBookPostLoading ? <span>등록중입니다</span> : <span>등록하기</span>}
+          </AddPostButton>
         </FormWrapper>
       </AddPostWrapper>
     </>

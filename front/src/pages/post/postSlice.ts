@@ -1,4 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { articleInterface } from '../../interfaces/PostList.interface';
 
 const postSlice = createSlice({
@@ -15,6 +15,10 @@ const postSlice = createSlice({
     isLoadScrollBookPostLoading: false,
     isLoadScrollPostDone: false,
     isLoadScrollPostError: null,
+
+    isAddBookPostLoading: false,
+    isAddBookPostDone: false,
+    isAddBookPostError: null,
 
     isDeleteBookPostLoading: false,
     isDeleteBookPostDone: false,
@@ -50,6 +54,20 @@ const postSlice = createSlice({
       state.isLoadScrollBookPostLoading = false;
       state.isLoadScrollPostError = action.payload;
     },
+    addBookPostRequest(state, action) {
+      state.isAddBookPostLoading = true;
+      state.isAddBookPostDone = false;
+    },
+    addBookPostSuccess(state, action) {
+      state.isAddBookPostLoading = false;
+      state.isAddBookPostDone = true;
+      state.bookPost = action.payload.data.concat(state.bookPost);
+    },
+    addBookPostError(state, action) {
+      state.isAddBookPostLoading = false;
+      state.isAddBookPostDone = false;
+      state.isAddBookPostError = action.payload.error;
+    },
     deleteBookPostRequest(state, action) {
       state.isDeleteBookPostLoading = true;
     },
@@ -72,6 +90,9 @@ export const {
   loadScrollBookPostRequest,
   loadScrollBookPostSuccess,
   loadScrollBookPostError,
+  addBookPostRequest,
+  addBookPostSuccess,
+  addBookPostError,
   deleteBookPostRequest,
   deleteBookPostSuccess,
   deleteBookPostError,

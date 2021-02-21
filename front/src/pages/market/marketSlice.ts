@@ -6,6 +6,7 @@ const marketSlice = createSlice({
   initialState: {
     marketList: [],
     marketDetail: {},
+    marketPost: [],
 
     isMaketDetailLoadLoading: false,
     isMaketDetailLoadDone: false,
@@ -14,6 +15,10 @@ const marketSlice = createSlice({
     isMarketLoadLoading: false,
     isMarketLoadDone: false,
     isMarketLoadError: null,
+
+    isMarketPostLoadLoading: false,
+    isMarketPostLoadDone: false,
+    isMarketPostLoadError: null,
 
     addMarketPostLoading: false,
     addMarketPostDone: false,
@@ -54,6 +59,21 @@ const marketSlice = createSlice({
       state.isMaketDetailLoadError = action.payload.error;
     },
 
+    maketpostLoadRequest(state, action) {
+      state.isMarketPostLoadLoading = true;
+      state.isMarketPostLoadDone = false;
+      state.marketDetail = action.payload.data;
+    },
+    maketpostLoadSuccess(state, action) {
+      state.isMarketPostLoadLoading = false;
+      state.isMarketPostLoadDone = true;
+    },
+    maketpostLoadError(state, action) {
+      state.isMarketPostLoadLoading = false;
+      state.isMarketPostLoadDone = false;
+      state.isMarketPostLoadError = action.payload.error;
+    },
+
     addMarketPostRequest(state, action) {
       state.addMarketPostLoading = true;
       state.addMarketPostDone = false;
@@ -90,6 +110,9 @@ export const {
   marketLoadRequest,
   marketLoadSuccess,
   marketLoadError,
+  maketpostLoadRequest,
+  maketpostLoadSuccess,
+  maketpostLoadError,
   maketDetailLoadRequest,
   maketDetailLoadSuccess,
   maketDetailLoadError,
