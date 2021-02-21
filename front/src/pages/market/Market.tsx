@@ -74,12 +74,12 @@ function Market():JSX.Element {
         </MarketFilterList>
         <MatrketList>
           {dummyMarket.data.map((v) => (
-            <Link to="/market/sd">
+            <Link to={`/market/${v.marketId}`}>
               <MarketItem>
-                <MarketThumbnail src={v.marketImage} alt={`${v.marketName}_thumbnail`} />
+                <MarketThumbnail src={v.image} alt={`${v.name}_thumbnail`} />
                 <MarketIntroduce>
-                  <h1>{v.marketName}</h1>
-                  <p>{v.marketIntro}</p>
+                  <h1>{v.name}</h1>
+                  <p>{v.intro}</p>
                 </MarketIntroduce>
               </MarketItem>
             </Link>
