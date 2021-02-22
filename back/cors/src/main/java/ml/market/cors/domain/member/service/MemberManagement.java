@@ -178,7 +178,13 @@ public class MemberManagement {
         return true;
     }
 
-    public boolean existNickname(@NonNull String nickname){
+    public boolean existNickname(String nickname){
+        if(nickname == null){
+            return false;
+        }
+        if(nickname.equals("")){
+            return false;
+        }
         return memberRepository.existsByNickname(nickname);
     }
 
@@ -195,7 +201,7 @@ public class MemberManagement {
 
 
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public boolean create(MemberVO memberVo) throws RuntimeException {
         String email = memberVo.getEmail();
         String nickname = memberVo.getNickname();
@@ -207,7 +213,13 @@ public class MemberManagement {
         String passwd = bCryptPasswordEncoder.encode(memberVo.getPasswd());
 
         Optional<EmailStateDAO> optional = emailStateRepository.findById(email);
-        EmailStateDAO emailStateDAO = optional.get();
+        EmailStateDAO emailStateDAO;
+        try{
+            emailStateDAO = optional.get();
+        }catch (Exception e){
+            return false;
+        }
+
         if(emailStateDAO.getAuthenticatedFlag() == eMailAuthenticatedFlag.N){
             return false;
         }
@@ -223,6 +235,10 @@ public class MemberManagement {
             return false;
         }
         MapDocumentsDTO mapResMapDocumentsDTO = kakaoResMapDTO.getDocuments().get(0);
+        List documents = kakaoResMapDTO.getDocuments();
+        if(documents.size() == 0){
+            return false;
+        }
         double latitude = mapResMapDocumentsDTO.getY();
         double longitude = mapResMapDocumentsDTO.getX();
         MemberDAO memberDAO = new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, MemberParam.DEFAULT_PROFILE_IMG_DIR, email, MemberRole.USER, null, passwd
