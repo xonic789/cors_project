@@ -54,10 +54,6 @@ const Content = styled.div`
   height: 100%;
   justify-content: center;
   padding: 0 1em;
-  & label {
-    font-size: 4vw;
-    margin-bottom: 0.5em;
-  }
   & input {
     font-size: 4.5vw;
     margin-bottom: 1.5em;
@@ -75,9 +71,6 @@ const Content = styled.div`
   }
   @media screen and (min-width: 455px) {
     width: 455px;
-    & label {
-      font-size: 18.4px;
-    }
     & input {
       font-size: 20.484px;
     }
@@ -91,7 +84,7 @@ const ButtonWrap = styled.div`
   display: flex;
   justify-content: flex-end;
   width: 100%;
-  padding: 3em 1em;
+  padding: 2em 1em;
   & button {
       color: #fff;
       border: 1px solid #eee;
@@ -112,6 +105,41 @@ const ButtonWrap = styled.div`
     & button {
       font-size: 15.932px;
     }
+  }
+`;
+
+const ContentHeader = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5em;
+`;
+const HeaderTextArea = styled.div`
+  word-break: keep-all;
+  & h2 {
+    font-weight: bold;
+    line-height: 1.3em;
+    margin-bottom: 0.5em;
+  }
+  & p {
+    color: #5f5f5f;
+    font-size: 3.5vw;
+  }
+  @media screen and (min-width: 455px) {
+    & p {
+      font-size: 15.932px;
+    }
+  }
+`;
+const HeaderImgArea = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  & img {
+    width: 5em;
+    height: 5em;
+    object-fit: contain;
   }
 `;
 
@@ -159,10 +187,23 @@ function AddQuestion():JSX.Element {
         <h1>문의사항 작성</h1>
       </Header>
       <Content>
-        <label htmlFor="title">제목</label>
-        <input onChange={onChangeInputs} id="title" name="title" value={questionInputs.title} type="text" />
-        <label htmlFor="content">내용</label>
-        <textarea onChange={onChangeInputs} id="content" name="content" value={questionInputs.content} />
+        <ContentHeader>
+          <HeaderTextArea>
+            <h2>
+              코스마켓 이용 중에 생긴<br />
+              불편한 점이나 문의사항을<br />
+              보내주세요.
+            </h2>
+            <p>
+              확인 후 답변드리겠습니다.
+            </p>
+          </HeaderTextArea>
+          <HeaderImgArea>
+            <img src="/images/icons/report_img.png" alt="" />
+          </HeaderImgArea>
+        </ContentHeader>
+        <input onChange={onChangeInputs} id="title" name="title" value={questionInputs.title} type="text" placeholder="제목을 입력해주세요." />
+        <textarea onChange={onChangeInputs} id="content" name="content" value={questionInputs.content} placeholder="내용을 입력해주세요." />
       </Content>
       <ButtonWrap>
         <button onClick={onClickReset} className="reset" type="button">reset</button>
