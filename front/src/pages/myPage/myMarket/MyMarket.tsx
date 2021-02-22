@@ -1,9 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import { Link, useHistory } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { getMyMarketListRequest } from './myMarketSlice';
-import numberArrayUtill from '../../../utils/numberArrayUtill';
+import { Link } from 'react-router-dom';
 
 const Layout = styled.div`
   display: flex;

@@ -19,6 +19,8 @@ import WishList from './pages/myPage/wishList/WishList';
 import Notice from './pages/myPage/notice/Notice';
 import Review from './pages/myPage/review/Review';
 import Question from './pages/myPage/question/question';
+import AddQuestion from './pages/myPage/question/AddQuestion';
+import QuestionDetail from './pages/myPage/question/QuestionDetail';
 import AddMarket from './pages/myPage/myMarket/MyMarket';
 
 function App():JSX.Element {
@@ -45,6 +47,8 @@ function App():JSX.Element {
             <Route path="/notice" exact component={Notice} />
             <Route path="/review" exact component={Review} />
             <Route path="/question" exact component={Question} />
+            <Route path="/question/save" exact component={AddQuestion} />
+            <Route path="/question/detail" exact component={QuestionDetail} />
             <Route path="/addMarket" exact component={AddMarket} />
             <Route component={NotFound} />
           </Switch>
