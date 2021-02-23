@@ -451,6 +451,8 @@ function ModifyProfile():JSX.Element {
         if (modifyInputs.nickname.value !== null) {
           console.log('닉네임 저장');
           formData.append('nickname', modifyInputs.nickname.value);
+        } else {
+          formData.append('nickname', user.nickname);
         }
         if (modifyInputs.passwd.value !== null) {
           console.log('패스워드 저장');

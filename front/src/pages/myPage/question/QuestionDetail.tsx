@@ -73,6 +73,8 @@ const TitleArea = styled.div`
   & p {
     color: #666666;
     font-size: 3.5vw;
+    flex-shrink: 0;
+    margin-left: 1em;
   }
   & p.commentOk {
     color: #3162C7;
@@ -87,7 +89,7 @@ const TitleArea = styled.div`
 
 const ContentArea = styled.div`
   width: 100%;
-  height: 50vh;
+  height: 60vh;
   min-height: 300px;
   overflow: auto;
   padding: 1em;
@@ -100,8 +102,13 @@ const ContentArea = styled.div`
   & pre {
     margin-bottom: 1em;
   }
+  & li {
+    display: flex;
+    flex-direction: column;
+    padding: 0.7em 0;
+  }
   & li:not(:last-child) {
-    margin-bottom: 0.5em;
+    border-bottom: 1px solid #ccc;
   }
   @media screen and (min-width: 455px) {
     font-size: 17.2976px;
@@ -135,6 +142,22 @@ const EmptyArticle = styled.div`
     }
     & button {
       font-size: 18.208px;
+    }
+  }
+`;
+
+const CommentWriter = styled.div`
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+
+  & * {
+    font-size: 3vw;
+  }
+  @media screen and (min-width: 455px) {
+    & * {
+      font-size: 13.656px;
     }
   }
 `;
@@ -191,9 +214,27 @@ function QuestionDetail():JSX.Element {
                     )
                     : (
                       <ul>
-                        <li>답변</li>
-                        <li>답변</li>
-                        <li>답변</li>
+                        <li>
+                          <CommentWriter>
+                            <h2>작성자 : 누구누구</h2>
+                            <p>작성일 : 2021-02-23</p>
+                          </CommentWriter>
+                          <p>답변 내용입니다.</p>
+                        </li>
+                        <li>
+                          <CommentWriter>
+                            <h2>작성자 : 누구누구</h2>
+                            <p>작성일 : 2021-02-23</p>
+                          </CommentWriter>
+                          <p>답변 내용입니다.</p>
+                        </li>
+                        <li>
+                          <CommentWriter>
+                            <h2>작성자 : 누구누구</h2>
+                            <p>작성일 : 2021-02-23</p>
+                          </CommentWriter>
+                          <p>답변 내용입니다.</p>
+                        </li>
                       </ul>
                     )
                 }

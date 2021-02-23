@@ -62,7 +62,7 @@ export function logoutAsync(): Promise<boolean> {
   }).catch((error) => false);
 }
 
-export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
+export function modifyProfileAsync(modifyProfile: FormData): Promise<AxiosResponse> {
   return axios({
     method: 'put',
     url: '/api/change/profile',

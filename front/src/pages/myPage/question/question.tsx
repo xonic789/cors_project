@@ -55,6 +55,7 @@ const QuestionList = styled.ul`
   overflow: auto;
   display: flex;
   flex-direction: column;
+  padding: 0 1em;
   @media screen and (min-width: 455px) {
     width: 455px;
   }
