@@ -10,6 +10,7 @@ const Layout = styled.form`
   align-items: center;
   height: 100vh;
   font-size: 4.5vw;
+  line-height: 1.3em;
   @media screen and (min-width: 455px) {
     font-size: 20.484px;
   }
@@ -51,7 +52,6 @@ const Content = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 100%;
   justify-content: center;
   padding: 0 1em;
   @media screen and (min-width: 455px) {
@@ -61,8 +61,50 @@ const Content = styled.div`
 
 const TitleArea = styled.div`
   width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5em 1em;
+  border: 1px solid #ccc;
+  margin-bottom: 0.5em;
   & h2 {
     text-align: left;
+  }
+  & p {
+    color: #666666;
+    font-size: 3.5vw;
+  }
+  & p.commentOk {
+    color: #3162C7;
+  }
+
+  @media screen and (min-width: 455px) {
+    & p {
+      font-size: 15.932px;
+    }
+  }
+`;
+
+const ContentArea = styled.div`
+  width: 100%;
+  height: 50vh;
+  min-height: 300px;
+  overflow: auto;
+  padding: 1em;
+  border: 1px solid #ccc;
+  font-size: 3.8vw;
+  & p.content_title {
+    color: #3162C7;
+    margin-bottom: 0.5em;
+  }
+  & pre {
+    margin-bottom: 1em;
+  }
+  & li:not(:last-child) {
+    margin-bottom: 0.5em;
+  }
+  @media screen and (min-width: 455px) {
+    font-size: 17.2976px;
   }
 `;
 
@@ -128,9 +170,34 @@ function QuestionDetail():JSX.Element {
             <Content>
               <TitleArea>
                 <h2>{questionDetail.title}</h2>
-                <p>{questionDetail.writeDate}</p>
+                {
+                  questionDetail.comments.length === 0
+                    ? (
+                      <p>[답변대기중]</p>
+                    )
+                    : (
+                      <p className="commentOk">[답변완료]</p>
+                    )
+                }
               </TitleArea>
-              <pre>{questionDetail.content}</pre>
+              <ContentArea>
+                <p className="content_title">[문의내용]</p>
+                <pre>{questionDetail.content}</pre>
+                <p className="content_title">[답변내용]</p>
+                {
+                  !(questionDetail.comments.length === 0)
+                    ? (
+                      <p>답변 대기중입니다. 신속히 답변 드리겠습니다.</p>
+                    )
+                    : (
+                      <ul>
+                        <li>답변</li>
+                        <li>답변</li>
+                        <li>답변</li>
+                      </ul>
+                    )
+                }
+              </ContentArea>
             </Content>
           )
       }

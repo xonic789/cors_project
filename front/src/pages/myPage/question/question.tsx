@@ -65,14 +65,17 @@ const QuestionItem = styled.li`
   width: 100%;
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid #e0e0e0;
+  &:not(:last-child) {
+    margin-bottom: 1em;
+  }
 `;
 
 const QuestionTitleBox = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding: 0.5em 1.5em;
+  padding: 1em;
+  border: 1px solid #cfcfcf;
 `;
 
 const QuestionText = styled.div`
@@ -233,7 +236,7 @@ function Question():JSX.Element {
                       <QuestionTitleBox>
                         <QuestionText>
                           <h2>{question.title}</h2>
-                          <p>{question.writeDate}</p>
+                          <p>등록일:{question.writeDate}</p>
                         </QuestionText>
                       </QuestionTitleBox>
                     </QuestionItem>
