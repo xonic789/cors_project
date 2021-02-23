@@ -30,7 +30,7 @@ import { push } from '../../utils/historyUtil';
 function* postLoginRequestSaga(action: { payload: { user: { email: string, passwd: string } } }) {
   try {
     const loginUser = yield call(postLoginAsync, action.payload.user);
-
+    console.log(loginUser, 'asdaksldlsajdklasjdlkajkdl');
     if (loginUser.nickname) {
       yield put({
         type: postLoginRequestSuccess,
