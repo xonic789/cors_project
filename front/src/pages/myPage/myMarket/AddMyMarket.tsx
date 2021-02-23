@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-const Layout = styled.div`
+const Layout = styled.form`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -55,6 +55,47 @@ const Content = styled.div`
   }
 `;
 
+const BackgroundImgBox = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width:100%;
+  height: 50vw;
+  background: #000;
+  margin-bottom: 3em;
+  @media screen and (min-width: 455px) {
+    height: 227.6px;
+  }
+`;
+
+const BackgroundImg = styled.img`
+  width: 100%;
+  height: 50vw;
+  object-fit: cover;
+  @media screen and (min-width: 455px) {
+    height: 227.6px;
+  }
+`;
+
+const MarketImg = styled.img`
+  position: absolute;
+  bottom: -2em;
+  width: 6em;
+  height: 6em;
+  border-radius: 50%;
+  object-fit: cover;
+`;
+
+const InputsBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 1em;
+`;
+const InputItem = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
 function MyMarket():JSX.Element {
   return (
     <Layout>
@@ -65,7 +106,16 @@ function MyMarket():JSX.Element {
         <h1>마켓 등록하기</h1>
       </Header>
       <Content>
-        콘텐트
+        <BackgroundImgBox>
+          <BackgroundImg src="/images/icons/profileBack.png" />
+          <MarketImg src="/images/icons/profileBack.png" />
+        </BackgroundImgBox>
+        <InputsBox>
+          <InputItem>
+            <label>마켓 이미지</label>
+            <input type="file" />
+          </InputItem>
+        </InputsBox>
       </Content>
     </Layout>
   );

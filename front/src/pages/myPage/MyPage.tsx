@@ -35,7 +35,7 @@ const ProfileImg = styled.img`
   width: 4em;
   height: 4em;
   margin-right: 0.4em;
-  border: 1.5px solid #000;
+  border: 1.5px solid #ccc;
   border-radius: 50%;
 `;
 

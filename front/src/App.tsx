@@ -21,7 +21,7 @@ import Review from './pages/myPage/review/Review';
 import Question from './pages/myPage/question/question';
 import AddQuestion from './pages/myPage/question/AddQuestion';
 import QuestionDetail from './pages/myPage/question/QuestionDetail';
-import AddMarket from './pages/myPage/myMarket/MyMarket';
+import AddMarket from './pages/myPage/myMarket/AddMyMarket';
 
 function App():JSX.Element {
   return (

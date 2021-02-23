@@ -277,22 +277,6 @@ function ModifyProfile():JSX.Element {
     },
   });
 
-  useEffect(() => {
-    if (isModifyProfileError === '비밀번호 불일치') {
-      setModifInputs((input) => ({
-        ...input,
-        passwd: {
-          ...input.passwd,
-          message: '비밀번호가 일치하지 않습니다.',
-          state: 'fail',
-          color: 'red',
-        },
-      }));
-    } else if (isModifyProfileError !== null) {
-      alert('서버 통신 에러');
-    }
-  }, [isModifyProfileError]);
-
   const onChangeInuts = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
@@ -446,19 +430,17 @@ function ModifyProfile():JSX.Element {
         const formData = new FormData();
         if (imageFileState.file !== null) {
           console.log('프로필이미지 저장');
-          formData.append('profileImg', imageFileState.file);
+          formData.append('profile_img', imageFileState.file);
         }
-        if (modifyInputs.nickname.value !== null) {
+        if (modifyInputs.nickname.value !== '') {
           console.log('닉네임 저장');
           formData.append('nickname', modifyInputs.nickname.value);
-        } else {
-          formData.append('nickname', user.nickname);
         }
-        if (modifyInputs.passwd.value !== null) {
+        if (modifyInputs.passwd.value !== '') {
           console.log('패스워드 저장');
           formData.append('passwd', modifyInputs.passwd.value);
         }
-        if (modifyInputs.newPasswd.value !== null) {
+        if (modifyInputs.newPasswd.value !== '') {
           formData.append('newPasswd', modifyInputs.newPasswd.value);
         }
         if (result) {
@@ -466,10 +448,18 @@ function ModifyProfile():JSX.Element {
             modifyProfile: formData,
           }));
         } else {
-          console.log('닉네임 중복');
+          setModifInputs({
+            ...modifyInputs,
+            nickname: {
+              ...modifyInputs.nickname,
+              state: 'fail',
+              message: '이미 사용중인 닉네임입니다.',
+              color: 'red',
+            },
+          });
         }
-      } catch {
-        alert('서버통신중 에러발생');
+      } catch (error) {
+        console.log(error);
       }
     }
   };

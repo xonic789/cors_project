@@ -89,11 +89,11 @@ function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: FormDat
   try {
     console.log(action.payload.modifyProfile);
     const result = yield call(modifyProfileAsync, action.payload.modifyProfile);
-    console.log(result);
-    if (result) {
+
+    if (result.state) {
       yield put({
         type: postModifyProfileRequestSuccess,
-        payload: action.payload.modifyProfile.get('nickname'),
+        payload: { nickname: result.nickname, profileImg: result.profileImg },
       });
       yield call(push, '/mypage');
     } else {
