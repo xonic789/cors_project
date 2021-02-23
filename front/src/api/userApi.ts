@@ -15,7 +15,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
     },
   }).then((result) => {
     console.log(result);
-    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist } = result.headers;
+    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist, myMarketList } = result.headers;
 
     const loginUser: memberInterface = {
       email: user.email,
@@ -26,6 +26,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       role,
       articles: articlelist === undefined ? [] : JSON.parse(articlelist),
       wishList: wishlist === undefined ? [] : JSON.parse(wishlist),
+      myMarketList: myMarketList === undefined ? [] : JSON.parse(myMarketList),
     };
     return loginUser;
   }).catch((error) => {

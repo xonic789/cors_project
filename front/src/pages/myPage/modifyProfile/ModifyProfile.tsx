@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 import styled from 'styled-components';
 import { nicknameDuplicationAsync } from '../../../api/joinApi';
 import { postModifyProfileRequest } from '../../signIn/userSlice';
@@ -417,13 +418,13 @@ function ModifyProfile():JSX.Element {
   const onSubmitModifyProfile = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (modifyInputs.nickname.state === 'fail') {
-      alert('닉네임을 확인해주세요.');
+      ToastsStore.error('닉네임을 확인해주세요.');
     } else if (modifyInputs.passwd.value === '') {
-      alert('비밀번호는 반드시 입력해야 합니다.');
+      ToastsStore.error('비밀번호는 반드시 입력해야 합니다.');
     } else if (modifyInputs.newPasswd.state === 'fail') {
-      alert('새비밀번호를 확인해주세요.');
+      ToastsStore.error('새비밀번호를 확인해주세요.');
     } else if (modifyInputs.newPasswdCheck.state === 'fail') {
-      alert('비밀번호가 일치하지 않습니다.');
+      ToastsStore.error('비밀번호가 일치하지 않습니다.');
     } else {
       try {
         const result = await nicknameDuplicationAsync(modifyInputs.nickname.value);
@@ -492,6 +493,7 @@ function ModifyProfile():JSX.Element {
 
   return (
     <FormLayout method="post" onSubmit={onSubmitModifyProfile}>
+      <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
       <Header>
         <BackImg src="/images/icons/back.png" onClick={() => history.push('/mypage')} />
         <h1>프로필 편집</h1>

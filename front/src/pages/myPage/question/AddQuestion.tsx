@@ -167,13 +167,19 @@ function AddQuestion():JSX.Element {
 
   const onSubmitSaveInputs = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const result = await addQuestionRequestAsync(questionInputs);
-    console.log(result);
-    if (result.status === 200) {
-      ToastsStore.success('문의사항 등록이 완료되었습니다.');
-      history.push('/question');
+    if (questionInputs.title === '') {
+      ToastsStore.error('제목을 입력해주세요.');
+    } else if (questionInputs.content === '') {
+      ToastsStore.error('내용을 입력해주세요.');
     } else {
-      ToastsStore.error('문의사항 등록중 오류가 발생하였습니다.');
+      const result = await addQuestionRequestAsync(questionInputs);
+      console.log(result);
+      if (result.status === 200) {
+        ToastsStore.success('문의사항 등록이 완료되었습니다.');
+        history.push('/question');
+      } else {
+        ToastsStore.error('문의사항 등록중 오류가 발생하였습니다.');
+      }
     }
   };
 

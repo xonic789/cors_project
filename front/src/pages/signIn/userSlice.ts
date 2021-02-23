@@ -10,6 +10,7 @@ const initialUser: memberInterface = {
   role: '', // 권한
   articles: [], // 아이디 만
   wishList: [], // 아이디 만
+  myMarketList: [],
 };
 
 const initialUserState = {
