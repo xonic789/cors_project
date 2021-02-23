@@ -15,4 +15,5 @@ public class MemberParam {
     public static final String DEFAULT_PROFILE_KEY = "a877b58d69aeffef68b1d0ec79b6853cf14f4300b0968bd8fb37f7ff879c386a";
     public static final String ARTICLELIST = "articlelist";
     public static final String INTRO = "intro";
+    public static final String MARKETLIST = "myMarketList";
 }
