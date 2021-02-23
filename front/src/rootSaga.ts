@@ -5,6 +5,7 @@ import detailPostSaga from './pages/post/detailPostView/detailViewSaga';
 import myPageSaga from './pages/myPage/myPageSaga';
 import userSaga from './pages/signIn/userSaga';
 
+
 export default function* rootSaga(): Generator {
   yield all([
     fork(postSaga),
