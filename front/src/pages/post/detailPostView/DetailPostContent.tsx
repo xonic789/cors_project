@@ -3,19 +3,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import { NavLink, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
-<<<<<<< HEAD:front/src/features/detailPostView/DetailPostContent.tsx
-import CategoryFormatUtil from '../../utils/categoryFormatUtil';
-import countUtil from '../../utils/countDaoUtil';
-import ProgressUtil from '../../utils/progressUtil';
-import { deleteBookPostRequest } from '../postList/postSlice';
-import { postAddWishListRequest, postRemoveWishListRequest } from '../../pages/signIn/userSlice';
-=======
 import CategoryFormatUtil from '../../../utils/categoryFormatUtil';
 import countUtil from '../../../utils/countDaoUtil';
 import ProgressUtil from '../../../utils/progressUtil';
 import { deleteBookPostRequest } from '../postSlice';
-import { postAddWishListRequest, postRemoveWishListRequest } from '../../login/userSlice';
->>>>>>> cksal/dev:front/src/pages/post/detailPostView/DetailPostContent.tsx
+import { postAddWishListRequest, postRemoveWishListRequest } from '../../signIn/userSlice';
 import ImageSlide from './ImageSlide';
 
 interface DetailPostInterface {
