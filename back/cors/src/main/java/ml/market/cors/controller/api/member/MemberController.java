@@ -53,21 +53,19 @@ public class MemberController {
     private final QuestionService questionService;
 
     @PostMapping("/check/nickname")
-    public ResponseEntity<Message<Object>> existNickname(@ModelAttribute MemberVO memberVO){
+    public ResponseEntity<Message<Object>> existNickname(@RequestParam String nickname){
         ResponseEntity<Message<Object>> messageResponseEntity;
-        try {
-            if(memberManagement.existNickname(memberVO.getNickname())){
-                throw new Exception();
-            }
-            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);
-        }catch (Exception e){
+        boolean bResult = memberManagement.existNickname(nickname);
+        if(bResult) {
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("닉네임 중복 입니다");
+        }else{
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("닉네임 중복 아닙니다.");
         }
         return messageResponseEntity;
     }
 
     @PostMapping("/check/email")
-    public ResponseEntity<Message<Object>> existEmail(@RequestParam("email") String email){
+    public ResponseEntity<Message<Object>> existEmail(@RequestParam String email){
         ResponseEntity<Message<Object>> messageResponseEntity;
         try{
             emailManagement.insert(email);
