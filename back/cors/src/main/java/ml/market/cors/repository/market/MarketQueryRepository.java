@@ -9,6 +9,7 @@ import ml.market.cors.domain.article.entity.enums.Progress;
 import ml.market.cors.domain.market.entity.MarketDAO;
 import ml.market.cors.domain.market.entity.search.MarketSearchCondition;
 import ml.market.cors.domain.market.enums.MarketStatus;
+import ml.market.cors.domain.member.entity.MemberDAO;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -29,16 +30,6 @@ public class MarketQueryRepository {
     public List<MarketDAO> findAll(MarketSearchCondition marketSearchCondition){
 
             //찜목록 많은순, 카운트 테이블 쿼리하여 찜 카운트 많은 순으로.
-//            return query
-//                    .selectFrom(marketDAO)
-//                    .join(marketDAO.member, memberDAO)
-//                    .where(
-//                            titleLike(marketSearchCondition.getTitle()),
-//                            marketIdLt(marketSearchCondition.getLastId()),
-//                            marketDAO.status.eq(MarketStatus.ACCEPT)
-//                    )
-//                    .orderBy(marketDAO.)
-//                    .fetch();
         return query
                 .selectFrom(marketDAO)
                 .join(marketDAO.member).fetchJoin()
@@ -50,6 +41,26 @@ public class MarketQueryRepository {
                 .orderBy(marketDAO.market_id.desc())
                 .fetch();
     }
+    public List<MarketDAO> findByUserLocation(MemberDAO member,MarketSearchCondition marketSearchCondition){
+
+        //찜목록 많은순, 카운트 테이블 쿼리하여 찜 카운트 많은 순으로.
+        return query
+                .selectFrom(marketDAO)
+                .join(marketDAO.member).fetchJoin()
+                .where(
+                        articleLatGoe(member),
+                        articleLatLoe(member),
+                        articleLngLoe(member),
+                        articleLatGoe(member),
+                        titleLike(marketSearchCondition.getTitle()),
+                        marketIdLt(marketSearchCondition.getLastId()),
+                        marketDAO.status.eq(MarketStatus.ACCEPT)
+                )
+                .orderBy(marketDAO.market_id.desc())
+                .fetch();
+    }
+
+
 
     public List<ArticleDAO> findByMarketId(Long marketId){
         return query
@@ -83,6 +94,10 @@ public class MarketQueryRepository {
 
 
 
+
+
+
+
     private BooleanExpression titleLike(String name){
         return name != null ? marketDAO.name.startsWith(name) : null;
     }
@@ -91,6 +106,20 @@ public class MarketQueryRepository {
     }
     private BooleanExpression marketIdEq(Long marketId){
         return marketId != null ? articleDAO.market.market_id.eq(marketId) : null;
+    }
+
+    private BooleanExpression articleLatGoe(MemberDAO member){
+
+        return member.getLatitude() != 0.0d ? marketDAO.latitude.goe(member.getLatitude()-0.035) : null;
+    }
+    private BooleanExpression articleLatLoe(MemberDAO member){
+        return member.getLatitude() != 0.0d ? marketDAO.latitude.loe(member.getLatitude()+0.035) : null;
+    }
+    private BooleanExpression articleLngGoe(MemberDAO member){
+        return member.getLongitude() != 0.0d ? marketDAO.longitude.goe(member.getLongitude()-0.035) : null;
+    }
+    private BooleanExpression articleLngLoe(MemberDAO member){
+        return member.getLongitude() != 0.0d ?  marketDAO.longitude.loe(member.getLongitude()+0.035) : null;
     }
 
 }
