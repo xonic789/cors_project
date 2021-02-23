@@ -1,8 +1,13 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
+<<<<<<< HEAD:front/src/features/postList/CategoryMenu.tsx
+import CategoryJSON from './Category.json';
+import { loadBookPostRequest } from './postSlice';
+=======
 import CategoryJSON from '../category.json';
 import { loadBookPostRequest } from '../postSlice';
+>>>>>>> cksal/dev:front/src/pages/post/postList/CategoryMenu.tsx
 
 interface CategoryMenuPropsInterFace {
   onMenuClose: () => void,
