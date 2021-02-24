@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 
 interface ButtonInterface {
@@ -42,17 +42,19 @@ const AskModalBlock = styled.div`
   .buttons {
     display: flex;
     justify-content: flex-end;
-    background-color: none;
+    border: 0;
+    padding: 5px;
+    background-color: white;
   }
 `;
 
-const ButtonWrapper = styled.button`
+const ButtonWrapper = styled.div`
 `;
 const StyledButton = styled.button<ButtonInterface>`
   height: 2rem;
   border: 0;
   padding: 5px;
-  background-color: none;
+  background-color: white;
   color: ${(props) => props.buttonColor};
   & + & {
     margin-left: 0.75rem;
