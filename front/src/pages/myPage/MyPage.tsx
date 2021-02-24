@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
+import cookie from 'react-cookies';
 import AppLayout from '../../components/AppLayout';
 import { postLogoutRequest } from '../signIn/userSlice';
 
@@ -170,26 +172,116 @@ const LogoutButton = styled.button`
   top: 0.5em;
 `;
 
+const AddMarketSelector = styled.div`
+  z-index: -1;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s, transform 0.5s;
+  width: 90%;
+  padding: 2em 1em;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid#808080;
+  border-radius: 10px;
+  & h2 {
+    font-size: 4vw;
+    margin-bottom: 0.7em;
+  }
+  & p {
+    font-size: 3.5vw;
+    margin-bottom: 1em;
+  }
+  @media screen and (min-width: 455px) {
+    width: 407.675px;
+    & h2 {
+      font-size: 18.208px;
+    }
+    & p {
+      font-size: 15.932px;
+    }
+  }
+`;
+
+const ButtonBox = styled.div`
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: 50%;
+  & button {
+    cursor: pointer;
+    font-size: 3.5vw;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    outline: none;
+  }
+  & button.OkButton {
+    background: #3162C7;
+    color: #fff;
+    font-weight: bold;
+  }
+  @media screen and (min-width: 455px) {
+    & button {
+      font-size: 15.932px;
+    }
+  }
+`;
+
 function MyPage():JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { user } = useSelector((state: any) => state.userSlice);
-  const { nickname, profileImg } = user;
+  const { user, isLoginSucceed } = useSelector((state: any) => state.userSlice);
+  const { nickname, profileImg, myMarketList } = user;
+  const marketAddBox = useRef<HTMLDivElement>(null);
 
   const onClickLogout = () => {
     dispatch(postLogoutRequest({}));
   };
 
+  const onClickAddmarket = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    if (!isLoginSucceed) {
+      ToastsStore.error('로그인이 필요한 서비스입니다.');
+    } else if (marketAddBox.current !== null) {
+      marketAddBox.current.style.opacity = '1';
+      marketAddBox.current.style.transform = 'translateY(0)';
+      marketAddBox.current.style.zIndex = '1';
+    }
+  };
+
+  const closeModal = () => {
+    if (marketAddBox.current !== null) {
+      marketAddBox.current.style.opacity = '0';
+      marketAddBox.current.style.transform = 'translateY(20px)';
+      marketAddBox.current.style.zIndex = '-1';
+    }
+  };
+
+  const onClickLoginCheck = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    if (!isLoginSucceed) {
+      e.preventDefault();
+      ToastsStore.error('로그인이 필요한 서비스입니다.');
+    }
+  };
+
   return (
     <AppLayout activeId={3}>
       <Wrapper>
+        <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
         <LogoutButton type="button" onClick={onClickLogout}>로그아웃</LogoutButton>
         <Layout>
           <MyInfo>
-            <ProfileImg src={profileImg} />
+            {
+              profileImg !== '' && cookie.load('REFRESH_TOKEN') !== undefined
+                ? <ProfileImg src={profileImg} />
+                : <ProfileImg src="/images/icons/init_profile.png" />
+            }
             <ProfileText>
               {
-                nickname !== ''
+                nickname !== '' && cookie.load('REFRESH_TOKEN') !== undefined
                   ? <MyName>{nickname}</MyName>
                   : (
                     <>
@@ -200,10 +292,10 @@ function MyPage():JSX.Element {
               }
             </ProfileText>
           </MyInfo>
-          <ProfileBtn to="/mypage/modify">프로필 수정</ProfileBtn>
+          <ProfileBtn onClick={onClickLoginCheck} to="/mypage/modify">프로필 수정</ProfileBtn>
           <MyMenu>
             <MyMenuItem>
-              <MyMenuLink to="/mypage/sales">
+              <MyMenuLink onClick={onClickLoginCheck} to="/mypage/sales">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/sell_active.png" />
                 </MenuImgBox>
@@ -211,7 +303,7 @@ function MyPage():JSX.Element {
               </MyMenuLink>
             </MyMenuItem>
             <MyMenuItem>
-              <MyMenuLink to="/mypage/purchase">
+              <MyMenuLink onClick={onClickLoginCheck} to="/mypage/purchase">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/pur_active.png" />
                 </MenuImgBox>
@@ -219,7 +311,7 @@ function MyPage():JSX.Element {
               </MyMenuLink>
             </MyMenuItem>
             <MyMenuItem>
-              <MyMenuLink to="/mypage/wishs">
+              <MyMenuLink onClick={onClickLoginCheck} to="/mypage/wishs">
                 <MenuImgBox>
                   <MenuImg src="/images/icons/heart_blue.png" />
                 </MenuImgBox>
@@ -228,12 +320,24 @@ function MyPage():JSX.Element {
             </MyMenuItem>
           </MyMenu>
           <UtilMenuList>
-            <UtilMenuItem><UtilLink to="/question">문의하기</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink to="/notice">공지사항</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink to="/review">한줄평</UtilLink></UtilMenuItem>
-            <UtilMenuItem><UtilLink to="/addMarket">나의마켓</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink onClick={onClickLoginCheck} to="/question">문의하기</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink onClick={onClickLoginCheck} to="/notice">공지사항</UtilLink></UtilMenuItem>
+            <UtilMenuItem><UtilLink onClick={onClickLoginCheck} to="/review">한줄평</UtilLink></UtilMenuItem>
+            {
+              myMarketList.length === 0
+                ? <UtilMenuItem><UtilLink onClick={onClickAddmarket} to="/addMarket">나의마켓</UtilLink></UtilMenuItem>
+                : <UtilMenuItem><UtilLink onClick={onClickLoginCheck} to={`/market/detail/${myMarketList[0].marketId}`}>나의마켓</UtilLink></UtilMenuItem>
+            }
           </UtilMenuList>
         </Layout>
+        <AddMarketSelector ref={marketAddBox}>
+          <h2>등록한 마켓이 없습니다.</h2>
+          <p>마켓을 등록하시겠습니까?</p>
+          <ButtonBox>
+            <button onClick={() => history.push('/addMarket')} className="OkButton" type="button">확인</button>
+            <button onClick={closeModal} type="button">취소</button>
+          </ButtonBox>
+        </AddMarketSelector>
       </Wrapper>
     </AppLayout>
   );

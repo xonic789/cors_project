@@ -58,6 +58,7 @@ const userSlice = createSlice({
     postLogoutRequestSuccess: (state, action) => {
       state.isLogoutLoading = false;
       state.isLogoutSucceed = true;
+      state.isLoginSucceed = false;
       state.user = initialUserState.user;
     },
     postLogoutRequestError: (state, action) => {
