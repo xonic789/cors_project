@@ -5,6 +5,7 @@ const postSlice = createSlice({
   name: 'posts',
   initialState: {
     bookPost: [],
+    originalPost: null,
     hasMorePost: true,
     filtering: { division: 'sales', category: '' },
 
@@ -19,6 +20,10 @@ const postSlice = createSlice({
     isAddBookPostLoading: false,
     isAddBookPostDone: false,
     isAddBookPostError: null,
+
+    isModifyBookPostLoading: false,
+    isModifyBookPostDone: false,
+    isModifyBookPostError: null,
 
     isDeleteBookPostLoading: false,
     isDeleteBookPostDone: false,
@@ -68,6 +73,18 @@ const postSlice = createSlice({
       state.isAddBookPostDone = false;
       state.isAddBookPostError = action.payload.error;
     },
+    modifyBookPostRequest(state, action) {
+      state.isModifyBookPostLoading = true;
+    },
+    modifyBookPostSuccess(state, action) {
+      state.isModifyBookPostLoading = false;
+      state.isModifyBookPostDone = true;
+      state.originalPost = action.payload.data;
+    },
+    modifyBookPostError(state, action) {
+      state.isModifyBookPostLoading = false;
+      state.isModifyBookPostError = action.payload.error;
+    },
     deleteBookPostRequest(state, action) {
       state.isDeleteBookPostLoading = true;
     },
@@ -87,12 +104,19 @@ export const {
   loadBookPostRequest,
   loadBookPostSuccess,
   loadBookPostError,
+
   loadScrollBookPostRequest,
   loadScrollBookPostSuccess,
   loadScrollBookPostError,
+
   addBookPostRequest,
   addBookPostSuccess,
   addBookPostError,
+
+  modifyBookPostRequest,
+  modifyBookPostSuccess,
+  modifyBookPostError,
+
   deleteBookPostRequest,
   deleteBookPostSuccess,
   deleteBookPostError,

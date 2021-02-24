@@ -19,18 +19,20 @@ import Chatting from './pages/chatting/Chatting';
 import Market from './pages/market/Market';
 import MarketDetail from './pages/market/MarketDetail';
 import Question from './pages/myPage/question/question';
+import ModifyPost from './pages/post/modifyPost/ModifyPost';
 
 function App():JSX.Element {
   return (
     <div className="App">
       <GlobalStyle />
       <div>
-        <BrowserRouter>
+        <HashRouter>
           <Switch>
             <Route path="/" exact component={Login} />
             <Route path="/home" exact component={PostList} />
             <Route path="/post/:id" exact component={DetailPostView} />
             <Route path="/addPost/:division" exact component={AddPostPage} />
+            <Route path="/modifyPost/:id" exact component={ModifyPost} />
             <Route path="/chatting" exact component={ChattingList} />
             <Route path="/chatting/:id" exact component={Chatting} />
             <Route path="/market" exact component={Market} />
@@ -46,7 +48,7 @@ function App():JSX.Element {
             <Route path="/question" exact component={Question} />
             <Route component={NotFound} />
           </Switch>
-        </BrowserRouter>
+        </HashRouter>
       </div>
     </div>
   );

@@ -1,27 +1,31 @@
 import axios, { AxiosResponse } from 'axios';
-import { Console } from 'console';
 import { AddBookPostInterface } from '../interfaces/PostList.interface';
 
+const BASEURL = 'http://local.corsmarket.ml/api/';
+const FormDataConfig = {
+  headers: {
+    'Content-Type': 'multipart/form-data',
+  },
+};
+// 알라딘 API
 export function getAladinBook(title: string):Promise<AxiosResponse> {
   return axios.get(`http://local.corsmarket.ml/ttb/api/ItemSearch.aspx?ttbkey=ttbehaakdl1816001&QueryType=Title&Query=${title}&output=js`);
 }
 // 일반사용자 판매/구매글 추가
 export function addBookPostAPI(data: AddBookPostInterface):Promise<AxiosResponse> {
-  console.log(data);
-  const config = {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  };
-  return axios.post('http://local.corsmarket.ml/api/article', data, config);
+  return axios.post(`${BASEURL}/article`, data, FormDataConfig);
 }
 export function deleteBookPostAPI(id: number):Promise<AxiosResponse> {
-  return axios.delete(`http://local.corsmarket.ml/api/article/${id}`);
+  return axios.delete(`${BASEURL}/article/${id}`);
+}
+// 일반사용자게시글 수정하기
+export function modifyBookPostAPI(id: number, data: AddBookPostInterface):Promise<AxiosResponse> {
+  return axios.put(`${BASEURL}/${id}`, data, FormDataConfig);
 }
 // 일반사용자 판매/구매글 리스트 불러오기
 export function getBookPostAPI(filtering:{ division:string, category:string }, id?: number):Promise<AxiosResponse> {
   console.log(filtering);
-  return axios.get(`http://local.corsmarket.ml/api/articles/${filtering.division}`, {
+  return axios.get(`${BASEURL}/articles/${filtering.division}`, {
     params: {
       category: filtering.category, lastId: id,
     },
@@ -29,21 +33,21 @@ export function getBookPostAPI(filtering:{ division:string, category:string }, i
 }
 // 일반사용자 판매/구매글 상세페이지 불러오기
 export function getBookPostDetailViewAPI(postId: number):Promise<AxiosResponse> {
-  return axios.get(`http://local.corsmarket.ml/api/article/${postId}`);
+  return axios.get(`${BASEURL}article/${postId}`);
 }
 // 마켓리스트 불러오기
 export function getMarketListAPI():Promise<AxiosResponse> {
-  return axios.get('http://local.corsmarket.ml/api/market');
+  return axios.get(`${BASEURL}market`);
 }
-export function deletePostAPI(id: number):Promise<AxiosResponse> {
-  return axios.get('http://local.corsmarket.ml/api/market/delete',
+export function deleteMarketPostAPI(id: number):Promise<AxiosResponse> {
+  return axios.get(`${BASEURL}/market/delete`,
     { params: { articleId: id } });
 }
 // 마켓글 불러오기
 export function getMarketBookAPI(marketId: number):Promise<AxiosResponse> {
-  return axios.get(`http://local.corsmarket.ml/api/market/${marketId}`);
+  return axios.get(`${BASEURL}/market/${marketId}`);
 }
 // 해당 마켓에 판매글 추가
 export function addMarketBookPostAPI(marketId: number):Promise<AxiosResponse> {
-  return axios.post(`http://local.corsmarket.ml/api/market/${marketId}`);
+  return axios.post(`${BASEURL}/market/${marketId}`);
 }

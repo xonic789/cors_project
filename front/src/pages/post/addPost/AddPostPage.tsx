@@ -5,11 +5,11 @@ import { useHistory, useParams } from 'react-router-dom';
 import { v4 as uuidv4 } from 'uuid';
 import { ToastsContainer, ToastsStore, ToastsContainerPosition } from 'react-toasts';
 import { addBookPostRequest } from '../postSlice';
-import ImagePreView from './ImagePreView';
 import ImageFileReaderPromise from '../../../utils/imageFileReader';
 import { getAladinBook } from '../../../api/postBookApi';
 import aladinIteminterface from '../../../interfaces/AladinInterface';
-import SearchBook from './SearchBook';
+import SearchBook from '../../../components/write/SearchBook';
+import Editor from '../../../components/write/Editor';
 
 interface ParamTypes {
   division: string
@@ -29,6 +29,10 @@ const AddPostHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 20px 0px;
+  & button {
+    background-color: white;
+    border: 0;
+  }
 `;
 const Logo = styled.img`
   width: 40px;
@@ -62,34 +66,6 @@ const BookTitle = styled.div`
 const BookPrice = styled.div`
   font-size: 15px;
   margin-bottom: 20px;
-`;
-const FormWrapper = styled.form`
-`;
-const BookDetailInputWrapper = styled.div`
-  & input {
-    margin: 20px 0;
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #e8e8e8;
-  }
-  & textArea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #e8e8e8;
-    height: 80px;
-    resize: none;
-    overflow: scroll;
-  }
-`;
-const AddPostButton = styled.button`
-  width: 100%;
-  border: 0;
-  background-color: #3960a6;
-  padding: 10px;
-  margin: 20px 0px;
-  border-radius: 5px;
-  color: white;
-  font-weight: 700;
 `;
 const SearchInput = styled.div`
   display: flex;
@@ -126,9 +102,8 @@ function AddPostPage():JSX.Element {
   const [isOpenSearchBox, setIsOpenSearchBox] = useState<boolean>(false);
   const history = useHistory();
 
-  const { isAddBookPostLoading } = useSelector((state: any) => state.postSlice);
   const dispatch = useDispatch();
-
+  // const { isAddBookPostLoading } = useSelector((state: any) => state.posts);
   const { division } = useParams<ParamTypes>();
   const upperCaseDivision:string = division.toUpperCase();
 
@@ -246,16 +221,17 @@ function AddPostPage():JSX.Element {
             : <div>책을 검색해서 등록하세요!</div>
         }
         </BookWrapper>
-        <FormWrapper encType="multipart/form-data" onSubmit={handleSubmitPost}>
-          <ImagePreView onChangeImage={handleChangeImages} images={images} onDelete={handleDeleteImage} />
-          <BookDetailInputWrapper>
-            <input type="text" pattern="[0-9]+" placeholder="₩ 가격입력" onChange={handleChangePrice} value={price} />
-            <textarea onChange={handleChangeContent} value={content} placeholder="상품설명을 입력하세요" />
-          </BookDetailInputWrapper>
-          <AddPostButton type="submit" disabled={isAddBookPostLoading}>
-            {isAddBookPostLoading ? <span>등록중입니다</span> : <span>등록하기</span>}
-          </AddPostButton>
-        </FormWrapper>
+        <Editor
+          onSubmit={handleSubmitPost}
+          onChangePrice={handleChangePrice}
+          onChangeContent={handleChangeContent}
+          onChangeImage={handleChangeImages}
+          onDeleteImage={handleDeleteImage}
+          isLoading={false}
+          content={content}
+          price={price}
+          images={images}
+        />
       </AddPostWrapper>
     </>
   );

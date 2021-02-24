@@ -1,13 +1,13 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call, throttle, select } from 'redux-saga/effects';
 import { AddBookPostInterface } from '../../interfaces/PostList.interface';
-import { generateDummyPost } from '../../interfaces/mockdata';
-import { addBookPostAPI, deleteBookPostAPI, getBookPostAPI, getBookPostDetailViewAPI } from '../../api/postBookApi';
+import { addBookPostAPI, deleteBookPostAPI, getBookPostAPI, modifyBookPostAPI } from '../../api/postBookApi';
 import {
   loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
   loadScrollBookPostRequest, loadScrollBookPostSuccess, loadScrollBookPostError,
   deleteBookPostSuccess, deleteBookPostError, deleteBookPostRequest,
   addBookPostRequest, addBookPostError,
+  modifyBookPostRequest, modifyBookPostSuccess, modifyBookPostError, addBookPostSuccess,
 } from './postSlice';
 import { push } from '../../utils/historyUtil';
 
@@ -18,12 +18,13 @@ interface loadBookPost {
 interface addBookPostPayloadInterface {
   data: AddBookPostInterface
 }
-
+interface modifyBookPostPayloadInterface {
+  id: number,
+  data: AddBookPostInterface
+}
 function* loadBookPost(action: PayloadAction<loadBookPost>) {
   try {
     const result = yield call(getBookPostAPI, action.payload.filtering);
-    // const result = generateDummyPost(10);
-    console.log(result.data);
     yield put(loadBookPostSuccess(result.data));
   } catch (error) {
     yield put(loadBookPostError({ error }));
@@ -32,10 +33,7 @@ function* loadBookPost(action: PayloadAction<loadBookPost>) {
 function* loadScrollBookPost(action: PayloadAction<loadBookPost>) {
   try {
     const { filtering } = yield select((state) => state.postSlice);
-    console.log(filtering);
     const result = yield call(getBookPostAPI, filtering, action.payload.lastId);
-    // const result = generateDummyPost(10);
-    console.log(result.data);
     yield put(loadScrollBookPostSuccess(result.data));
   } catch (error) {
     yield put(loadScrollBookPostError({ error }));
@@ -44,7 +42,7 @@ function* loadScrollBookPost(action: PayloadAction<loadBookPost>) {
 function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {
   try {
     const result = yield call(addBookPostAPI, action.payload.data);
-    yield put(addBookPostRequest({ result }));
+    yield put(addBookPostSuccess({ result }));
     yield call(push, '/home');
   } catch (error) {
     yield put(addBookPostError({ error: error.response.data }));
@@ -59,6 +57,15 @@ function* deleteBookPost(action: PayloadAction<number>) {
     yield put(deleteBookPostError({ error: error.response.data }));
   }
 }
+function* modifyBookPost(action: PayloadAction<modifyBookPostPayloadInterface>) {
+  try {
+    const result = yield call(modifyBookPostAPI, action.payload.id, action.payload.data);
+    yield put(modifyBookPostSuccess(result.data));
+  } catch (error) {
+    yield put(modifyBookPostError({ error }));
+  }
+}
+
 function* watchLoadBookPost() {
   yield takeLatest(loadBookPostRequest, loadBookPost);
 }
@@ -71,10 +78,13 @@ function* watchloadScrollBookPost() {
 function* watchdeleteBookPost() {
   yield takeLatest(deleteBookPostRequest, deleteBookPost);
 }
-
+function* watchloadModifyBookPost() {
+  yield takeLatest(modifyBookPostRequest, modifyBookPost);
+}
 export default function* postSaga():Generator {
   yield all([
     fork(watchloadScrollBookPost),
+    fork(watchloadModifyBookPost),
     fork(watchAddBookPost),
     fork(watchLoadBookPost),
     fork(watchdeleteBookPost),

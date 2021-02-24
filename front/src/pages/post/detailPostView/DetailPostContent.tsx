@@ -11,6 +11,7 @@ import { postAddWishListRequest, postRemoveWishListRequest } from '../../signIn/
 import ImageSlide from './ImageSlide';
 import timeForToday from '../../../utils/timeForToday';
 import PostActionButton from './PostActionButton';
+import { loadDetailBookPostRequest } from './detailViewSlice';
 
 interface DetailPostInterface {
   id: number;
@@ -124,11 +125,6 @@ const HeartButton = styled.button`
 const Price = styled.div`
   font-weight: 800;
 `;
-const Delete = styled.div`
-  font-size: 15px;
-  padding: 20px 0;
-  color: #ff3d3d;
-`;
 const Report = styled.div`
   font-size: 15px;
   padding: 20px 0;
@@ -153,15 +149,19 @@ function DetailPostContent({ id } :DetailPostInterface):JSX.Element {
       dispatch(postAddWishListRequest(detailBookPost.articleId));
     }
   };
+
   const deletePost = useCallback(() => {
     dispatch(deleteBookPostRequest(id));
   }, [dispatch, id]);
   const editPost = useCallback(() => {
-    console.log('수정버튼');
-  }, []);
+    dispatch(loadDetailBookPostRequest(id));
+    history.push(`/modifyPost/${id}`);
+  }, [dispatch, history, id]);
+
   useEffect(() => {
     setHeart(wishList.includes(detailBookPost.articleId));
   }, [wishList, detailBookPost]);
+
   return (
     <>
       <ImageSlide images={detailBookPost.image} />
