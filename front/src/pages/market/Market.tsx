@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import AppLayout from '../../components/AppLayout';
-import { dummyMarket } from '../../interfaces/mockdata';
+import { marketInterface } from '../../interfaces/MarketInterface';
+import { marketLoadRequest } from './marketSlice';
 
 const MarketWrapper = styled.div`
   width: 100%;
@@ -60,7 +62,14 @@ const MarketIntroduce = styled.div`
     margin-bottom: 10px;
   }
 `;
+
 function Market():JSX.Element {
+  const dispatch = useDispatch();
+  const { marketList } = useSelector((state: any) => state.marketSlice);
+  useEffect(() => {
+    dispatch(marketLoadRequest());
+  }, [dispatch]);
+  console.log(marketList);
   return (
     <AppLayout activeId={2}>
       <MarketWrapper>
@@ -73,7 +82,8 @@ function Market():JSX.Element {
           <MarketFilterItem>찜많은순</MarketFilterItem>
         </MarketFilterList>
         <MatrketList>
-          {dummyMarket.data.map((v) => (
+          {marketList.length !== 0
+          && marketList.map((v:marketInterface) => (
             <Link to={`/market/${v.marketId}`}>
               <MarketItem>
                 <MarketThumbnail src={v.image} alt={`${v.name}_thumbnail`} />

@@ -29,14 +29,14 @@ const marketSlice = createSlice({
     deleteMarketPostError: null,
   },
   reducers: {
-    marketLoadRequest(state, action) {
+    marketLoadRequest(state) {
       state.isMarketLoadLoading = true;
       state.isMarketLoadDone = false;
-      state.marketList = action.payload.data;
     },
     marketLoadSuccess(state, action) {
       state.isMarketLoadLoading = false;
       state.isMarketLoadDone = true;
+      state.marketList = action.payload.data;
     },
     marketLoadError(state, action) {
       state.isMarketLoadLoading = false;
@@ -47,11 +47,11 @@ const marketSlice = createSlice({
     maketDetailLoadRequest(state, action) {
       state.isMaketDetailLoadLoading = true;
       state.isMaketDetailLoadDone = false;
-      state.marketDetail = action.payload.data;
     },
     maketDetailLoadSuccess(state, action) {
       state.isMaketDetailLoadLoading = false;
       state.isMaketDetailLoadDone = true;
+      state.marketDetail = action.payload.data;
     },
     maketDetailLoadError(state, action) {
       state.isMaketDetailLoadLoading = false;
@@ -62,11 +62,11 @@ const marketSlice = createSlice({
     maketpostLoadRequest(state, action) {
       state.isMarketPostLoadLoading = true;
       state.isMarketPostLoadDone = false;
-      state.marketDetail = action.payload.data;
     },
     maketpostLoadSuccess(state, action) {
       state.isMarketPostLoadLoading = false;
       state.isMarketPostLoadDone = true;
+      state.marketDetail = action.payload.data;
     },
     maketpostLoadError(state, action) {
       state.isMarketPostLoadLoading = false;
@@ -77,11 +77,11 @@ const marketSlice = createSlice({
     addMarketPostRequest(state, action) {
       state.addMarketPostLoading = true;
       state.addMarketPostDone = false;
-      state.marketList.concat(action.payload.data);
     },
     addMarketPostSuccess(state, action) {
       state.addMarketPostLoading = false;
       state.addMarketPostDone = true;
+      state.marketList.concat(action.payload.data);
     },
     addMarketPostError(state, action) {
       state.addMarketPostLoading = false;
@@ -92,11 +92,11 @@ const marketSlice = createSlice({
     deleteMarketPostRequest(state, action) {
       state.deleteMarketPostLoading = true;
       state.deleteMarketPostDone = false;
-      state.marketList.filter((data: marketDetailInterface) => data.marketId !== action.payload);
     },
     deleteMarketPostSuccess(state, action) {
       state.deleteMarketPostLoading = false;
       state.deleteMarketPostDone = true;
+      state.marketList.filter((data: marketDetailInterface) => data.marketId !== action.payload);
     },
     deleteMarketPostError(state, action) {
       state.deleteMarketPostLoading = false;

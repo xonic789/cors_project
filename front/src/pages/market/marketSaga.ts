@@ -12,6 +12,7 @@ interface marketPostActionInterface {
 function* loadMarketList() {
   try {
     const result = yield call(loadMarketAPI);
+    console.log(result);
     yield put(marketLoadSuccess(result.data));
   } catch (error) {
     yield put(marketLoadError({ error }));
