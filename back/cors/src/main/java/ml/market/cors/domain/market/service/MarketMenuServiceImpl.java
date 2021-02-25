@@ -89,8 +89,12 @@ public class MarketMenuServiceImpl implements MarketMenuService{
                                 .map(a -> new ArticleDTO(
                                         a.getArticle_id(),
                                         a.getTitle(),
+                                        a.getWrite_date(),
                                         a.getTprice(),
-                                        a.getImageInfo().getImage1()
+                                        a.getProgress(),
+                                        a.getCategory(),
+                                        a.getImageInfo().getImage1(),
+                                        a.getMember().getNickname()
                                 )).collect(Collectors.toList())
                 )).collect(Collectors.toList());
     }
