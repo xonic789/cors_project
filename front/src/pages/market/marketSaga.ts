@@ -1,7 +1,7 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
 import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI, addMarketPostAPI } from '../../api/marketApi';
-import { maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
+import { maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess, maketpostLoadRequest,
   maketpostLoadError, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess,
   addMarketPostSuccess, addMarketPostError, addMarketPostRequest } from './marketSlice';
 
@@ -69,5 +69,5 @@ export default function* marketSaga():Generator {
     fork(watchloadMarketDetail),
     fork(watchloadMarketPost),
     fork(watchMarket),
-   ]);
+  ]);
 }

@@ -1,6 +1,6 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
-import { getNoticeRequestAsync } from '../../../api/noticeApi';
+import { getNoticeRequestAsync } from '../../api/noticeApi';
 import {
   getNoticeRequest,
   getNoticeRequestSuccess,

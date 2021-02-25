@@ -1,7 +1,7 @@
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
 import {
   myPurchaseArtilceAsync,
-} from '../../../api/myArticleApi';
+} from '../../api/myArticleApi';
 import {
   getMyPurchaseArticleRequest,
   getMyPurchaseArticleRequestSuccess,

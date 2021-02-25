@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { nicknameDuplicationAsync } from '../../../api/joinApi';
-import { postModifyProfileRequest } from '../../signIn/userSlice';
+import { nicknameDuplicationAsync } from '../../api/joinApi';
+import { postModifyProfileRequest } from '../signIn/userSlice';
 
 const FormLayout = styled.form`
   display: flex;
