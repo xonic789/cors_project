@@ -1,9 +1,8 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
-import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI, addMarketPostAPI } from '../../api/marketApi';
+import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI } from '../../api/marketApi';
 import { maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
-  maketpostLoadError, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess,
-  addMarketPostSuccess, addMarketPostError, addMarketPostRequest } from './marketSlice';
+  maketpostLoadError, maketpostLoadRequest, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess } from './marketSlice';
 
 interface marketPostActionInterface {
   marketId: number,
@@ -41,7 +40,7 @@ function* loadMarketPost(action: PayloadAction<marketPostActionInterface>) {
     yield put(maketpostLoadError({ error }));
   }
 }
-function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
+/* function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
   try {
     console.log(action.payload, 'payload');
     const result = yield call(addMarketPostAPI, action.payload.market);
@@ -50,7 +49,7 @@ function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
   } catch (error) {
     yield put(addMarketPostError({ error }));
   }
-}
+} */
 function* watchloadMarketList() {
   yield takeLatest(marketLoadRequest, loadMarketList);
 }
@@ -60,14 +59,14 @@ function* watchloadMarketDetail() {
 function* watchloadMarketPost() {
   yield takeLatest(maketpostLoadRequest, loadMarketPost);
 }
-function* watchMarket(): Generator {
+/* function* watchMarket(): Generator {
   yield takeLatest(addMarketPostRequest, addMarketPost);
-}
+} */
 export default function* marketSaga():Generator {
   yield all([
     fork(watchloadMarketList),
     fork(watchloadMarketDetail),
     fork(watchloadMarketPost),
-    fork(watchMarket),
-   ]);
+    // fork(watchMarket),
+  ]);
 }

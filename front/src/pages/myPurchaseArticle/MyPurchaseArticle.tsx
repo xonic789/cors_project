@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
-import { myArticleInterface } from '../../../interfaces/MyArticle.interface';
-import CategoryFormatUtil from '../../../utils/categoryFormatUtil';
-import numberArrayUtill from '../../../utils/numberArrayUtill';
+import { myArticleInterface } from '../../interfaces/MyArticle.interface';
+import CategoryFormatUtil from '../../utils/categoryFormatUtil';
+import numberArrayUtill from '../../utils/numberArrayUtill';
 import { getMyPurchaseArticleRequest } from './myPurchaseArticleSlice';
 
 const Layout = styled.form`
