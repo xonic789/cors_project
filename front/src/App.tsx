@@ -34,7 +34,7 @@ function App():JSX.Element {
             <Route path="/" exact component={Login} />
             <Route path="/home" exact component={PostList} />
             <Route path="/post/:id" exact component={DetailPostView} />
-            <Route path="/addPost/:division" exact component={AddPostPage} />
+            <Route path="/addPost/:division/:type" exact component={AddPostPage} />
             <Route path="/modifyPost/:id" exact component={ModifyPost} />
             <Route path="/chatting" exact component={ChattingList} />
             <Route path="/chatting/:id" exact component={Chatting} />

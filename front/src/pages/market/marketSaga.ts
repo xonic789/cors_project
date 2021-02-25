@@ -1,7 +1,9 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
 import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI } from '../../api/marketApi';
-import { maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
+import { addMarketBookPostAPI } from '../../api/postBookApi';
+import { AddBookPostInterface } from '../../interfaces/PostList.interface';
+import { addMarketPostError, addMarketPostRequest, addMarketPostSuccess, maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
   maketpostLoadError, maketpostLoadRequest, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess } from './marketSlice';
 
 interface marketPostActionInterface {
@@ -12,7 +14,9 @@ interface marketPostActionInterface {
 interface addMarketActionInterface {
   market: FormData,
 }
-
+interface addBookPostPayloadInterface {
+  data: AddBookPostInterface
+}
 function* loadMarketList() {
   try {
     const result = yield call(loadMarketAPI);
@@ -40,6 +44,14 @@ function* loadMarketPost(action: PayloadAction<marketPostActionInterface>) {
     yield put(maketpostLoadError({ error }));
   }
 }
+function* addMarketPost(action: PayloadAction<addBookPostPayloadInterface>) {
+  try {
+    const result = yield call(addMarketBookPostAPI, action.payload.data);
+    yield put(addMarketPostSuccess(result.data));
+  } catch (error) {
+    yield put(addMarketPostError({ error }));
+  }
+}
 /* function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
   try {
     console.log(action.payload, 'payload');
@@ -59,6 +71,9 @@ function* watchloadMarketDetail() {
 function* watchloadMarketPost() {
   yield takeLatest(maketpostLoadRequest, loadMarketPost);
 }
+function* watchAddMarketPost() {
+  yield takeLatest(addMarketPostRequest, addMarketPost);
+}
 /* function* watchMarket(): Generator {
   yield takeLatest(addMarketPostRequest, addMarketPost);
 } */
@@ -67,6 +82,7 @@ export default function* marketSaga():Generator {
     fork(watchloadMarketList),
     fork(watchloadMarketDetail),
     fork(watchloadMarketPost),
+    fork(watchAddMarketPost),
     // fork(watchMarket),
   ]);
 }

@@ -10,9 +10,11 @@ import { getAladinBook } from '../../../api/postBookApi';
 import aladinIteminterface from '../../../interfaces/AladinInterface';
 import SearchBook from '../../../components/write/SearchBook';
 import Editor from '../../../components/write/Editor';
+import { addMarketPostRequest } from '../../market/marketSlice';
 
 interface ParamTypes {
-  division: string
+  division: string,
+  type: string,
 }
 interface ImageURLInterface {
   id: string;
@@ -104,7 +106,7 @@ function AddPostPage():JSX.Element {
 
   const dispatch = useDispatch();
   // const { isAddBookPostLoading } = useSelector((state: any) => state.posts);
-  const { division } = useParams<ParamTypes>();
+  const { division, type } = useParams<ParamTypes>();
   const upperCaseDivision:string = division.toUpperCase();
 
   const ImageFileReader = async (file: Blob) => {
@@ -186,8 +188,12 @@ function AddPostPage():JSX.Element {
     formData.append('content', content); // 사용자가 입력한 정보
     formData.append('tprice', price); // 사용자가 입력한 정보
     formData.append('division', upperCaseDivision); // 사용자가 입력한 정보
-    dispatch(addBookPostRequest({ data: formData }));
-  }, [category, cid, content, dispatch, images, price, realPrice, thumbnail, title, upperCaseDivision]);
+    if (type === 'user') {
+      dispatch(addBookPostRequest({ data: formData }));
+    } else if (type === 'market') {
+      dispatch(addMarketPostRequest({ data: formData }));
+    }
+  }, [category, cid, content, dispatch, images, price, realPrice, thumbnail, title, type, upperCaseDivision]);
   return (
     <>
       <AddPostWrapper>

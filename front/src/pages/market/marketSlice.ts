@@ -5,7 +5,7 @@ const marketSlice = createSlice({
   name: 'market',
   initialState: {
     marketList: [],
-    marketDetail: {},
+    marketDetail: null,
     marketPost: [],
 
     isMaketDetailLoadLoading: false,
@@ -81,7 +81,7 @@ const marketSlice = createSlice({
     addMarketPostSuccess(state, action) {
       state.addMarketPostLoading = false;
       state.addMarketPostDone = true;
-      state.marketList.concat(action.payload.data);
+      // state.marketList.concat(action.payload.data);
     },
     addMarketPostError(state, action) {
       state.addMarketPostLoading = false;

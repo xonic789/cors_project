@@ -8,7 +8,7 @@ export function loadMarketAPI(): Promise<AxiosResponse> {
 }
 // 마켓개별로 디테일 불러오기
 export function loadMarketDetailAPI(marketId: number): Promise<AxiosResponse> {
-  return axios.get(`${URL}/api/mypage/market/detail/${marketId}`);
+  return axios.get(`${URL}/api/market/${marketId}`);
 }
 // 마켓게시글 불러오기
 export function loadMarketPostDetailAPI(marketId: number, postId: number): Promise<AxiosResponse> {
