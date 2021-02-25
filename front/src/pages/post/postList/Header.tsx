@@ -55,7 +55,6 @@ const SearchInput = styled.div`
   width: 85%;
   margin: auto;
   & input {
-    color: white;
     border:0;
     width:80%;
     background-color: inherit;
@@ -80,6 +79,7 @@ const PostTabItem = styled.li<PostTabItemInterface>`
 
 function Header(): JSX.Element {
   const dispatch = useDispatch();
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [openMenu, setOpenMenu] = useState(false);
   const [tabIndex, setTabIndex] = useState(0);
   const { filtering } = useSelector((state: any) => state.postSlice);
@@ -93,12 +93,40 @@ function Header(): JSX.Element {
   }, []);
   const onClickSalePostTab = useCallback(() => {
     setTabIndex(0);
-    dispatch(loadBookPostRequest({ filtering: { division: 'sales', category: filtering.category } }));
-  }, [dispatch, filtering.category]);
+    dispatch(loadBookPostRequest({
+      filtering: {
+        division: 'sales',
+        category: filtering.category,
+        title: filtering.title,
+      },
+    }));
+  }, [dispatch, filtering.category, filtering.title]);
+
   const onClickPurchasPostTab = useCallback(() => {
     setTabIndex(1);
-    dispatch(loadBookPostRequest({ filtering: { division: 'purchase', category: filtering.category } }));
-  }, [dispatch, filtering.category]);
+    dispatch(loadBookPostRequest({
+      filtering: {
+        division: 'purchase',
+        category: filtering.category,
+        title: filtering.title,
+      },
+    }));
+  }, [dispatch, filtering.category, filtering.title]);
+
+  const onChangeSearchInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchKeyword(e.target.value);
+  }, []);
+
+  const onClickSearchButton = useCallback(() => {
+    dispatch(loadBookPostRequest({
+      filtering: {
+        division: filtering.division,
+        category: '',
+        title: searchKeyword,
+      },
+    }));
+  }, [dispatch, filtering.division, searchKeyword]);
+
   return (
     <HeaderWrapper>
       {openMenu && <CategoryMenu onMenuClose={onCloseMenuHandler} />}
@@ -111,8 +139,10 @@ function Header(): JSX.Element {
         </LogoWrapper>
       </TopWrapper>
       <SearchInput>
-        <input placeholder="책 이름을 검색해보세요!" />
-        <img src="/images/icons/search.png" alt="search_icon" />
+        <input placeholder="책 이름을 검색해보세요!" onChange={onChangeSearchInput} value={searchKeyword} />
+        <button type="button" onClick={onClickSearchButton}>
+          <img src="/images/icons/search.png" alt="search_icon" />
+        </button>
       </SearchInput>
       <PostTab>
         <PostTabItem onClick={() => onClickSalePostTab()} tab={0} active={tabIndex}>판매글</PostTabItem>

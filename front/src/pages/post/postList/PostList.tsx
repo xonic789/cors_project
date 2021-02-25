@@ -22,8 +22,8 @@ function PostList(): JSX.Element {
   const dispatch = useDispatch();
   const { bookPost, filtering, isLoadBookPostLoading } = useSelector((state: any) => state.postSlice);
   useEffect(() => {
-    dispatch(loadBookPostRequest({ filtering: { division: filtering.division, category: filtering.category } }));
-  }, [dispatch, filtering.category, filtering.division]);
+    dispatch(loadBookPostRequest({ filtering }));
+  }, [dispatch, filtering, filtering.category, filtering.division, filtering.title]);
   console.log(bookPost);
 
   return (
@@ -32,7 +32,7 @@ function PostList(): JSX.Element {
         <Header />
         <PostListWrapper>
           <AddPostButton />
-          <Category>카테고리: {filtering.category}</Category>
+          <Category>카테고리: {filtering.category} | 검색키워드: {filtering.title} </Category>
           {
             isLoadBookPostLoading
               ? <Loading />

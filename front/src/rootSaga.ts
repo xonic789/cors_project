@@ -9,6 +9,7 @@ import marketSaga from './pages/market/marketSaga';
 export default function* rootSaga(): Generator {
   yield all([
     fork(postSaga),
+    fork(marketSaga),
     fork(detailPostSaga),
     fork(userSaga),
     fork(marketSaga),

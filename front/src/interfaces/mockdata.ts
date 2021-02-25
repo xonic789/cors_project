@@ -80,14 +80,14 @@ export const generateDummyPost = (Postnumber: number) => Array(Postnumber).fill(
 export const dummyMarket:marketListInterface = {
   data: [{
     marketId: 1,
-    marketName: '찬미마켓',
-    marketIntro: '저렴하게 파는 친절한 마켓입니다',
-    marketImage: 'https://pbs.twimg.com/profile_images/968000221543202817/f92oypNr.jpg',
+    name: '찬미마켓',
+    intro: '저렴하게 파는 친절한 마켓입니다',
+    image: 'https://pbs.twimg.com/profile_images/968000221543202817/f92oypNr.jpg',
   },
   {
     marketId: 2,
-    marketName: '오이마켓',
-    marketIntro: '저렴하게 파는 친절한 마켓입니다',
-    marketImage: 'https://pbs.twimg.com/profile_images/968000221543202817/f92oypNr.jpg',
+    name: '찬미마켓',
+    intro: '저렴하게 파는 친절한 마켓입니다',
+    image: 'https://pbs.twimg.com/profile_images/968000221543202817/f92oypNr.jpg',
   }],
 };

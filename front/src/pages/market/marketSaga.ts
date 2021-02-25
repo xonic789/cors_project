@@ -1,5 +1,4 @@
 import { PayloadAction } from '@reduxjs/toolkit';
-import { act } from 'react-dom/test-utils';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
 import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI, addMarketPostAPI } from '../../api/marketApi';
 import { maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
@@ -18,6 +17,7 @@ interface addMarketActionInterface {
 function* loadMarketList() {
   try {
     const result = yield call(loadMarketAPI);
+    console.log(result);
     yield put(marketLoadSuccess(result.data));
   } catch (error) {
     yield put(marketLoadError({ error }));
@@ -36,12 +36,11 @@ function* loadMarketDetail(action: PayloadAction<number>) {
 function* loadMarketPost(action: PayloadAction<marketPostActionInterface>) {
   try {
     const result = yield call(loadMarketPostDetailAPI, action.payload.marketId, action.payload.articleId);
-    yield put(maketpostLoadSuccess);
+    yield put(maketpostLoadSuccess(result.data));
   } catch (error) {
     yield put(maketpostLoadError({ error }));
   }
 }
-
 function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
   try {
     console.log(action.payload, 'payload');
@@ -52,13 +51,23 @@ function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
     yield put(addMarketPostError({ error }));
   }
 }
-
+function* watchloadMarketList() {
+  yield takeLatest(marketLoadRequest, loadMarketList);
+}
+function* watchloadMarketDetail() {
+  yield takeLatest(maketDetailLoadRequest, loadMarketDetail);
+}
+function* watchloadMarketPost() {
+  yield takeLatest(maketpostLoadRequest, loadMarketPost);
+}
 function* watchMarket(): Generator {
   yield takeLatest(addMarketPostRequest, addMarketPost);
 }
-
-export default function* noticeSaga(): Generator {
+export default function* marketSaga():Generator {
   yield all([
+    fork(watchloadMarketList),
+    fork(watchloadMarketDetail),
+    fork(watchloadMarketPost),
     fork(watchMarket),
-  ]);
+   ]);
 }
