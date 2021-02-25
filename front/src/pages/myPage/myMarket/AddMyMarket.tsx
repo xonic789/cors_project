@@ -298,23 +298,22 @@ function MyMarket():JSX.Element {
     e.preventDefault();
     const market = new FormData();
 
-    if (file !== null) {
-      market.append('image', file);
-    }
-
-    if (marketInfo.name === '') {
+    if (file === null) {
+      alert('마켓 이미지를 등록해주세요.');
+    } else if (marketInfo.name === '') {
       alert('마켓이름을 입력해주세요.');
     } else if (marketInfo.intro === '') {
       alert('마켓소개를 입력해주세요.');
     } else if (addressInputs.zipcode === '') {
       alert('주소를 입력해주세요.');
     } else {
+      market.append('image', file);
       market.append('name', marketInfo.name);
       market.append('intro', marketInfo.intro);
       market.append('location', `${addressInputs.baseAddress} ${addressInputs.detailAddress}`);
 
       console.log(market);
-      dispatch(addMarketPostRequest({ payload: market }));
+      dispatch(addMarketPostRequest({ market }));
     }
   };
 
