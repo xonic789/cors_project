@@ -170,7 +170,6 @@ function Chatting({ userNickname }: ChattingUserInterface):JSX.Element {
           console.log(data.data.joinId);
           client.subscribe(`ws://local.corsmarket.ml/api/sub/chat/room/${data.data.joinId}`, (msg) => {
             console.log('mag-------!!!!!!!!!!!!!!!!!', msg);
-            console.log('aaaa');
             setMyJoinId(data.data.joinId);
             if (msg.body) {
               setChatting([...chatting, msg.body]);
