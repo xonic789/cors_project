@@ -101,13 +101,14 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                         articleDAO.article_id,
                         articleDAO.countDAO,
                         articleDAO.title,
+                        articleDAO.write_date,
                         articleDAO.tprice,
                         articleDAO.progress,
                         articleDAO.category,
+                        articleDAO.imageInfo.image1,
                         articleDAO.member.nickname,
-                        articleDAO.market,
-                        articleDAO.write_date,
-                        articleDAO.imageInfo.image1))
+                        articleDAO.market
+                ))
                 .from(articleDAO)
                 .join(articleDAO.member, memberDAO)
                 .join(articleDAO.countDAO, countDAO)
