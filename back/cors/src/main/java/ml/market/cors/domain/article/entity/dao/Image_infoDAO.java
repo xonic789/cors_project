@@ -25,7 +25,7 @@ public class Image_infoDAO {
     private String image3;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "imageInfo", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "imageInfo")
     private ArticleDAO article;
 
     @Enumerated(EnumType.STRING)

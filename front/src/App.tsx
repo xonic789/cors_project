@@ -19,6 +19,7 @@ import WishList from './pages/myPage/wishList/WishList';
 import Notice from './pages/myPage/notice/Notice';
 import Review from './pages/myPage/review/Review';
 import Question from './pages/myPage/question/question';
+import ModifyPost from './pages/post/modifyPost/ModifyPost';
 import AddQuestion from './pages/myPage/question/AddQuestion';
 import QuestionDetail from './pages/myPage/question/QuestionDetail';
 import AddMarket from './pages/myPage/myMarket/AddMyMarket';
@@ -34,6 +35,7 @@ function App():JSX.Element {
             <Route path="/home" exact component={PostList} />
             <Route path="/post/:id" exact component={DetailPostView} />
             <Route path="/addPost/:division" exact component={AddPostPage} />
+            <Route path="/modifyPost/:id" exact component={ModifyPost} />
             <Route path="/chatting" exact component={ChattingList} />
             <Route path="/chatting/:id" exact component={Chatting} />
             <Route path="/market" exact component={Market} />

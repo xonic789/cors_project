@@ -3,6 +3,7 @@ package ml.market.cors.domain.market.entity.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ml.market.cors.domain.article.entity.dto.ArticleDTO;
+import ml.market.cors.domain.market.enums.MarketStatus;
 
 import java.util.List;
 
@@ -15,6 +16,9 @@ public class MarketDTO {
     private String image;
     private String name;
     private String email;
+    private String location;
+    private MarketStatus status;
+//    private int wishCount;
     private List<ArticleDTO> articles;
 
     public MarketDTO(Long marketId, String intro, String image, String name, String email) {

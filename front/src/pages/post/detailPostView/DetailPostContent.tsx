@@ -9,6 +9,9 @@ import ProgressUtil from '../../../utils/progressUtil';
 import { deleteBookPostRequest } from '../postSlice';
 import { postAddWishListRequest, postRemoveWishListRequest } from '../../signIn/userSlice';
 import ImageSlide from './ImageSlide';
+import timeForToday from '../../../utils/timeForToday';
+import PostActionButton from './PostActionButton';
+import { loadDetailBookPostRequest } from './detailViewSlice';
 
 interface DetailPostInterface {
   id: number;
@@ -122,10 +125,6 @@ const HeartButton = styled.button`
 const Price = styled.div`
   font-weight: 800;
 `;
-const Delete = styled.div`
-  font-size: 15px;
-  padding: 20px 0;
-`;
 const Report = styled.div`
   font-size: 15px;
   padding: 20px 0;
@@ -139,8 +138,9 @@ const UploadeTime = styled.div`
 function DetailPostContent({ id } :DetailPostInterface):JSX.Element {
   const dispatch = useDispatch();
   const [heart, setHeart] = useState(false);
-  const { wishList } = useSelector((state: any) => state.userSlice.user);
+  const { wishList, email } = useSelector((state: any) => state.userSlice.user);
   const { detailBookPost } = useSelector((state: any) => state.detailViewSlice);
+  const isMe = detailBookPost.member.email === email;
   const history = useHistory();
   const HandleHeartButton = () => {
     if (heart) {
@@ -149,16 +149,19 @@ function DetailPostContent({ id } :DetailPostInterface):JSX.Element {
       dispatch(postAddWishListRequest(detailBookPost.articleId));
     }
   };
-  const DeletePost = useCallback(() => {
+
+  const deletePost = useCallback(() => {
     dispatch(deleteBookPostRequest(id));
-    ToastsStore.success('삭제완료');
-    setTimeout(() => {
-      history.push('/home');
-    }, 700);
+  }, [dispatch, id]);
+  const editPost = useCallback(() => {
+    dispatch(loadDetailBookPostRequest(id));
+    history.push(`/modifyPost/${id}`);
   }, [dispatch, history, id]);
+
   useEffect(() => {
     setHeart(wishList.includes(detailBookPost.articleId));
   }, [wishList, detailBookPost]);
+
   return (
     <>
       <ImageSlide images={detailBookPost.image} />
@@ -166,14 +169,14 @@ function DetailPostContent({ id } :DetailPostInterface):JSX.Element {
         <ContentTop>
           <ProfileWrapper>
             <ProfileImg src="/images/icons/init_profile.png" alt="profile" />
-            <NickName>닉네임</NickName>
+            <NickName>{detailBookPost.member.nickname}</NickName>
           </ProfileWrapper>
           <State>{ProgressUtil(detailBookPost.progress)}</State>
         </ContentTop>
         <ContentMain>
           <ContentTitle>{detailBookPost.title}</ContentTitle>
           <Category>{CategoryFormatUtil(detailBookPost.category)}</Category>
-          <UploadeTime>9초전</UploadeTime>
+          <UploadeTime>{timeForToday(detailBookPost.writeDate)}</UploadeTime>
           <Thumbnail>
             <img src={detailBookPost.thumbnail} alt="thumnail" />
             <div>원가: {detailBookPost.rprice} 원</div>
@@ -183,8 +186,8 @@ function DetailPostContent({ id } :DetailPostInterface):JSX.Element {
           </Content>
           <AdditionalContent>{countUtil(detailBookPost.count)}</AdditionalContent>
           <OtherBooksButton>판매자의 다른도서 보러가기</OtherBooksButton>
-          <Report>신고하기⚡️</Report>
-          {/* 여기서 사용자랑 이게시물 아이디랑 같으면 삭제하는걸로 로직짜야함 */}<Delete onClick={DeletePost}>삭제하기</Delete>
+          {!isMe && <Report>신고하기⚡️</Report>}
+          {isMe && <PostActionButton onEdit={editPost} onRemove={deletePost} />}
         </ContentMain>
         <ContentBottom>
           <HeartButton onClick={HandleHeartButton}>
@@ -192,7 +195,7 @@ function DetailPostContent({ id } :DetailPostInterface):JSX.Element {
           </HeartButton>
           <Price>{detailBookPost.tprice} 원</Price>
           <NavLink to={`/chatting/${id}`}>
-            <ChattingButton>채팅하기</ChattingButton>
+            {!isMe && <ChattingButton>채팅하기</ChattingButton>}
           </NavLink>
         </ContentBottom>
         <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />

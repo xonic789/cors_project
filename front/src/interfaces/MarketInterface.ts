@@ -10,9 +10,9 @@ export interface marketArticleInterface {
 }
 export interface marketInterface {
   marketId: number,
-  marketName: string,
-  marketIntro: string,
-  marketImage: string,
+  name: string,
+  intro: string,
+  image: string,
 }
 export interface marketDetailInterface {
   marketId: number,

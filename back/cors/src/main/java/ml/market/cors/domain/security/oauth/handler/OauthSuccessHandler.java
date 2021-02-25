@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.member.map.MemberParam;
+import ml.market.cors.domain.member.query.MemberQuerys;
+import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enums.eSocialType;
 import ml.market.cors.domain.util.cookie.CookieManagement;
@@ -12,6 +14,8 @@ import ml.market.cors.domain.util.cookie.eCookie;
 import ml.market.cors.domain.util.token.LoginTokenManagement;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.repository.member.TokenInfoRepository;
+import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,6 +29,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.io.IOException;
 
@@ -36,6 +42,32 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
     private final LoginTokenManagement loginTokenManagement;
 
     private final TokenInfoRepository tokenInfoRepository;
+
+    private final MemberQuerys memberQuerys;
+
+    private void setHeader(HttpServletResponse response, MemberDAO memberDAO) throws UnsupportedEncodingException {
+        String nickname = Base64.encodeBase64String(memberDAO.getNickname().getBytes(StandardCharsets.UTF_8));
+        response.setHeader(MemberParam.NICKNAME, nickname);
+        response.setHeader(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
+        response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
+        response.setHeader(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
+        response.setHeader(MemberParam.ROLE, memberDAO.getRole().getRole());
+        List<Object> wishIdList = memberQuerys.searchMemberWishArticleList(memberDAO.getMember_id());
+        if (wishIdList.size() > 0) {
+            response.setHeader(MemberParam.WISHLIST, String.valueOf(wishIdList));
+        }
+
+        List<Object> marketList = memberQuerys.searchMemberMarketList(memberDAO.getMember_id());
+        if (marketList.size() > 0) {
+            response.setHeader(MemberParam.MARKETLIST, String.valueOf(marketList));
+        }
+
+        List<Object> articleIdList = memberQuerys.searchMemberArticleIdList(memberDAO.getMember_id());
+        if(articleIdList.size() > 0){
+            response.setHeader(MemberParam.ARTICLELIST, String.valueOf(articleIdList));
+        }
+
+    }
 
     private String getEmail(Authentication authentication){
         OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
@@ -64,6 +96,13 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException{
+        Cookie accessCookie = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), request.getCookies());
+        Cookie refreshCookie = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), request.getCookies());
+        if(accessCookie != null || refreshCookie != null){
+            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "로그아웃하고 와라");
+            response.sendRedirect("/");
+            return;
+        }
         String email = getEmail(authentication);
         if (email == null) {
             response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "인증은 됐지만 이메일이 넘어오지 않음");
@@ -92,13 +131,12 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         }
 
         memberDAO = memberRepository.findByEmail(email);
-        loginTokenManagement.logout(request, response);
         Map<String, Object> claims = new HashMap<>();
         claims.put(LoginTokenManagement.ID, memberDAO.getMember_id());
         claims.put(LoginTokenManagement.EMAIL, memberDAO.getEmail());
         claims.put(LoginTokenManagement.IAT, System.currentTimeMillis());
-        List role = new LinkedList();
-        role.add(memberDAO.getRole());
+        List<GrantedAuthority> role = new LinkedList();
+        role.add(new MemberGrantAuthority(memberDAO.getRole()));
         claims.put(LoginTokenManagement.ROLE, role);
         Map<String, Object> tokenPair = loginTokenManagement.createTokenPair(claims);
         if(tokenPair == null){
@@ -116,6 +154,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
             cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), refreshTokenIndexToken);
             response.addCookie(cookie);
             response.sendRedirect("/");
+            setHeader(response, memberDAO);
         } catch(Exception e) {
             response.reset();
             throw new RuntimeException();

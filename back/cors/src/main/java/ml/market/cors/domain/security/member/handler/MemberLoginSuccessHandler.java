@@ -90,10 +90,16 @@ public class MemberLoginSuccessHandler extends SavedRequestAwareAuthenticationSu
         response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
         response.setHeader(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
         response.setHeader(MemberParam.ROLE, memberDAO.getRole().getRole());
-        List<Object> wishIdList = memberQuerys.searchMemberWishIdList(memberDAO.getMember_id());
+        List<Object> wishIdList = memberQuerys.searchMemberWishArticleList(memberDAO.getMember_id());
         if (wishIdList.size() > 0) {
             response.setHeader(MemberParam.WISHLIST, String.valueOf(wishIdList));
         }
+
+        List<Object> marketList = memberQuerys.searchMemberMarketList(memberDAO.getMember_id());
+        if (marketList.size() > 0) {
+            response.setHeader(MemberParam.MARKETLIST, String.valueOf(marketList));
+        }
+
         List<Object> articleIdList = memberQuerys.searchMemberArticleIdList(memberDAO.getMember_id());
         if(articleIdList.size() > 0){
             response.setHeader(MemberParam.ARTICLELIST, String.valueOf(articleIdList));
