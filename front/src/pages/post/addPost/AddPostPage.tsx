@@ -158,6 +158,7 @@ function AddPostPage():JSX.Element {
   }, []);
   const handleChangeImages = (e: any) => {
     ImageFileReader(e.target.files[0]);
+    console.log(e.target.files[0]);
   };
   const handleClickItem = (item: aladinIteminterface) => {
     setCategory(item.categoryName);
@@ -185,7 +186,6 @@ function AddPostPage():JSX.Element {
     formData.append('content', content); // 사용자가 입력한 정보
     formData.append('tprice', price); // 사용자가 입력한 정보
     formData.append('division', upperCaseDivision); // 사용자가 입력한 정보
-
     dispatch(addBookPostRequest({ data: formData }));
   }, [category, cid, content, dispatch, images, price, realPrice, thumbnail, title, upperCaseDivision]);
   return (

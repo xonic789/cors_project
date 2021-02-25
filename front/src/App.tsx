@@ -26,7 +26,7 @@ function App():JSX.Element {
     <div className="App">
       <GlobalStyle />
       <div>
-        <HashRouter>
+        <BrowserRouter>
           <Switch>
             <Route path="/" exact component={Login} />
             <Route path="/home" exact component={PostList} />
@@ -48,7 +48,7 @@ function App():JSX.Element {
             <Route path="/question" exact component={Question} />
             <Route component={NotFound} />
           </Switch>
-        </HashRouter>
+        </BrowserRouter>
       </div>
     </div>
   );

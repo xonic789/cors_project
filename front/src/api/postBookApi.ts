@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { AddBookPostInterface } from '../interfaces/PostList.interface';
 
-const BASEURL = 'http://local.corsmarket.ml/api/';
+const BASEURL = 'http://local.corsmarket.ml/api';
 const FormDataConfig = {
   headers: {
     'Content-Type': 'multipart/form-data',
@@ -23,21 +23,23 @@ export function modifyBookPostAPI(id: number, data: AddBookPostInterface):Promis
   return axios.put(`${BASEURL}/${id}`, data, FormDataConfig);
 }
 // 일반사용자 판매/구매글 리스트 불러오기
-export function getBookPostAPI(filtering:{ division:string, category:string }, id?: number):Promise<AxiosResponse> {
-  console.log(filtering);
+export function getBookPostAPI(filtering:{ division:string, category:string, title?: string}, id?: number):Promise<AxiosResponse> {
+  console.log(filtering.title);
   return axios.get(`${BASEURL}/articles/${filtering.division}`, {
     params: {
-      category: filtering.category, lastId: id,
+      category: filtering.category,
+      lastId: id,
+      title: filtering.title,
     },
   });
 }
 // 일반사용자 판매/구매글 상세페이지 불러오기
 export function getBookPostDetailViewAPI(postId: number):Promise<AxiosResponse> {
-  return axios.get(`${BASEURL}article/${postId}`);
+  return axios.get(`${BASEURL}/article/${postId}`);
 }
 // 마켓리스트 불러오기
 export function getMarketListAPI():Promise<AxiosResponse> {
-  return axios.get(`${BASEURL}market`);
+  return axios.get(`${BASEURL}/market`);
 }
 export function deleteMarketPostAPI(id: number):Promise<AxiosResponse> {
   return axios.get(`${BASEURL}/market/delete`,

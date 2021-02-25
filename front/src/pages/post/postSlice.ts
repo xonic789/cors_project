@@ -7,7 +7,7 @@ const postSlice = createSlice({
     bookPost: [],
     originalPost: null,
     hasMorePost: true,
-    filtering: { division: 'sales', category: '' },
+    filtering: { division: 'sales', category: '', title: '' },
 
     isLoadBookPostLoading: false,
     isLoadBookPostDone: false,
@@ -36,6 +36,7 @@ const postSlice = createSlice({
       state.hasMorePost = true;
       state.filtering.division = action.payload.filtering.division;
       state.filtering.category = action.payload.filtering.category;
+      state.filtering.title = action.payload.filtering.title;
     },
     loadBookPostSuccess(state, action) {
       state.isLoadBookPostLoading = false;
@@ -66,7 +67,7 @@ const postSlice = createSlice({
     addBookPostSuccess(state, action) {
       state.isAddBookPostLoading = false;
       state.isAddBookPostDone = true;
-      state.bookPost = action.payload.data.concat(state.bookPost);
+      // state.bookPost = action.payload.data.concat(state.bookPost);
     },
     addBookPostError(state, action) {
       state.isAddBookPostLoading = false;

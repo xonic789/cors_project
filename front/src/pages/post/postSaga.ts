@@ -6,14 +6,14 @@ import {
   loadBookPostRequest, loadBookPostSuccess, loadBookPostError,
   loadScrollBookPostRequest, loadScrollBookPostSuccess, loadScrollBookPostError,
   deleteBookPostSuccess, deleteBookPostError, deleteBookPostRequest,
-  addBookPostRequest, addBookPostError,
-  modifyBookPostRequest, modifyBookPostSuccess, modifyBookPostError, addBookPostSuccess,
+  addBookPostRequest, addBookPostError, addBookPostSuccess,
+  modifyBookPostRequest, modifyBookPostSuccess, modifyBookPostError,
 } from './postSlice';
 import { push } from '../../utils/historyUtil';
 
 interface loadBookPost {
-  filtering: { division:string, category:string },
-  lastId?: number
+  filtering: { division:string, category:string, title?:string },
+  lastId?: number,
 }
 interface addBookPostPayloadInterface {
   data: AddBookPostInterface
@@ -42,10 +42,10 @@ function* loadScrollBookPost(action: PayloadAction<loadBookPost>) {
 function* addBookPost(action: PayloadAction<addBookPostPayloadInterface>) {
   try {
     const result = yield call(addBookPostAPI, action.payload.data);
-    yield put(addBookPostSuccess({ result }));
+    yield put(addBookPostSuccess(result.data));
     yield call(push, '/home');
   } catch (error) {
-    yield put(addBookPostError({ error: error.response.data }));
+    yield put(addBookPostError({ error: error.response }));
   }
 }
 
