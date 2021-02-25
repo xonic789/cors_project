@@ -62,11 +62,11 @@ const marketSlice = createSlice({
     maketpostLoadRequest(state, action) {
       state.isMarketPostLoadLoading = true;
       state.isMarketPostLoadDone = false;
-      state.marketDetail = action.payload.data;
     },
     maketpostLoadSuccess(state, action) {
       state.isMarketPostLoadLoading = false;
       state.isMarketPostLoadDone = true;
+      state.marketDetail = action.payload.data;
     },
     maketpostLoadError(state, action) {
       state.isMarketPostLoadLoading = false;
@@ -116,6 +116,9 @@ export const {
   maketDetailLoadRequest,
   maketDetailLoadSuccess,
   maketDetailLoadError,
+  addMarketPostRequest,
+  addMarketPostSuccess,
+  addMarketPostError,
 } = marketSlice.actions;
 
 export default marketSlice.reducer;

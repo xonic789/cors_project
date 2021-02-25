@@ -261,7 +261,7 @@ function MyPage():JSX.Element {
   };
 
   const onClickLoginCheck = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    if (!isLoginSucceed) {
+    if (!isLoginSucceed || cookie.load('REFRESH_TOKEN') === undefined) {
       e.preventDefault();
       ToastsStore.error('로그인이 필요한 서비스입니다.');
     }
