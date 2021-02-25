@@ -21,6 +21,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
@@ -112,12 +113,14 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
 
         OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
         String socialTypeName = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
+        String imageUrl = uploadSocialProfileImage(socialTypeName, oAuth2AuthenticationToken.getPrincipal());
+
         MemberDAO memberDAO;
         boolean bResult = memberRepository.existsByEmail(email);
         if (!bResult) {
             for(eSocialType type : eSocialType.values()){
                 if (type.getValue().equals(socialTypeName)) {
-                    memberRepository.save(new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, MemberParam.DEFAULT_PROFILE_IMG_DIR, email, MemberRole.USER, null, "blank", "blank", 0.0, 0.0, email, type));
+                    memberRepository.save(new MemberDAO("blank", imageUrl, email, MemberRole.USER, null, "blank", "blank", 0.0, 0.0, email, type));
                     break;
                 }
             }
@@ -159,5 +162,24 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
             response.reset();
             throw new RuntimeException();
         }
+    }
+
+    private String uploadSocialProfileImage(String socialTypeName, OAuth2User principle) {
+        Map resultMap;
+        String imageUrl = null;
+        switch (socialTypeName){
+            case "kakao":
+                resultMap = principle.getAttributes();
+                resultMap = (Map)resultMap.get("properties");
+                imageUrl = (String)resultMap.get("profile_image");
+                break;
+            case "google":
+                resultMap = principle.getAttributes();
+                imageUrl = (String)resultMap.get("picture");
+                break;
+            case "naver":
+                break;
+        }
+        return imageUrl;
     }
 }
