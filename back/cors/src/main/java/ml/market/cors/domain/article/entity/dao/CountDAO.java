@@ -27,7 +27,7 @@ public class CountDAO {
     private int wishCount;
 
     @JsonIgnore
-    @OneToOne(mappedBy = "countDAO", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "countDAO")
     private ArticleDAO article;
 
     public void updateViewCount(int views){

@@ -5,6 +5,7 @@ import ml.market.cors.domain.article.entity.dto.ArticleDTO;
 import ml.market.cors.domain.market.entity.dto.MarketArticleDTO;
 import ml.market.cors.domain.market.entity.dto.MarketDTO;
 import ml.market.cors.domain.market.entity.search.MarketSearchCondition;
+import ml.market.cors.domain.market.enums.MarketStatus;
 import ml.market.cors.domain.market.service.MarketMenuService;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.util.Errors;
@@ -34,8 +35,15 @@ public class MarketController {
 
     @GetMapping("/api/market/{marketId}")
     public ResponseEntity<Message<Object>> marketDetail(@PathVariable Long marketId){
-        List<MarketArticleDTO> findArticles = marketMenuService.findArticlesByMarketId(marketId);
-        return responseEntityUtils.getMessageResponseEntityOK(findArticles);
+        MarketDTO market = marketMenuService.findArticlesByMarketId(marketId);
+        if(market==null){
+            return responseEntityUtils.getMessageResponseEntityBadRequest("없는 게시물 입니다."+"marketId = "+marketId);
+        }
+        if(!market.getStatus().equals(MarketStatus.ACCEPT)){
+            return responseEntityUtils.getMessageResponseEntityBadRequest("승인되지 않은 게시물 입니다."+"marketId = "+marketId);
+        }
+
+        return responseEntityUtils.getMessageResponseEntityOK(market);
     }
 
     @GetMapping("/api/member/markets")

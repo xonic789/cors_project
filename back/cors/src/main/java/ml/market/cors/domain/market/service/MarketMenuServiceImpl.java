@@ -9,6 +9,7 @@ import ml.market.cors.domain.market.entity.dto.MarketDTO;
 import ml.market.cors.domain.market.entity.search.MarketSearchCondition;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
+import ml.market.cors.repository.article.ArticleRepository;
 import ml.market.cors.repository.market.MarketQueryRepository;
 import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.stereotype.Service;
@@ -34,32 +35,37 @@ public class MarketMenuServiceImpl implements MarketMenuService{
 
 
     @Override
-    public List<MarketArticleDTO> findArticlesByMarketId(Long marketId) {
-        List<ArticleDAO> articles = marketQueryRepository.findByMarketId(marketId);
-        return articles.stream()
-                .map(a -> new MarketArticleDTO(
+    public MarketDTO findArticlesByMarketId(Long marketId) {
+        MarketDAO findMarket = marketQueryRepository.findById(marketId);
+        if(findMarket==null){
+            return null;
+        }
+        return new MarketDTO(
+                findMarket.getMarket_id(),
+                findMarket.getIntro(),
+                findMarket.getImage(),
+                findMarket.getName(),
+                findMarket.getMember().getEmail(),
+                findMarket.getLocation(),
+                findMarket.getStatus(),
+                marketQueryRepository.findByMarketId(findMarket.getMarket_id())
+                .stream()
+                .map(a -> new ArticleDTO(
                         a.getArticle_id(),
-                        a.getCountDAO(),
                         a.getTitle(),
+                        a.getWrite_date(),
                         a.getTprice(),
                         a.getProgress(),
                         a.getCategory(),
-                        a.getMember().getNickname(),
-                        new MarketDTO(
-                                a.getMarket().getMarket_id(),
-                                a.getMarket().getIntro(),
-                                a.getMarket().getImage(),
-                                a.getMarket().getName(),
-                                a.getMarket().getMember().getEmail()
-                        ),
-                        a.getWrite_date(),
-                        a.getImageInfo().getImage1()
-                )).collect(Collectors.toList());
+                        a.getImageInfo().getImage1(),
+                        a.getMember().getNickname()
+                )).collect(Collectors.toList())
+        );
     }
 
     @Override
     public List<MarketDTO> findAllByMemberLocation(JwtCertificationToken jwtCertificationToken, MarketSearchCondition marketSearchCondition) throws IllegalStateException{
-        MemberDAO memberDAO = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalArgumentException("멤버를 찾지 못했습니다."));
+        MemberDAO memberDAO = findMember(jwtCertificationToken).orElseThrow(() -> new IllegalStateException("멤버를 찾지 못했습니다."));
         List<MarketDAO> byUserLocation = marketQueryRepository.findByUserLocation(memberDAO, marketSearchCondition);
         return getMarketDTOS(byUserLocation);
     }
@@ -74,6 +80,8 @@ public class MarketMenuServiceImpl implements MarketMenuService{
                         m.getImage(),
                         m.getName(),
                         m.getMember().getEmail(),
+                        m.getLocation(),
+                        m.getStatus(),
                         marketQueryRepository.findByMarketIdLimit3(m.getMarket_id())
                                 .stream()
                                 .map(a -> new ArticleDTO(

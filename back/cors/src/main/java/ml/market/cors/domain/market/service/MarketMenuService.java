@@ -10,6 +10,6 @@ import java.util.List;
 public interface MarketMenuService {
 
     List<MarketDTO> findAll(MarketSearchCondition marketSearchCondition);
-    List<MarketArticleDTO> findArticlesByMarketId(Long marketId);
+    MarketDTO findArticlesByMarketId(Long marketId);
     List<MarketDTO> findAllByMemberLocation(JwtCertificationToken jwtCertificationToken,MarketSearchCondition marketSearchCondition) throws IllegalStateException;
 }
