@@ -152,7 +152,11 @@ function DetailPostContent({ id } :DetailPostInterface):JSX.Element {
 
   const deletePost = useCallback(() => {
     dispatch(deleteBookPostRequest(id));
-  }, [dispatch, id]);
+    setTimeout(() => {
+      history.push('/home');
+      ToastsStore.success('삭제가 완료되었습니다.');
+    }, 1000);
+  }, [dispatch, history, id]);
   const editPost = useCallback(() => {
     dispatch(loadDetailBookPostRequest(id));
     history.push(`/modifyPost/${id}`);

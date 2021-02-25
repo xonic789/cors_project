@@ -190,10 +190,18 @@ function AddPostPage():JSX.Element {
     formData.append('division', upperCaseDivision); // 사용자가 입력한 정보
     if (type === 'user') {
       dispatch(addBookPostRequest({ data: formData }));
+      setTimeout(() => {
+        history.push('/home');
+        ToastsStore.success('등록이 완료되었습니다.');
+      }, 1000);
     } else if (type === 'market') {
       dispatch(addMarketPostRequest({ data: formData }));
+      setTimeout(() => {
+        history.push('/market');
+        ToastsStore.success('등록이 완료되었습니다.');
+      }, 1000);
     }
-  }, [category, cid, content, dispatch, images, price, realPrice, thumbnail, title, type, upperCaseDivision]);
+  }, [category, cid, content, dispatch, history, images, price, realPrice, thumbnail, title, type, upperCaseDivision]);
   return (
     <>
       <AddPostWrapper>
