@@ -104,7 +104,7 @@ public class MemberDAO implements UserDetails{
         this.eSocialType = eSocialType;
     }
 
-    public MemberDAO(Long memberId) {
+    public MemberDAO(long memberId) {
         this.member_id = memberId;
     }
 
