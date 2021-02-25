@@ -157,7 +157,6 @@ public class MemberManagement {
                     if (result == null) {
                         return true;
                     }
-                    s3Uploader.deleteObject(memberDAO.getProfileKey());
                     memberDAO = memberRepository.save(new MemberDAO(id, result.get("key"), result.get("url"), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType(), memberDAO.getIntro()));
                 } catch (Exception e) {
                     log.debug("파일 업로드 실패");
