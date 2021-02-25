@@ -15,7 +15,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
     },
   }).then((result) => {
     console.log(result);
-    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist } = result.headers;
+    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist, myMarketList } = result.headers;
 
     const loginUser: memberInterface = {
       email: user.email,
@@ -26,6 +26,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       role,
       articles: articlelist === undefined ? [] : JSON.parse(articlelist),
       wishList: wishlist === undefined ? [] : JSON.parse(wishlist),
+      myMarketList: myMarketList === undefined ? [] : JSON.parse(myMarketList),
     };
     return loginUser;
   }).catch((error) => {
@@ -62,7 +63,7 @@ export function logoutAsync(): Promise<boolean> {
   }).catch((error) => false);
 }
 
-export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promise<AxiosResponse> {
+export function modifyProfileAsync(modifyProfile: FormData): Promise<AxiosResponse> {
   return axios({
     method: 'put',
     url: '/api/change/profile',
@@ -70,7 +71,11 @@ export function modifyProfileAsync(modifyProfile: modifyProfileInterface): Promi
       'Content-Type': 'multipart/form-data',
     },
     data: modifyProfile,
-  }).then((res) => true).catch((error) => {
+  }).then((res) => {
+    console.log(res);
+    const { nickname, profile_img } = res.data.data;
+    return { state: true, nickname: Base64.decode(nickname), profileImg: profile_img };
+  }).catch((error) => {
     if (error.response.status !== 400) {
       throw new Error('서버통신에러');
     }

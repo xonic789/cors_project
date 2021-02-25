@@ -4,7 +4,6 @@ import { Router } from 'react-router-dom';
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import logger from 'redux-logger';
 import { Provider } from 'react-redux';
-
 import { persistReducer, persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
 import storage from 'redux-persist/lib/storage';

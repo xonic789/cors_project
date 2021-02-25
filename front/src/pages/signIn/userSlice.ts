@@ -10,6 +10,7 @@ const initialUser: memberInterface = {
   role: '', // 권한
   articles: [], // 아이디 만
   wishList: [], // 아이디 만
+  myMarketList: [],
 };
 
 const initialUserState = {
@@ -57,6 +58,7 @@ const userSlice = createSlice({
     postLogoutRequestSuccess: (state, action) => {
       state.isLogoutLoading = false;
       state.isLogoutSucceed = true;
+      state.isLoginSucceed = false;
       state.user = initialUserState.user;
     },
     postLogoutRequestError: (state, action) => {
@@ -69,7 +71,8 @@ const userSlice = createSlice({
     postModifyProfileRequestSuccess: (state, action) => {
       state.isModifyProfileLoading = false;
       state.isModifyProfileSuccess = true;
-      state.user.nickname = action.payload;
+      state.user.nickname = action.payload.nickname;
+      state.user.profileImg = action.payload.profileImg;
     },
     postModifyProfileRequestError: (state, action) => {
       state.isModifyProfileLoading = false;

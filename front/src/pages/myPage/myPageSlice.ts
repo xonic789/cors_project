@@ -4,7 +4,6 @@ import mySaleArticleSlice from './mySlaeArticle/mySaleArticleSlice';
 import myWishListSlice from './wishList/wishListSlice';
 import noticeSlice from './notice/noticeSlice';
 import questionSlice from './question/questionSlice';
-import myMarketSlice from './myMarket/myMarketSlice';
 
 export default combineReducers({
   myPurchaseArticleSlice,
@@ -12,5 +11,4 @@ export default combineReducers({
   myWishListSlice,
   noticeSlice,
   questionSlice,
-  myMarketSlice,
 });

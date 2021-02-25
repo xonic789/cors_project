@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 import { postLoginRequest, postLoginRequestError, postLoginRequestSuccess } from './userSlice';
 import { LOGIN_ERROR, postLoginAsync, SERVER_ERROR } from '../../api/userApi';
 
@@ -83,20 +84,22 @@ function LoginForm(): JSX.Element {
     e.preventDefault();
     try {
       const result = await postLoginAsync({ email: inputs.email, passwd: inputs.passwd });
+      console.log(result, 'asdasdsad');
       dispatch(postLoginRequestSuccess(result));
       history.push('/home');
     } catch (error) {
       dispatch(postLoginRequestError(error.message));
       if (error.message === LOGIN_ERROR) {
-        alert('로그인 정보를 확인해주세요.');
+        ToastsStore.error('로그인 정보를 확인해주세요.');
       } else if (error.message === SERVER_ERROR) {
-        alert('서버 통신중 에러 발생');
+        ToastsStore.error('서버 통신중 에러 발생');
       }
     }
   };
 
   return (
     <Form method="GET" onSubmit={onLogin}>
+      <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
       <InputBox>
         <Input type="email" name="email" placeholder="아이디" value={inputs.email} onChange={handleChange} required />
         <Input type="password" name="passwd" placeholder="비밀번호" value={inputs.passwd} onChange={handleChange} required />
