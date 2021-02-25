@@ -153,7 +153,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
             String refreshTokenIndexToken = loginTokenManagement.create(index);
             cookie = CookieManagement.add(cookAttr.getName(), cookAttr.getMaxAge(), cookAttr.getPath(), refreshTokenIndexToken);
             response.addCookie(cookie);
-            response.sendRedirect("/");
+            response.sendRedirect("/home");
             setHeader(response, memberDAO);
         } catch(Exception e) {
             response.reset();
