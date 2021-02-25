@@ -6,6 +6,7 @@ import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toa
 import cookie from 'react-cookies';
 import AppLayout from '../../components/AppLayout';
 import { postLogoutRequest } from '../signIn/userSlice';
+import { maketDetailLoadRequest } from '../market/marketSlice';
 
 const Wrapper = styled.div`
   position: relative;
@@ -267,6 +268,10 @@ function MyPage():JSX.Element {
     }
   };
 
+  const onClickPushMarket = () => {
+    dispatch(maketDetailLoadRequest(myMarketList[0]));
+  };
+
   return (
     <AppLayout activeId={3}>
       <Wrapper>
@@ -326,7 +331,7 @@ function MyPage():JSX.Element {
             {
               myMarketList.length === 0
                 ? <UtilMenuItem><UtilLink onClick={onClickAddmarket} to="/addMarket">나의마켓</UtilLink></UtilMenuItem>
-                : <UtilMenuItem><UtilLink onClick={onClickLoginCheck} to={`/market/detail/${myMarketList[0].marketId}`}>나의마켓</UtilLink></UtilMenuItem>
+                : <UtilMenuItem><UtilLink onClick={onClickPushMarket} to={`/market/${myMarketList[0]}`}>나의마켓</UtilLink></UtilMenuItem>
             }
           </UtilMenuList>
         </Layout>

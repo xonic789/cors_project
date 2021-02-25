@@ -102,6 +102,7 @@ function AddPostPage():JSX.Element {
   const [isOpenSearchBox, setIsOpenSearchBox] = useState<boolean>(false);
   const history = useHistory();
 
+  const { isAddBookPostLoading } = useSelector((state: any) => state.postSlice);
   const dispatch = useDispatch();
   // const { isAddBookPostLoading } = useSelector((state: any) => state.posts);
   const { division } = useParams<ParamTypes>();

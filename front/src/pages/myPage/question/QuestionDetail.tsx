@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { commentInterface } from '../../../interfaces/Question.inteface';
 import { getQuestionDetailRequest } from './questionSlice';
 
 const Layout = styled.form`
@@ -163,7 +164,7 @@ const CommentWriter = styled.div`
 `;
 
 function QuestionDetail():JSX.Element {
-  const { detailId, questionDetail, isGetQuestionDetailError } = useSelector((state: any) => state.myPageSlice.questionSlice);
+  const { detailId, questionDetail, isGetQuestionDetailError, comments } = useSelector((state: any) => state.myPageSlice.questionSlice);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -208,33 +209,23 @@ function QuestionDetail():JSX.Element {
                 <pre>{questionDetail.content}</pre>
                 <p className="content_title">[답변내용]</p>
                 {
-                  !(questionDetail.comments.length === 0)
+                  questionDetail.comments.length === 0
                     ? (
                       <p>답변 대기중입니다. 신속히 답변 드리겠습니다.</p>
                     )
                     : (
                       <ul>
-                        <li>
-                          <CommentWriter>
-                            <h2>작성자 : 누구누구</h2>
-                            <p>작성일 : 2021-02-23</p>
-                          </CommentWriter>
-                          <p>답변 내용입니다.</p>
-                        </li>
-                        <li>
-                          <CommentWriter>
-                            <h2>작성자 : 누구누구</h2>
-                            <p>작성일 : 2021-02-23</p>
-                          </CommentWriter>
-                          <p>답변 내용입니다.</p>
-                        </li>
-                        <li>
-                          <CommentWriter>
-                            <h2>작성자 : 누구누구</h2>
-                            <p>작성일 : 2021-02-23</p>
-                          </CommentWriter>
-                          <p>답변 내용입니다.</p>
-                        </li>
+                        {
+                          comments.map((item: commentInterface) => (
+                            <li>
+                              <CommentWriter>
+                                <h2>작성자 : {item.nickname}</h2>
+                                <p>작성일 : {item.writeDate}</p>
+                              </CommentWriter>
+                              <p>{item.content}</p>
+                            </li>
+                          ))
+                        }
                       </ul>
                     )
                 }
