@@ -1,3 +1,3 @@
-const chattingConnection = 'ws://local.corsmarket.ml/api/ws/websocket';
+const chattingConnection = 'wss://www.corsmarket.ml/api/ws/websocket';
 
 export default chattingConnection;
