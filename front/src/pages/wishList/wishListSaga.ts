@@ -1,5 +1,5 @@
 import { all, call, fork, put, takeLatest } from 'redux-saga/effects';
-import getWishListAsync from '../../../api/wishListApi';
+import getWishListAsync from '../../api/wishListApi';
 import {
   getWishListRequest,
   getWishListRequestSuccess,

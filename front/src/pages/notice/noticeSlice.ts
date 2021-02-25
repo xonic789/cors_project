@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { noticeInterface } from '../../../interfaces/NoticeInterface';
+import { noticeInterface } from '../../interfaces/NoticeInterface';
 
 const initialNoticeList: noticeInterface[] = [];
 
