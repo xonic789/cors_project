@@ -12,6 +12,6 @@ export default function* rootSaga(): Generator {
     fork(marketSaga),
     fork(detailPostSaga),
     fork(userSaga),
-    fork(myPageSaga),
-  ]);
+    fork(marketSaga),
+    fork(myPageSaga)]);
 }

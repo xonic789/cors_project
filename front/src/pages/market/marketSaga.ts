@@ -1,12 +1,17 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
-import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI } from '../../api/marketApi';
+import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI, addMarketPostAPI } from '../../api/marketApi';
 import { maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
-  maketpostLoadError, maketpostLoadRequest, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess } from './marketSlice';
+  maketpostLoadError, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess,
+  addMarketPostSuccess, addMarketPostError, addMarketPostRequest } from './marketSlice';
 
 interface marketPostActionInterface {
   marketId: number,
   articleId: number,
+}
+
+interface addMarketActionInterface {
+  market: FormData,
 }
 
 function* loadMarketList() {
@@ -36,21 +41,33 @@ function* loadMarketPost(action: PayloadAction<marketPostActionInterface>) {
     yield put(maketpostLoadError({ error }));
   }
 }
-
+function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
+  try {
+    console.log(action.payload, 'payload');
+    const result = yield call(addMarketPostAPI, action.payload.market);
+    console.log(result);
+    // yield put(addMarketPostSuccess(result));
+  } catch (error) {
+    yield put(addMarketPostError({ error }));
+  }
+}
 function* watchloadMarketList() {
   yield takeLatest(marketLoadRequest, loadMarketList);
 }
-
 function* watchloadMarketDetail() {
   yield takeLatest(maketDetailLoadRequest, loadMarketDetail);
 }
 function* watchloadMarketPost() {
   yield takeLatest(maketpostLoadRequest, loadMarketPost);
 }
+function* watchMarket(): Generator {
+  yield takeLatest(addMarketPostRequest, addMarketPost);
+}
 export default function* marketSaga():Generator {
   yield all([
     fork(watchloadMarketList),
     fork(watchloadMarketDetail),
     fork(watchloadMarketPost),
-  ]);
+    fork(watchMarket),
+   ]);
 }

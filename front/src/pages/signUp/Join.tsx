@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import DaumPostCode, { AddressData } from 'react-daum-postcode';
+import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 import { emailCertificationAsync, emailDuplicationAsync, joinRequestAsync, nicknameDuplicationAsync } from '../../api/joinApi';
 
 const Positional = styled.div`
@@ -406,12 +407,7 @@ function Join():JSX.Element {
         if (value.length < 4) {
           inputChange(name, value, 'fail', '닉네임을 4자 이상 입력해주세요.', 'red');
         } else {
-          try {
-            await nicknameDuplicationAsync(value);
-            inputChange(name, value, 'check', '', 'blue');
-          } catch {
-            inputChange(name, value, 'fail', '이미 사용중인 닉네임입니다.', 'red');
-          }
+          inputChange(name, value, 'check', '', 'blue');
         }
         break;
       case 'passwd':
@@ -460,7 +456,7 @@ function Join():JSX.Element {
         });
       }
     } catch (error) {
-      alert('서버 통신중 오류가 발생하였습니다.');
+      ToastsStore.error('서버 통신중 오류가 발생하였습니다.');
     }
   };
 
@@ -503,7 +499,7 @@ function Join():JSX.Element {
         });
       }
     } catch {
-      alert('서버 통신중 오류가 발생하였습니다.');
+      ToastsStore.error('서버 통신중 오류가 발생하였습니다.');
     }
   };
 
@@ -570,26 +566,39 @@ function Join():JSX.Element {
     e.preventDefault();
 
     if (!email.certificationCheck) {
-      alert('이메일 인증을 진행해주세요.');
+      ToastsStore.error('이메일 인증을 진행해주세요.');
     } else if (nickname.state !== 'check') {
-      alert('닉네임이 중복되었거나 형식이 맞지 않습니다.');
+      ToastsStore.error('닉네임이 중복되었거나 형식이 맞지 않습니다.');
     } else if (passwd.state !== 'check') {
-      alert('비밀번호 형식이 맞지 않습니다.');
+      ToastsStore.error('비밀번호 형식이 맞지 않습니다.');
     } else if (passwdCheck.state !== 'check') {
-      alert('비밀번호가 일치하지 않습니다.');
+      ToastsStore.error('비밀번호가 일치하지 않습니다.');
     } else if (address.zipcode === '') {
-      alert('주소를 입력해주세요.');
+      ToastsStore.error('주소를 입력해주세요.');
     } else if (!agreement.agree1 || !agreement.agree2) {
-      alert('필수 약관 항목에 동의해주세요.');
+      ToastsStore.error('필수 약관 항목에 동의해주세요.');
     } else {
-      await joinRequestAsync(email.value, nickname.value, passwd.value, `${address.baseAddress} ${address.detailAddress}`);
-      alert('회원가입이 완료되었습니다.');
-      history.push('/');
+      let nicknameDuplication = false;
+      try {
+        nicknameDuplication = await nicknameDuplicationAsync(nickname.state);
+        console.log(nicknameDuplication, 'nicknameDuplication');
+      } catch {
+        inputChange('nickname', nickname.value, 'fail', '이미 사용중인 닉네임입니다.', 'red');
+      }
+      if (!nicknameDuplication) {
+        await joinRequestAsync(email.value, nickname.value, passwd.value, `${address.baseAddress} ${address.detailAddress}`);
+        ToastsStore.success('회원가입이 완료되었습니다.');
+        history.push('/');
+      } else {
+        ToastsStore.error('이미 사용중인 닉네임입니다.');
+        inputChange('nickname', nickname.state, 'fail', '이미 사용중인 닉네임입니다.', 'red');
+      }
     }
   };
 
   return (
     <Positional>
+      <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
       <Header>
         <BackLink to="/">
           <BackLogo src="/images/icons/back.png" />
@@ -601,7 +610,7 @@ function Join():JSX.Element {
           <JoinInputBox>
             <label htmlFor="email">이메일</label>
             <JoinInput>
-              <Input required type="email" id="email" name="email" onChange={onChangeText} value={email.value} disabled={email.duplicationCheck} />
+              <Input type="email" id="email" name="email" onChange={onChangeText} value={email.value} disabled={email.duplicationCheck} />
               <CheckLogo src={`/images/icons/${email.state}.png`} />
               <CertificationRequest style={{ display: email.state === 'check' && !email.certificationCheck ? 'block' : 'none' }} type="button" onClick={onClickEmailDuplication}>인증요청</CertificationRequest>
             </JoinInput>
@@ -616,7 +625,7 @@ function Join():JSX.Element {
           <JoinInputBox>
             <label htmlFor="nickname">닉네임</label>
             <JoinInput>
-              <Input required type="text" maxLength={10} id="nickname" name="nickname" onChange={onChangeText} value={nickname.value} />
+              <Input type="text" maxLength={10} id="nickname" name="nickname" onChange={onChangeText} value={nickname.value} />
               <CheckLogo src={`/images/icons/${nickname.state}.png`} />
             </JoinInput>
             <InputMessage style={{ color: nickname.color }}>{nickname.message}</InputMessage>
@@ -624,7 +633,7 @@ function Join():JSX.Element {
           <JoinInputBox>
             <label htmlFor="passwd">비밀번호</label>
             <JoinInput>
-              <Input maxLength={20} required type="password" id="passwd" name="passwd" onChange={onChangeText} value={passwd.value} />
+              <Input maxLength={20} type="password" id="passwd" name="passwd" onChange={onChangeText} value={passwd.value} />
               <CheckLogo src={`/images/icons/${passwd.state}.png`} />
             </JoinInput>
             <InputMessage style={{ color: passwd.color }}>{passwd.message}</InputMessage>
@@ -632,7 +641,7 @@ function Join():JSX.Element {
           <JoinInputBox>
             <label htmlFor="passwdCheck">비밀번호 확인</label>
             <JoinInput>
-              <Input maxLength={20} required type="password" id="passwdCheck" name="passwdCheck" onChange={onChangeText} value={passwdCheck.value} />
+              <Input maxLength={20} type="password" id="passwdCheck" name="passwdCheck" onChange={onChangeText} value={passwdCheck.value} />
               <CheckLogo src={`/images/icons/${passwdCheck.state}.png`} />
             </JoinInput>
             <InputMessage style={{ color: passwdCheck.color }}>{passwdCheck.message}</InputMessage>

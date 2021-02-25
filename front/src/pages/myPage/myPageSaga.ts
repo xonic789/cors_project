@@ -4,7 +4,6 @@ import mySaleArticleSaga from './mySlaeArticle/mySaleArticleSaga';
 import myWishListSaga from './wishList/wishListSaga';
 import noticeSaga from './notice/noticeSaga';
 import questionSaga from './question/questionSaga';
-import myMarketSaga from './myMarket/myMarketSaga';
 
 export default function* myPageSaga(): Generator {
   yield all([
@@ -12,6 +11,5 @@ export default function* myPageSaga(): Generator {
     fork(mySaleArticleSaga),
     fork(myWishListSaga),
     fork(noticeSaga),
-    fork(questionSaga),
-    fork(myMarketSaga)]);
+    fork(questionSaga)]);
 }

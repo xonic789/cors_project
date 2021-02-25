@@ -25,11 +25,12 @@ import {
 } from './userSlice';
 import { modifyProfileInterface } from '../../interfaces/UserInterface';
 import { addWishs, removeWishs } from '../../api/wishsApi';
+import { push } from '../../utils/historyUtil';
 
 function* postLoginRequestSaga(action: { payload: { user: { email: string, passwd: string } } }) {
   try {
     const loginUser = yield call(postLoginAsync, action.payload.user);
-
+    console.log(loginUser, 'asdaksldlsajdklasjdlkajkdl');
     if (loginUser.nickname) {
       yield put({
         type: postLoginRequestSuccess,
@@ -84,16 +85,17 @@ function* postLogoutRequestSaga() {
   }
 }
 
-function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: modifyProfileInterface}}) {
+function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: FormData}}) {
   try {
     console.log(action.payload.modifyProfile);
     const result = yield call(modifyProfileAsync, action.payload.modifyProfile);
-    console.log(result);
-    if (result) {
+
+    if (result.state) {
       yield put({
         type: postModifyProfileRequestSuccess,
-        payload: action.payload.modifyProfile.nickname,
+        payload: { nickname: result.nickname, profileImg: result.profileImg },
       });
+      yield call(push, '/mypage');
     } else {
       yield put({
         type: postModifyProfileRequestError,

@@ -116,6 +116,9 @@ export const {
   maketDetailLoadRequest,
   maketDetailLoadSuccess,
   maketDetailLoadError,
+  addMarketPostRequest,
+  addMarketPostSuccess,
+  addMarketPostError,
 } = marketSlice.actions;
 
 export default marketSlice.reducer;

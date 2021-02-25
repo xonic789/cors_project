@@ -15,9 +15,9 @@ public class MemberQuerys {
     @PersistenceContext
     EntityManager entityManager;
 
-    public List<Object> searchMemberWishIdList(long memberId) {
+    public List<Object> searchMemberWishArticleList(long memberId) {
         MemberDAO memberDAO = new MemberDAO(memberId);
-        String jpql = "SELECT wishList.wish_id FROM  Wish_listDAO wishList where wishList.member = :memberId";
+        String jpql = "SELECT wishList.article.article_id FROM  Wish_listDAO wishList where wishList.member = :memberId";
         Query query = entityManager.createQuery(jpql);
         query.setParameter("memberId", memberDAO);
         return query.getResultList();
@@ -26,6 +26,14 @@ public class MemberQuerys {
     public List<Object> searchMemberArticleIdList(long memberId) {
         MemberDAO memberDAO = new MemberDAO(memberId);
         String jpql = "SELECT articleList.article_id FROM  ArticleDAO articleList where articleList.member = :memberId";
+        Query query = entityManager.createQuery(jpql);
+        query.setParameter("memberId", memberDAO);
+        return query.getResultList();
+    }
+
+    public List<Object> searchMemberMarketList(long memberId) {
+        MemberDAO memberDAO = new MemberDAO(memberId);
+        String jpql = "SELECT marketTb.market_id FROM MarketDAO marketTb where marketTb.member = :memberId";
         Query query = entityManager.createQuery(jpql);
         query.setParameter("memberId", memberDAO);
         return query.getResultList();

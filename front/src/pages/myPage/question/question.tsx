@@ -4,7 +4,7 @@ import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import { questionInterface } from '../../../interfaces/Question.inteface';
 import numberArrayUtill from '../../../utils/numberArrayUtill';
-import { getQuestionRequest } from './questionSlice';
+import { getQuestionRequest, setDeatilId } from './questionSlice';
 
 const Layout = styled.div`
   display: flex;
@@ -55,23 +55,28 @@ const QuestionList = styled.ul`
   overflow: auto;
   display: flex;
   flex-direction: column;
+  padding: 0 1em;
   @media screen and (min-width: 455px) {
     width: 455px;
   }
 `;
 
 const QuestionItem = styled.li`
+  cursor: pointer;
   width: 100%;
   display: flex;
   flex-direction: column;
-  border-bottom: 1px solid #e0e0e0;
+  &:not(:last-child) {
+    margin-bottom: 1em;
+  }
 `;
 
 const QuestionTitleBox = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding: 0.5em 1.5em;
+  padding: 1em;
+  border: 1px solid #cfcfcf;
 `;
 
 const QuestionText = styled.div`
@@ -94,12 +99,19 @@ const QuestionText = styled.div`
 `;
 
 const PaginationBox = styled.div`
+  position: relative;
   display: flex;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
   padding: 1.5em 0;
   & img {
     cursor: pointer;
     width: 1em;
     height: 1em;
+  }
+  @media screen and (min-width: 455px) {
+    width: 455px;
   }
 `;
 
@@ -160,6 +172,28 @@ const EmptyArticle = styled.div`
   }
 `;
 
+const ButtonWrap = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+  @media screen and (min-width: 455px) {
+    width: 455px;
+  }
+`;
+
+const AddButton = styled(Link)`
+  padding: 0.5em;
+  background: #265290;
+  margin-right: 1em;
+  border: 1px solid #eee;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 3.5vw;
+  @media screen and (min-width: 455px) {
+    font-size: 15.932px;
+  }
+`;
+
 function Question():JSX.Element {
   const [page, setPage] = useState<number>(0);
   const dispatch = useDispatch();
@@ -169,6 +203,11 @@ function Question():JSX.Element {
   useEffect(() => {
     dispatch(getQuestionRequest(page));
   }, [page, dispatch]);
+
+  const onClickDetail = (id: string) => {
+    dispatch(setDeatilId(id));
+    history.push('/question/detail');
+  };
 
   return (
     <Layout>
@@ -190,20 +229,25 @@ function Question():JSX.Element {
             </>
           )
           : (
-            <QuestionList>
-              {
-                questionList.map((question: questionInterface) => (
-                  <QuestionItem key={question.questionId}>
-                    <QuestionTitleBox>
-                      <QuestionText>
-                        <h2>{question.title}</h2>
-                        <p>{question.writeDate}</p>
-                      </QuestionText>
-                    </QuestionTitleBox>
-                  </QuestionItem>
-                ))
-              }
-            </QuestionList>
+            <>
+              <QuestionList>
+                {
+                  questionList.map((question: questionInterface) => (
+                    <QuestionItem onClick={() => onClickDetail(question.questionId)} key={question.questionId}>
+                      <QuestionTitleBox>
+                        <QuestionText>
+                          <h2>{question.title}</h2>
+                          <p>등록일:{question.writeDate}</p>
+                        </QuestionText>
+                      </QuestionTitleBox>
+                    </QuestionItem>
+                  ))
+                }
+              </QuestionList>
+              <ButtonWrap>
+                <AddButton to="/question/save">작성하기</AddButton>
+              </ButtonWrap>
+            </>
           )
       }
       <PaginationBox>
