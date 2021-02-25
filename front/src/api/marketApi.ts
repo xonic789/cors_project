@@ -8,7 +8,7 @@ export function loadMarketAPI(): Promise<AxiosResponse> {
 }
 // 마켓개별로 디테일 불러오기
 export function loadMarketDetailAPI(marketId: number): Promise<AxiosResponse> {
-  return axios.get(`${URL}/api/mypage/market/detail/${marketId}`);
+  return axios.get(`${URL}/api/market/${marketId}`);
 }
 // 마켓게시글 불러오기
 export function loadMarketPostDetailAPI(marketId: number, postId: number): Promise<AxiosResponse> {
@@ -23,7 +23,7 @@ export function deleteMarket(marketId: number): Promise<AxiosResponse> {
   return axios.delete(`${URL}/api/mypage/market/${marketId}`);
 }
 // 마켓 등록 요청
-export function addMarketPostAPI(market: FormData): Promise<AxiosResponse> {
+export function addMarketAPI(market: FormData): Promise<AxiosResponse> {
   return axios({
     method: 'post',
     url: ' /api/mypage/market',
