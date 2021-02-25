@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import DaumPostCode, { AddressData } from 'react-daum-postcode';
-import { addMarketPostRequest } from '../../market/marketSlice';
+import { addMarketPostRequest, addMarketRequest } from '../../market/marketSlice';
 
 const Layout = styled.form`
   display: flex;
@@ -298,23 +298,22 @@ function MyMarket():JSX.Element {
     e.preventDefault();
     const market = new FormData();
 
-    if (file !== null) {
-      market.append('image', file);
-    }
-
-    if (marketInfo.name === '') {
+    if (file === null) {
+      alert('마켓이미지를 등록해주세요!');
+    } else if (marketInfo.name === '') {
       alert('마켓이름을 입력해주세요.');
     } else if (marketInfo.intro === '') {
       alert('마켓소개를 입력해주세요.');
     } else if (addressInputs.zipcode === '') {
       alert('주소를 입력해주세요.');
     } else {
+      market.append('image', file);
       market.append('name', marketInfo.name);
       market.append('intro', marketInfo.intro);
       market.append('location', `${addressInputs.baseAddress} ${addressInputs.detailAddress}`);
 
       console.log(market);
-      dispatch(addMarketPostRequest({ payload: market }));
+      dispatch(addMarketRequest({ market }));
     }
   };
 

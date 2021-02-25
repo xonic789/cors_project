@@ -24,6 +24,10 @@ const marketSlice = createSlice({
     addMarketPostDone: false,
     addMarketPostError: null,
 
+    addMarketLoading: false,
+    addMarketDone: false,
+    addMarketError: null,
+
     deleteMarketPostLoading: false,
     deleteMarketPostDone: false,
     deleteMarketPostError: null,
@@ -89,6 +93,20 @@ const marketSlice = createSlice({
       state.addMarketPostError = action.payload.error;
     },
 
+    addMarketRequest(state, action) {
+      state.addMarketLoading = true;
+      state.addMarketDone = false;
+    },
+    addMarketSuccess(state, action) {
+      state.addMarketLoading = false;
+      state.addMarketDone = true;
+    },
+    addMarketError(state, action) {
+      state.addMarketLoading = false;
+      state.addMarketDone = false;
+      state.addMarketError = action.payload.error;
+    },
+
     deleteMarketPostRequest(state, action) {
       state.deleteMarketPostLoading = true;
       state.deleteMarketPostDone = false;
@@ -119,6 +137,9 @@ export const {
   addMarketPostRequest,
   addMarketPostSuccess,
   addMarketPostError,
+  addMarketRequest,
+  addMarketSuccess,
+  addMarketError,
 } = marketSlice.actions;
 
 export default marketSlice.reducer;

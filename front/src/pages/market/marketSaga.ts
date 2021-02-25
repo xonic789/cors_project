@@ -1,9 +1,9 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
-import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI } from '../../api/marketApi';
+import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI, addMarketAPI } from '../../api/marketApi';
 import { addMarketBookPostAPI } from '../../api/postBookApi';
 import { AddBookPostInterface } from '../../interfaces/PostList.interface';
-import { addMarketPostError, addMarketPostRequest, addMarketPostSuccess, maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
+import { addMarketError, addMarketPostError, addMarketPostRequest, addMarketPostSuccess, addMarketRequest, addMarketSuccess, maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
   maketpostLoadError, maketpostLoadRequest, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess } from './marketSlice';
 
 interface marketPostActionInterface {
@@ -52,16 +52,15 @@ function* addMarketPost(action: PayloadAction<addBookPostPayloadInterface>) {
     yield put(addMarketPostError({ error }));
   }
 }
-/* function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
+function* addMarket(action: PayloadAction<addMarketActionInterface>) {
   try {
     console.log(action.payload, 'payload');
-    const result = yield call(addMarketPostAPI, action.payload.market);
-    console.log(result);
-    // yield put(addMarketPostSuccess(result));
+    const result = yield call(addMarketAPI, action.payload.market);
+    yield put(addMarketSuccess(result));
   } catch (error) {
-    yield put(addMarketPostError({ error }));
+    yield put(addMarketError({ error }));
   }
-} */
+}
 function* watchloadMarketList() {
   yield takeLatest(marketLoadRequest, loadMarketList);
 }
@@ -74,15 +73,15 @@ function* watchloadMarketPost() {
 function* watchAddMarketPost() {
   yield takeLatest(addMarketPostRequest, addMarketPost);
 }
-/* function* watchMarket(): Generator {
-  yield takeLatest(addMarketPostRequest, addMarketPost);
-} */
+function* watchMarket(): Generator {
+  yield takeLatest(addMarketRequest, addMarket);
+}
 export default function* marketSaga():Generator {
   yield all([
     fork(watchloadMarketList),
     fork(watchloadMarketDetail),
     fork(watchloadMarketPost),
     fork(watchAddMarketPost),
-    // fork(watchMarket),
+    fork(watchMarket),
   ]);
 }

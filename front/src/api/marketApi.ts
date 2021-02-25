@@ -23,7 +23,7 @@ export function deleteMarket(marketId: number): Promise<AxiosResponse> {
   return axios.delete(`${URL}/api/mypage/market/${marketId}`);
 }
 // 마켓 등록 요청
-export function addMarketPostAPI(market: FormData): Promise<AxiosResponse> {
+export function addMarketAPI(market: FormData): Promise<AxiosResponse> {
   return axios({
     method: 'post',
     url: ' /api/mypage/market',
