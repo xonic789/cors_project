@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +38,7 @@ public class MarketMenuServiceImpl implements MarketMenuService{
     @Override
     public MarketDTO findArticlesByMarketId(Long marketId) {
         MarketDAO findMarket = marketQueryRepository.findById(marketId);
+
         if(findMarket==null){
             return null;
         }
