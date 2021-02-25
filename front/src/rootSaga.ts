@@ -14,5 +14,5 @@ export default function* rootSaga(): Generator {
     fork(userSaga),
     fork(marketSaga),
     fork(myPageSaga),
-   ]);
+  ]);
 }

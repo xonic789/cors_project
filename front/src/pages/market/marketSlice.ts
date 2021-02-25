@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { marketListInterface, marketDetailInterface } from '../../interfaces/MarketInterface';
+import { marketDetailInterface } from '../../interfaces/MarketInterface';
 
 const marketSlice = createSlice({
   name: 'market',
