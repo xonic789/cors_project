@@ -4,7 +4,7 @@ spring:
     include:
       - aws
       - credentials
-
+      - email
 #  datasource:
 #    url: jdbc:h2:tcp://localhost/~/test
 #    username: sa
