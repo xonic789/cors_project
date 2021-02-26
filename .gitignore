@@ -1,5 +1,6 @@
 /www
 back/cors/src/main/resources/application-credentials.yml
+back/cors/src/main/resources/application-email.yml
 cors-0.0.1-SNAPSHOT.jar
 back/cors/cors-0.0.1-SNAPSHOT.jar
 back/cors/awscli-bundle/

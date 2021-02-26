@@ -1,5 +1,7 @@
 package ml.market.cors.domain.util.mail;
 
+import org.springframework.beans.factory.annotation.Value;
+
 import javax.mail.Message;
 import javax.mail.Session;
 import javax.mail.Transport;
@@ -9,13 +11,17 @@ import java.util.Properties;
 
 public class MailTransfer {
     private final int port= 465;
-    private String host = "smtp.naver.com";
+    @Value("${email.host}")
+    private String host;
 
-    private String user = "ehaakdl";
+    @Value("${email.user}")
+    private String user;
 
-    private String tail = "@naver.com";
+    @Value("${email.tail}")
+    private String tail;
 
-    private String password = "!ahtpgns5652";
+    @Value("${email.passwd}")
+    private String password;
 
     private Properties props = System.getProperties();
 
@@ -52,7 +58,7 @@ public class MailTransfer {
     }
 
     private void body(Message msg, String receiver, String title, String text) throws Exception{
-        msg.setFrom(new InternetAddress(user + tail));
+        msg.setFrom(new InternetAddress(user + '@' + tail));
         msg.setRecipient(Message.RecipientType.TO, new InternetAddress(receiver));
         msg.setSubject(title);
     }
