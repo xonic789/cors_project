@@ -81,6 +81,7 @@ export default function* marketSaga():Generator {
     fork(watchloadMarketList),
     fork(watchloadMarketDetail),
     fork(watchloadMarketPost),
+    fork(watchAddMarketPost),
     fork(watchMarket),
   ]);
 }
