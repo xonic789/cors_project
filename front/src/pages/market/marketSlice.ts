@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { marketListInterface, marketDetailInterface } from '../../interfaces/MarketInterface';
+import { marketDetailInterface } from '../../interfaces/MarketInterface';
 
 const marketSlice = createSlice({
   name: 'market',
   initialState: {
     marketList: [],
-    marketDetail: {},
+    marketDetail: null,
     marketPost: [],
 
     isMaketDetailLoadLoading: false,
@@ -23,6 +23,10 @@ const marketSlice = createSlice({
     addMarketPostLoading: false,
     addMarketPostDone: false,
     addMarketPostError: null,
+
+    addMarketLoading: false,
+    addMarketDone: false,
+    addMarketError: null,
 
     deleteMarketPostLoading: false,
     deleteMarketPostDone: false,
@@ -81,12 +85,26 @@ const marketSlice = createSlice({
     addMarketPostSuccess(state, action) {
       state.addMarketPostLoading = false;
       state.addMarketPostDone = true;
-      state.marketList.concat(action.payload.data);
+      // state.marketList.concat(action.payload.data);
     },
     addMarketPostError(state, action) {
       state.addMarketPostLoading = false;
       state.addMarketPostDone = false;
       state.addMarketPostError = action.payload.error;
+    },
+
+    addMarketRequest(state, action) {
+      state.addMarketLoading = true;
+      state.addMarketDone = false;
+    },
+    addMarketSuccess(state, action) {
+      state.addMarketLoading = false;
+      state.addMarketDone = true;
+    },
+    addMarketError(state, action) {
+      state.addMarketLoading = false;
+      state.addMarketDone = false;
+      state.addMarketError = action.payload.error;
     },
 
     deleteMarketPostRequest(state, action) {
@@ -119,6 +137,9 @@ export const {
   addMarketPostRequest,
   addMarketPostSuccess,
   addMarketPostError,
+  addMarketRequest,
+  addMarketSuccess,
+  addMarketError,
 } = marketSlice.actions;
 
 export default marketSlice.reducer;

@@ -1,9 +1,10 @@
 import { PayloadAction } from '@reduxjs/toolkit';
 import { all, takeLatest, put, fork, call } from 'redux-saga/effects';
-import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI, addMarketPostAPI } from '../../api/marketApi';
-import { maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess, maketpostLoadRequest,
-  maketpostLoadError, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess,
-  addMarketPostSuccess, addMarketPostError, addMarketPostRequest } from './marketSlice';
+import { loadMarketAPI, loadMarketDetailAPI, loadMarketPostDetailAPI, addMarketAPI } from '../../api/marketApi';
+import { addMarketBookPostAPI } from '../../api/postBookApi';
+import { AddBookPostInterface } from '../../interfaces/PostList.interface';
+import { addMarketError, addMarketPostError, addMarketPostRequest, addMarketPostSuccess, addMarketRequest, addMarketSuccess, maketDetailLoadError, maketDetailLoadRequest, maketDetailLoadSuccess,
+  maketpostLoadError, maketpostLoadRequest, maketpostLoadSuccess, marketLoadError, marketLoadRequest, marketLoadSuccess } from './marketSlice';
 
 interface marketPostActionInterface {
   marketId: number,
@@ -13,7 +14,9 @@ interface marketPostActionInterface {
 interface addMarketActionInterface {
   market: FormData,
 }
-
+interface addBookPostPayloadInterface {
+  data: AddBookPostInterface
+}
 function* loadMarketList() {
   try {
     const result = yield call(loadMarketAPI);
@@ -41,14 +44,21 @@ function* loadMarketPost(action: PayloadAction<marketPostActionInterface>) {
     yield put(maketpostLoadError({ error }));
   }
 }
-function* addMarketPost(action: PayloadAction<addMarketActionInterface>) {
+function* addMarketPost(action: PayloadAction<addBookPostPayloadInterface>) {
   try {
-    console.log(action.payload, 'payload');
-    const result = yield call(addMarketPostAPI, action.payload.market);
-    console.log(result);
-    // yield put(addMarketPostSuccess(result));
+    const result = yield call(addMarketBookPostAPI, action.payload.data);
+    yield put(addMarketPostSuccess(result.data));
   } catch (error) {
     yield put(addMarketPostError({ error }));
+  }
+}
+function* addMarket(action: PayloadAction<addMarketActionInterface>) {
+  try {
+    console.log(action.payload, 'payload');
+    const result = yield call(addMarketAPI, action.payload.market);
+    yield put(addMarketSuccess(result));
+  } catch (error) {
+    yield put(addMarketError({ error }));
   }
 }
 function* watchloadMarketList() {
@@ -60,8 +70,11 @@ function* watchloadMarketDetail() {
 function* watchloadMarketPost() {
   yield takeLatest(maketpostLoadRequest, loadMarketPost);
 }
-function* watchMarket(): Generator {
+function* watchAddMarketPost() {
   yield takeLatest(addMarketPostRequest, addMarketPost);
+}
+function* watchMarket(): Generator {
+  yield takeLatest(addMarketRequest, addMarket);
 }
 export default function* marketSaga():Generator {
   yield all([

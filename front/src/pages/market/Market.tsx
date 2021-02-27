@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
 import AppLayout from '../../components/AppLayout';
 import { marketInterface } from '../../interfaces/MarketInterface';
-import { marketLoadRequest } from './marketSlice';
+import { maketDetailLoadRequest, marketLoadRequest } from './marketSlice';
 
 const MarketWrapper = styled.div`
   width: 100%;
@@ -65,11 +65,15 @@ const MarketIntroduce = styled.div`
 
 function Market():JSX.Element {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { marketList } = useSelector((state: any) => state.marketSlice);
+  const handleClickMarket = (id: number) => {
+    history.push(`market/${id}`);
+    dispatch(maketDetailLoadRequest(id));
+  };
   useEffect(() => {
     dispatch(marketLoadRequest());
   }, [dispatch]);
-  console.log(marketList);
   return (
     <AppLayout activeId={2}>
       <MarketWrapper>
@@ -85,7 +89,7 @@ function Market():JSX.Element {
           {marketList.length !== 0
           && marketList.map((v:marketInterface) => (
             <Link to={`/market/${v.marketId}`}>
-              <MarketItem>
+              <MarketItem onClick={() => handleClickMarket(v.marketId)}>
                 <MarketThumbnail src={v.image} alt={`${v.name}_thumbnail`} />
                 <MarketIntroduce>
                   <h1>{v.name}</h1>

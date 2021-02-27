@@ -176,7 +176,8 @@ public class ArticleController {
                         new Member(
                                 findArticle.getMember().getMember_id(),
                                 findArticle.getMember().getEmail(),
-                                findArticle.getMember().getNickname()
+                                findArticle.getMember().getNickname(),
+                                findArticle.getMember().getProfile_img()
                         ),
                         findArticle.getTitle(),
                         findArticle.getContent(),
@@ -442,6 +443,7 @@ public class ArticleController {
         private Long memberId;
         private String email;
         private String nickname;
+        private String profile;
     }
 
 

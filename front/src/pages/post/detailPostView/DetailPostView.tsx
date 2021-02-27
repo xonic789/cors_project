@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, RouteComponentProps, useParams } from 'react-router-dom';
+import { Link, RouteComponentProps, useHistory, useParams } from 'react-router-dom';
 import styled from 'styled-components';
 import Spinner from 'react-spinner-material';
 import { loadDetailBookPostRequest } from './detailViewSlice';
@@ -25,12 +25,12 @@ const Header = styled.div`
   z-index: 5000;
 `;
 
-function DetailPostView({ history }: RouteComponentProps):JSX.Element {
+function DetailPostView():JSX.Element {
   const dispatch = useDispatch();
+
   const { detailBookPost } = useSelector((state: any) => state.detailViewSlice);
   const { id } = useParams<ParamTypes>();
 
-  console.log('DetailPostView', id);
   const postIdNumber = Number(id);
 
   useEffect(() => {

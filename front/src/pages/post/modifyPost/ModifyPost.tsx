@@ -117,12 +117,12 @@ function ModifyPost():JSX.Element {
     formData.append('cid', String(detailBookPost.category.cid)); // 알라딘에서 받은 정보
     formData.append('title', detailBookPost.title); // 알라딘에서 받은 정보
     formData.append('image', detailBookPost.thumbnail); // 알라딘에서 받은 정보
-    formData.append('rprice', detailBookPost.rpice); // 알라딘에서 받은 정보
+    formData.append('rprice', detailBookPost.rprice); // 알라딘에서 받은 정보
     formData.append('content', content); // 사용자가 입력한 정보
     formData.append('tprice', price); // 사용자가 입력한 정보
     formData.append('division', detailBookPost.division); // 사용자가 입력한 정보
     dispatch(modifyBookPostRequest({ id: detailBookPost.articleId, data: formData }));
-  }, [content, detailBookPost.articleId, detailBookPost.category, detailBookPost.division, detailBookPost.rpice, detailBookPost.thumbnail, detailBookPost.title, dispatch, images, price]);
+  }, [content, detailBookPost.articleId, detailBookPost.category, detailBookPost.division, detailBookPost.rprice, detailBookPost.thumbnail, detailBookPost.title, dispatch, images, price]);
   useEffect(() => {
     setImages(detailBookPost.image);
     setPrice(detailBookPost.tprice);
@@ -145,6 +145,17 @@ function ModifyPost():JSX.Element {
           <BookPrice>{detailBookPost.rprice} 원</BookPrice>
         </BookDetail>
       </BookWrapper>
+      <Editor
+        onSubmit={handleSubmitPost}
+        onChangePrice={handleChangePrice}
+        onChangeContent={handleChangeContent}
+        onChangeImage={handleChangeImages}
+        onDeleteImage={handleDeleteImage}
+        isLoading={false} // 수정필요함
+        content={content}
+        price={price}
+        images={images}
+      />
     </AddPostWrapper>
   );
 }

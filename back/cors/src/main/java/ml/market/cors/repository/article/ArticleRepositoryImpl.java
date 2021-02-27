@@ -143,6 +143,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                 .selectFrom(articleDAO)
                 .join(articleDAO.countDAO).fetchJoin()
                 .join(articleDAO.imageInfo).fetchJoin()
+                .join(articleDAO.member).fetchJoin()
                 .where(articleDAO.article_id.eq(article_id))
                 .fetchOne();
     }

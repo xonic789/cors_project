@@ -23,6 +23,7 @@ import ModifyPost from './pages/post/modifyPost/ModifyPost';
 import AddQuestion from './pages/myPage/question/AddQuestion';
 import QuestionDetail from './pages/myPage/question/QuestionDetail';
 import AddMarket from './pages/myPage/myMarket/AddMyMarket';
+import ChattingSub from './pages/chatting/ChattingSub';
 
 function App():JSX.Element {
   return (
@@ -34,10 +35,10 @@ function App():JSX.Element {
             <Route path="/" exact component={Login} />
             <Route path="/home" exact component={PostList} />
             <Route path="/post/:id" exact component={DetailPostView} />
-            <Route path="/addPost/:division" exact component={AddPostPage} />
+            <Route path="/addPost/:division/:type" exact component={AddPostPage} />
             <Route path="/modifyPost/:id" exact component={ModifyPost} />
-            <Route path="/chatting" exact component={ChattingList} />
-            <Route path="/chatting/:id" exact component={Chatting} />
+            <Route path="/chatting" exact component={ChattingSub} />
+            <Route path="/chatting/:id" exact component={ChattingSub} />
             <Route path="/market" exact component={Market} />
             <Route path="/market/:id" exact component={MarketDetail} />
             <Route path="/join" exact component={Join} />
