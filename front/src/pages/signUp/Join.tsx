@@ -580,18 +580,18 @@ function Join():JSX.Element {
     } else {
       let nicknameDuplication = false;
       try {
-        nicknameDuplication = await nicknameDuplicationAsync(nickname.state);
+        nicknameDuplication = await nicknameDuplicationAsync(nickname.value);
         console.log(nicknameDuplication, 'nicknameDuplication');
       } catch {
         inputChange('nickname', nickname.value, 'fail', '이미 사용중인 닉네임입니다.', 'red');
       }
-      if (!nicknameDuplication) {
+      if (nicknameDuplication) {
         await joinRequestAsync(email.value, nickname.value, passwd.value, `${address.baseAddress} ${address.detailAddress}`);
         ToastsStore.success('회원가입이 완료되었습니다.');
         history.push('/');
       } else {
         ToastsStore.error('이미 사용중인 닉네임입니다.');
-        inputChange('nickname', nickname.state, 'fail', '이미 사용중인 닉네임입니다.', 'red');
+        inputChange('nickname', nickname.value, 'fail', '이미 사용중인 닉네임입니다.', 'red');
       }
     }
   };
