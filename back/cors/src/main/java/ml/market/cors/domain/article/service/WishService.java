@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.CountDAO;
 import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.article.entity.dto.MyWishListDTO;
@@ -13,6 +14,7 @@ import ml.market.cors.domain.bookcategory.entity.dto.BookCategoryDTO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.QMemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
+import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Wish_list_Repository;
 import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -33,6 +36,8 @@ public class WishService {
     private final ArticleRepository articleRepository;
 
     private final MemberRepository memberRepository;
+
+    private final CountRepository countRepository;
 
     public MyWishListDTO getMyWishList(long memberId, int pageIndex){
         if(memberId == 0){
@@ -74,11 +79,18 @@ public class WishService {
         if(memberId == 0 || articleId == 0){
             return false;
         }
+        MemberDAO memberDAO = new MemberDAO(memberId);
+        ArticleDAO articleDAO = new ArticleDAO(articleId);
+        boolean bResult = wish_list_repository.existsByMemberAndArticle(memberDAO, articleDAO);
+        if(bResult){
+            return false;
+        }
         try{
-            MemberDAO memberDAO = memberRepository.findById(memberId);
-            ArticleDAO articleDAO = articleRepository.findById(articleId);
+            memberDAO = memberRepository.findById(memberId);
+            articleDAO = articleRepository.findById(articleId);
             Wish_listDAO wishListDAO = new Wish_listDAO(memberDAO, articleDAO);
             wish_list_repository.save(wishListDAO);
+            //int count = countRepository.countByArticle(articleDAO);
         }catch (Exception e){
             return false;
         }
