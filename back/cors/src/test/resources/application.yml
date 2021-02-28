@@ -5,10 +5,7 @@ spring:
       - aws
       - credentials
       - email
-<<<<<<< HEAD
-=======
 
->>>>>>> master
 #  datasource:
 #    url: jdbc:h2:tcp://localhost/~/test
 #    username: sa
