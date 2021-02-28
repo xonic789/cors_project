@@ -75,7 +75,8 @@ public class WishService {
         return count;
     }
 
-    public boolean save(long memberId, long articleId) {
+    @Transactional
+    public boolean save(long memberId, long articleId) throws RuntimeException{
         if(memberId == 0 || articleId == 0){
             return false;
         }
@@ -88,26 +89,43 @@ public class WishService {
         try{
             memberDAO = memberRepository.findById(memberId);
             articleDAO = articleRepository.findById(articleId);
+            CountDAO countDAO = articleRepository.getCount(articleId);
+            if(countDAO == null){
+                throw new Exception();
+            }
             Wish_listDAO wishListDAO = new Wish_listDAO(memberDAO, articleDAO);
             wish_list_repository.save(wishListDAO);
-            //int count = countRepository.countByArticle(articleDAO);
+            countDAO.updateWishCount(countDAO.getWishCount() + 1);
         }catch (Exception e){
-            return false;
+            throw new RuntimeException();
         }
         return true;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public boolean delete(long articleId, long memberId) {
+    public boolean delete(long articleId, long memberId) throws RuntimeException{
         if(articleId == 0 || memberId == 0){
             return false;
         }
         try{
             MemberDAO memberDAO = memberRepository.findById(memberId);
             ArticleDAO articleDAO = articleRepository.findById(articleId);
+            boolean bResult = wish_list_repository.existsByMemberAndArticle(memberDAO, articleDAO);
+            if(!bResult){
+                return false;
+            }
             wish_list_repository.deleteByMemberAndArticle(memberDAO, articleDAO);
+            CountDAO countDAO = articleRepository.getCount(articleId);
+            if(countDAO == null){
+                throw new Exception();
+            }
+            int wishCount = countDAO.getWishCount();
+            if(wishCount > 0) {
+                wishCount--;
+            }
+            countDAO.updateWishCount(wishCount);
         }catch (Exception e){
-            return false;
+            throw new RuntimeException();
         }
         return true;
     }

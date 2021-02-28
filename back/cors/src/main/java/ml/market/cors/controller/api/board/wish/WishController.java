@@ -37,10 +37,14 @@ public class WishController {
     public ResponseEntity<Message<Object>> saveByArticleWish(@RequestParam("articleId") long articleId, @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken) {
         long memberId = (long) jwtCertificationToken.getCredentials();
         ResponseEntity<Message<Object>> messageResponseEntity;
-        boolean bResult = wishService.save(memberId, articleId);
-        if (bResult) {
-            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("찜 저장 성공");
-        } else {
+        try {
+            boolean bResult = wishService.save(memberId, articleId);
+            if (bResult) {
+                messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("찜 저장 성공");
+            } else {
+                messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("찜 저장 실패");
+            }
+        }catch (Exception e){
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("찜 저장 실패");
         }
         return messageResponseEntity;
@@ -50,10 +54,14 @@ public class WishController {
     public ResponseEntity<Message<Object>> deleteByArticleWish(@RequestParam("articleId") long articleId, @AuthenticationPrincipal JwtCertificationToken jwtCertificationToken) {
         ResponseEntity<Message<Object>> messageResponseEntity = null;
         long memberId = (long) jwtCertificationToken.getCredentials();
-        boolean bResult = wishService.delete(articleId, memberId);
-        if (bResult) {
-            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("찜 삭제 성공");
-        } else {
+        try {
+            boolean bResult = wishService.delete(articleId, memberId);
+            if (bResult) {
+                messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("찜 삭제 성공");
+            } else {
+                messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("찜 삭제 실패");
+            }
+        }catch (Exception e){
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("찜 삭제 실패");
         }
         return messageResponseEntity;
