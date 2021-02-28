@@ -22,4 +22,6 @@ public interface Wish_list_Repository extends JpaRepository<Wish_listDAO,Long> {
     int countByArticle(ArticleDAO articleDAO);
 
     void deleteByMemberAndArticle(MemberDAO memberDAO, ArticleDAO articleDAO);
+
+    boolean existsByMemberAndArticle(MemberDAO member, ArticleDAO article);
 }

@@ -101,13 +101,13 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         Cookie refreshCookie = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), request.getCookies());
         if(accessCookie != null || refreshCookie != null){
             response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "로그아웃하고 와라");
-            response.sendRedirect("/home");
+            response.sendRedirect("/");
             return;
         }
         String email = getEmail(authentication);
         if (email == null) {
             response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "인증은 됐지만 이메일이 넘어오지 않음");
-            response.sendRedirect("/home");
+            response.sendRedirect("/");
             return;
         }
 
@@ -128,7 +128,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
             memberDAO = memberRepository.findByEmail(email);
             if(memberDAO.getESocialType() == eSocialType.NORMAL){
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST, "이미 가입된 아이디");
-                response.sendRedirect("/home");
+                response.sendRedirect("/");
                 return;
             }
         }
