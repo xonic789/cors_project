@@ -18,6 +18,7 @@
 
 
 ## front-end
+- Programming Language : javascript (typescript) 
 - react
 
 
@@ -33,8 +34,8 @@
   - `QueryDsl`
 - `Spring security`
 - Stomp (프론트 미구현)
-- build tool
+- build tool : `gradle`
 
-![RDB](./img/RDB.png){: width='300px' height='300px'}
+![RDB](./img/RDB.png)
 
 
