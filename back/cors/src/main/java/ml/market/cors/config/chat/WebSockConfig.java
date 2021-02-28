@@ -27,7 +27,7 @@ public class WebSockConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/api/ws").withSockJS();
+        registry.addEndpoint("/api/ws").withSockJS();//403 cors?
     }
 
     @Override
