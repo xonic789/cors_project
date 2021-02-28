@@ -220,7 +220,7 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
         return five_depth != null ? book_CategoryDAO.fiveDepth.eq(five_depth) : null;
     }
     private BooleanExpression titleLike(String title){
-        return title != null ? articleDAO.title.startsWith(title) : null;
+        return title != null ? articleDAO.title.contains(title) : null;
     }
     private BooleanExpression articleIdLt(Long articleId){
         return articleId != null ? articleDAO.article_id.lt(articleId) : null;

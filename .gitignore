@@ -7,3 +7,4 @@ back/cors/awscli-bundle/
 back/cors/awscli-bundle.zip
 back/cors/src/test/resources/application-credentials.yml
 back/cors/src/test/resources/application-email.yml
+back/cors/src/main/resources/application-oauth.yml
