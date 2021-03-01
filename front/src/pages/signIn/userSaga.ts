@@ -85,7 +85,7 @@ function* postLogoutRequestSaga() {
   }
 }
 
-function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: FormData}}) {
+function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: FormData, history: any, ToastsStore: any}}) {
   try {
     console.log(action.payload.modifyProfile);
     const result = yield call(modifyProfileAsync, action.payload.modifyProfile);
@@ -95,7 +95,8 @@ function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: FormDat
         type: postModifyProfileRequestSuccess,
         payload: { nickname: result.nickname, profileImg: result.profileImg },
       });
-      yield call(push, '/mypage');
+      action.payload.history.push('/mypage');
+      action.payload.ToastsStore.success('프로필 변경이 완료되었습니다.');
     } else {
       yield put({
         type: postModifyProfileRequestError,
