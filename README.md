@@ -1,7 +1,9 @@
-# 미완
-
-
 # cors project
+
+DNS : freenom
+
+url : corsmarket.ml
+
 
 ## 책 중고 마켓 프로젝트
 
