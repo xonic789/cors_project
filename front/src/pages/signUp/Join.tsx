@@ -587,8 +587,8 @@ function Join():JSX.Element {
       }
       if (nicknameDuplication) {
         await joinRequestAsync(email.value, nickname.value, passwd.value, `${address.baseAddress} ${address.detailAddress}`);
-        ToastsStore.success('회원가입이 완료되었습니다.');
         history.push('/');
+        ToastsStore.success('회원가입이 완료되었습니다.');
       } else {
         ToastsStore.error('이미 사용중인 닉네임입니다.');
         inputChange('nickname', nickname.value, 'fail', '이미 사용중인 닉네임입니다.', 'red');
