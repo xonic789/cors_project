@@ -24,6 +24,8 @@ import AddQuestion from './pages/myPage/question/AddQuestion';
 import QuestionDetail from './pages/myPage/question/QuestionDetail';
 import AddMarket from './pages/myPage/myMarket/AddMyMarket';
 import ChattingSub from './pages/chatting/ChattingSub';
+import AdminSignIn from './pages/admin/signIn/AdminSignIn';
+import AdminHome from './pages/admin/home/AdminHome';
 
 function App():JSX.Element {
   return (
@@ -53,6 +55,8 @@ function App():JSX.Element {
             <Route path="/question/save" exact component={AddQuestion} />
             <Route path="/question/detail" exact component={QuestionDetail} />
             <Route path="/addMarket" exact component={AddMarket} />
+            <Route path="/admin" exact component={AdminSignIn} />
+            <Route path="/admin/home" exact component={AdminHome} />
             <Route component={NotFound} />
           </Switch>
         </BrowserRouter>

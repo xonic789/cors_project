@@ -294,7 +294,7 @@ function MyMarket():JSX.Element {
     });
   };
 
-  const onSubmitAddMarket = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onSubmitAddMarket = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const market = new FormData();
 
@@ -314,7 +314,7 @@ function MyMarket():JSX.Element {
   };
 
   return (
-    <Layout>
+    <Layout onSubmit={onSubmitAddMarket}>
       <Header>
         <BackLink to="/mypage">
           <BackLogo src="/images/icons/back.png" />
@@ -356,7 +356,7 @@ function MyMarket():JSX.Element {
           </AddressFormBox>
         </InputsBox>
         <SubmitButtonBox>
-          <SubmitButton type="submit" onClick={onSubmitAddMarket}>마켓 등록하기</SubmitButton>
+          <SubmitButton type="submit">마켓 등록하기</SubmitButton>
         </SubmitButtonBox>
         <SearchModal style={{ display: showsModal ? 'flex' : 'none' }}>
           <CloseButton src="/images/icons/x.png" onClick={() => setShowsModal(false)} />
