@@ -22,7 +22,6 @@ const Header = styled.header`
   text-align: center;
   width: 100%;
   padding: 1.5em 0;
-  margin-bottom: 1.5em;
   & h1 {
     font-size: 6vw;
     font-weight: 400;
