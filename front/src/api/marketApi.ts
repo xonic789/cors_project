@@ -34,9 +34,18 @@ export function addMarketAPI(market: FormData): Promise<AxiosResponse> {
   });
 }
 
+// 마켓 승인 요청 목록
 export function getMarketRequest(page: number): Promise<AxiosResponse> {
   return axios({
     method: 'get',
     url: `/api/admin/markets/${page}`,
+  });
+}
+
+// 마켓 승인 여부
+export function getMarketPass(): Promise<AxiosResponse> {
+  return axios({
+    method: 'get',
+    url: '/api/mypage/request/mymarket',
   });
 }

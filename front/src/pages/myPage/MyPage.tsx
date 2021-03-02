@@ -7,6 +7,7 @@ import cookie from 'react-cookies';
 import AppLayout from '../../components/AppLayout';
 import { postLogoutRequest, setMyMarketList } from '../signIn/userSlice';
 import { maketDetailLoadRequest, resetMyMarketList } from '../market/marketSlice';
+import { getMarketPass } from '../../api/marketApi';
 
 const Wrapper = styled.div`
   position: relative;
@@ -269,8 +270,19 @@ function MyPage():JSX.Element {
     }
   };
 
-  const onClickPushMarket = () => {
-    dispatch(maketDetailLoadRequest(myMarketList[0]));
+  const onClickPushMarket = async (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+    e.preventDefault();
+    try {
+      const isPass = await getMarketPass();
+      if (isPass) {
+        dispatch(maketDetailLoadRequest(myMarketList[0]));
+        history.push(`/market/${myMarketList[0]}`);
+      } else {
+        ToastsStore.error('마켓 승인 대기중입니다.');
+      }
+    } catch {
+      ToastsStore.error('서버 통신 에러');
+    }
   };
 
   useEffect(() => {
