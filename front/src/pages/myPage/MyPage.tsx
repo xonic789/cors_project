@@ -1,12 +1,12 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Link, useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 import cookie from 'react-cookies';
 import AppLayout from '../../components/AppLayout';
-import { postLogoutRequest } from '../signIn/userSlice';
-import { maketDetailLoadRequest } from '../market/marketSlice';
+import { postLogoutRequest, setMyMarketList } from '../signIn/userSlice';
+import { maketDetailLoadRequest, resetMyMarketList } from '../market/marketSlice';
 
 const Wrapper = styled.div`
   position: relative;
@@ -235,6 +235,7 @@ function MyPage():JSX.Element {
   const history = useHistory();
   const dispatch = useDispatch();
   const { user, isLoginSucceed } = useSelector((state: any) => state.userSlice);
+  const { myMarketList: myMarket } = useSelector((state: any) => state.marketSlice);
   const { nickname, profileImg, myMarketList } = user;
   const marketAddBox = useRef<HTMLDivElement>(null);
 
@@ -271,6 +272,12 @@ function MyPage():JSX.Element {
   const onClickPushMarket = () => {
     dispatch(maketDetailLoadRequest(myMarketList[0]));
   };
+
+  useEffect(() => {
+    if (myMarket.length !== 0) {
+      dispatch(setMyMarketList(myMarket));
+    }
+  }, [dispatch, myMarket]);
 
   return (
     <AppLayout activeId={3}>

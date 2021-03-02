@@ -447,6 +447,8 @@ function ModifyProfile():JSX.Element {
         if (result) {
           dispatch(postModifyProfileRequest({
             modifyProfile: formData,
+            history,
+            ToastsStore,
           }));
         } else {
           setModifInputs({
