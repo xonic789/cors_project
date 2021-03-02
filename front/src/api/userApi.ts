@@ -35,7 +35,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
     } else if (error.response.status === 500) {
       throw new Error(SERVER_ERROR);
     } else {
-      alert('서버에러 관리자 호출');
+      throw new Error(SERVER_ERROR);
     }
     return error;
   });
