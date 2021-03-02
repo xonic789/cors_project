@@ -40,6 +40,16 @@ const Header = styled.header`
   }
 `;
 
+const BackLink = styled(Link)`
+  position: absolute;
+  left: 0.5em;
+`;
+
+const BackLogo = styled.img`
+  width: 1.8em;
+  height: 1.8em;
+`;
+
 const Content = styled.div`
   width: 100%;
   height: 100%;
@@ -141,6 +151,9 @@ function AdminNotice():JSX.Element {
     <Layout>
       <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
       <Header>
+        <BackLink to="/admin/home">
+          <BackLogo src="/images/icons/back.png" />
+        </BackLink>
         <h1>공지사항 관리</h1>
       </Header>
       <Content>
