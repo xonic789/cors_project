@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useParams } from 'react-router-dom';
+import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 import styled from 'styled-components';
+import { modifyNoticeRequestAsync, reomveNoticeRequestAsync } from '../../../api/noticeApi';
+import { getNoticeDetailRequest } from '../adminSlice';
 
 const Layout = styled.div`
   position: relative;
@@ -204,10 +207,12 @@ const ModalButtonBox = styled.div``;
 
 function AdminNoticeDetail():JSX.Element {
   const history = useHistory();
+  const dispatch = useDispatch();
   const { id: idParam } = useParams<{ id: string }>();
   const [isModify, setIsModify] = useState(false);
   const [isModalVisable, setIsModalVisable] = useState(false);
-  const { title, content, noticeId } = useSelector((state) => state.adminSlice.noticeDetail);
+  const { noticeDetail } = useSelector((state) => state.adminSlice);
+  const { title, content, noticeId } = noticeDetail;
   const [inputs, setInputs] = useState({
     title,
     content,
@@ -232,16 +237,47 @@ function AdminNoticeDetail():JSX.Element {
     setIsModify(!isModify);
   };
 
-  const onClickModify = () => {
+  const onClickModify = async () => {
     console.log(`${idParam}번 수정하기`);
+    const formData = new FormData();
+    formData.append('noticeId', noticeId);
+    formData.append('title', inputs.title);
+    formData.append('content', inputs.content);
+    try {
+      const result = await modifyNoticeRequestAsync(formData);
+      if (result.status === 200) {
+        dispatch(getNoticeDetailRequest({
+          ...noticeDetail,
+          title: inputs.title,
+          content: inputs.content,
+        }));
+        ToastsStore.success('공지사항 수정이 완료되었습니다.');
+        setIsModify(!isModify);
+      }
+    } catch (error) {
+      setIsModalVisable(false);
+      ToastsStore.error('서버에러 또는 권한 불충분');
+      setIsModify(!isModify);
+    }
   };
 
-  const onClickDelete = () => {
+  const onClickDelete = async () => {
     console.log(`${idParam}번 삭제하기`);
+    try {
+      const result = await reomveNoticeRequestAsync(noticeId);
+      if (result.status === 200) {
+        history.push('/admin/notice');
+        ToastsStore.success('공지사항 삭제가 완료되었습니다.');
+      }
+    } catch (error) {
+      setIsModalVisable(false);
+      ToastsStore.error('서버에러 또는 권한 불충분');
+    }
   };
 
   return (
     <Layout>
+      <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
       <Header>
         <BackLink to="/admin/notice">
           <BackLogo src="/images/icons/back.png" />

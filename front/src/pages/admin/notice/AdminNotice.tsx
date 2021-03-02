@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
+import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 import styled from 'styled-components';
 import { adminNoticeInterface } from '../../../interfaces/AdminInterface';
 import numberArrayUtill from '../../../utils/numberArrayUtill';
@@ -138,6 +139,7 @@ function AdminNotice():JSX.Element {
 
   return (
     <Layout>
+      <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
       <Header>
         <h1>공지사항 관리</h1>
       </Header>
