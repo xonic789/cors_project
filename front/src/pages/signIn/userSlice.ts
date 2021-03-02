@@ -102,6 +102,9 @@ const userSlice = createSlice({
       state.isRemoveWishListLoading = false;
       state.isRemoveWishListError = action.payload;
     },
+    setMyMarketList: (state, action) => {
+      state.user.myMarketList = action.payload;
+    },
   },
 });
 
@@ -122,6 +125,7 @@ export const {
   postRemoveWishListRequest,
   postRemoveWishListRequestSuccess,
   postRemoveWishListRequestError,
+  setMyMarketList,
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -33,3 +33,10 @@ export function addMarketAPI(market: FormData): Promise<AxiosResponse> {
     data: market,
   });
 }
+
+export function getMarketRequest(page: number): Promise<AxiosResponse> {
+  return axios({
+    method: 'get',
+    url: `/api/admin/markets/${page}`,
+  });
+}
