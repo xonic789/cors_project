@@ -4,6 +4,7 @@ import detailViewSlice from './pages/post/detailPostView/detailViewSlice';
 import myPageSlice from './pages/myPage/myPageSlice';
 import userSlice from './pages/signIn/userSlice';
 import marketSlice from './pages/market/marketSlice';
+import adminSlice from './pages/admin/adminSlice';
 
 export default combineReducers({
   postSlice,
@@ -11,4 +12,5 @@ export default combineReducers({
   detailViewSlice,
   userSlice,
   myPageSlice,
+  adminSlice,
 });

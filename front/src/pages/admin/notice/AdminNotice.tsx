@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
 import styled from 'styled-components';
+import { adminNoticeInterface } from '../../../interfaces/AdminInterface';
+import numberArrayUtill from '../../../utils/numberArrayUtill';
+import { getNoticeDetailRequest, getNoticeRequest } from '../adminSlice';
 
 const Layout = styled.div`
   display: flex;
@@ -89,12 +92,50 @@ const AddNoticeBox = styled.div`
   }
 `;
 
+const PaginationBox = styled.div`
+  display: flex;
+  padding: 1em 0 0 0;
+  & img {
+    cursor: pointer;
+    width: 1em;
+    height: 1em;
+  }
+`;
+
+const PrevPage = styled.img``;
+
+const PageNumbers = styled.div`
+  display: flex;
+`;
+
+const PageNumber = styled.div`
+`;
+
+const PageLink = styled(Link)`
+  padding: 0 0.5em;
+`;
+
+const NextPage = styled.img`
+  width: 1em;
+  height: 1em;
+  transform: rotate(180deg);
+`;
+
 function AdminNotice():JSX.Element {
   const history = useHistory();
+  const dispatch = useDispatch();
+  const { noticeTotalPage, noticeList } = useSelector((state) => state.adminSlice);
+  const [page, setPage] = useState(0);
 
-  const onClickDetail = (noticeId: string) => {
-    history.push(`/admin/notice/${noticeId}`);
+  const onClickDetail = (notice: adminNoticeInterface) => {
+    console.log(notice);
+    dispatch(getNoticeDetailRequest(notice));
   };
+
+  useEffect(() => {
+    dispatch(getNoticeRequest(page));
+  }, [page, dispatch]);
+
   return (
     <Layout>
       <Header>
@@ -102,32 +143,43 @@ function AdminNotice():JSX.Element {
       </Header>
       <Content>
         <ul>
-          <li>
-            <h2>공지사항 제목입니다.</h2>
-            <p>2020.03.01</p>
-          </li>
-          <li>
-            <h2>공지사항 제목입니다.</h2>
-            <p>2020.03.01</p>
-          </li>
-          <li>
-            <h2>공지사항 제목입니다.</h2>
-            <p>2020.03.01</p>
-          </li>
-          <li>
-            <h2>공지사항 제목입니다.</h2>
-            <p>2020.03.01</p>
-          </li>
-          <li>
-            <h2>공지사항 제목입니다.</h2>
-            <p>2020.03.01</p>
-          </li>
-          <li>
-            <h2>공지사항 제목입니다.</h2>
-            <p>2020.03.01</p>
-          </li>
+          {
+            noticeList.map((notice: adminNoticeInterface) => (
+              <li key={notice.noticeId}>
+                <Link onClick={() => onClickDetail(notice)} to={`/admin/notice/${notice.noticeId}`}>
+                  <h2>{notice.title}</h2>
+                  <p>{notice.writeDate}</p>
+                </Link>
+              </li>
+            ))
+          }
         </ul>
       </Content>
+      <PaginationBox>
+        <PrevPage src="/images/icons/back.png" />
+        <PageNumbers>
+          {
+            !noticeTotalPage
+              ? (
+                <PageNumber>
+                  <PageLink to="/admin/notice">1</PageLink>
+                </PageNumber>
+              )
+              : (
+                <>
+                  {
+                    numberArrayUtill(noticeTotalPage).map((i) => (
+                      <PageNumber>
+                        <PageLink onClick={() => setPage(i - 1)} to={`/admin/notice?page=${i - 1}`}>{i}</PageLink>
+                      </PageNumber>
+                    ))
+                  }
+                </>
+              )
+          }
+        </PageNumbers>
+        <NextPage src="/images/icons/back.png" />
+      </PaginationBox>
       <AddNoticeBox>
         <Link to="/admin/addNoitce">공지사항 등록</Link>
       </AddNoticeBox>

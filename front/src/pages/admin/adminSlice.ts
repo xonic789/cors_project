@@ -1,30 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { adminMarketRequestInterface, adminNoticeInterface, adminReportInterface } from '../../interfaces/AdminInterface';
 
-interface noticeInterface {
-  noticeId: string,
-  title: string,
-  content: string,
-  writeDate: string,
-}
-interface marketRequestInterface {
-  marketId: string,
-  marketName: string,
-  marketStatus: string,
-}
-interface reportInterface {
-  reportId: string,
-  title: string,
-  content: string,
-}
-
-const noticeList: noticeInterface[] = [];
-const marketRequestList: marketRequestInterface[] = [];
-const reportList: reportInterface[] = [];
+const noticeList: adminNoticeInterface[] = [];
+const marketRequestList: adminMarketRequestInterface[] = [];
+const reportList: adminReportInterface[] = [];
 
 const adminSlice = createSlice({
   name: 'admin',
   initialState: {
     noticeList,
+    noticeTotalPage: 0,
+    noticeDetail: {
+      noticeId: '',
+      title: '',
+      content: '',
+      writeDate: '',
+    },
     marketRequestList,
     reportList,
     isAdminLoginLoading: false,
@@ -33,6 +24,9 @@ const adminSlice = createSlice({
     isGetNoticeLoading: false,
     isGetNoticeSuccess: false,
     isGetNoticeError: null,
+    isGetNoticeDetailLoading: false,
+    isGetNoticeDetailSuccess: false,
+    isGetNoticeDetailError: null,
   },
   reducers: {
     adminLoginRequest: (state, action) => {
@@ -59,11 +53,19 @@ const adminSlice = createSlice({
       state.isGetNoticeLoading = false;
       state.isGetNoticeSuccess = true;
       state.isGetNoticeError = null;
+      state.noticeTotalPage = action.payload.totalPage;
+      state.noticeList = action.payload.data;
     },
     getNoticeRequestError: (state, action) => {
       state.isGetNoticeLoading = false;
       state.isGetNoticeSuccess = false;
       state.isGetNoticeError = action.payload;
+    },
+    getNoticeDetailRequest: (state, action) => {
+      state.isGetNoticeDetailLoading = true;
+      state.isGetNoticeDetailSuccess = false;
+      state.isGetNoticeDetailError = null;
+      state.noticeDetail = action.payload;
     },
   },
 });
@@ -72,6 +74,10 @@ export const {
   adminLoginRequest,
   adminLoginRequestSuccess,
   adminLoginRequestError,
+  getNoticeRequest,
+  getNoticeRequestSuccess,
+  getNoticeRequestError,
+  getNoticeDetailRequest,
 } = adminSlice.actions;
 
 export default adminSlice.reducer;

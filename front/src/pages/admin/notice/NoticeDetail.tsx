@@ -37,6 +37,16 @@ const Header = styled.header`
   }
 `;
 
+const BackLink = styled(Link)`
+  position: absolute;
+  left: 0.5em;
+`;
+
+const BackLogo = styled.img`
+  width: 1.8em;
+  height: 1.8em;
+`;
+
 const Content = styled.div`
   width: 100%;
   height: 100%;
@@ -197,15 +207,10 @@ function AdminNoticeDetail():JSX.Element {
   const { id: idParam } = useParams<{ id: string }>();
   const [isModify, setIsModify] = useState(false);
   const [isModalVisable, setIsModalVisable] = useState(false);
-  const title = '제목입니다.';
-  const content = '내용입니다.';
+  const { title, content, noticeId } = useSelector((state) => state.adminSlice.noticeDetail);
   const [inputs, setInputs] = useState({
     title,
     content,
-  });
-
-  useEffect(() => {
-    console.log(idParam);
   });
 
   const onchangeInputs = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -238,6 +243,9 @@ function AdminNoticeDetail():JSX.Element {
   return (
     <Layout>
       <Header>
+        <BackLink to="/admin/notice">
+          <BackLogo src="/images/icons/back.png" />
+        </BackLink>
         <h1>공지사항 관리</h1>
       </Header>
       <Content>
