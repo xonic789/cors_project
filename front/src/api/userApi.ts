@@ -82,3 +82,25 @@ export function modifyProfileAsync(modifyProfile: FormData): Promise<AxiosRespon
     return error;
   });
 }
+
+export function getUserInfoAsync(): Promise<memberInterface> {
+  return axios({
+    method: 'get',
+    url: '/api/mypage',
+  }).then((result) => {
+    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishList, mymarketlist } = result.data.data;
+
+    const loginUser: memberInterface = {
+      email: '',
+      nickname,
+      profileImg,
+      latitude,
+      longitude,
+      role,
+      articles: articlelist === undefined ? [] : JSON.parse(articlelist),
+      wishList: wishList === undefined ? [] : JSON.parse(wishList),
+      myMarketList: mymarketlist === undefined ? [] : JSON.parse(mymarketlist),
+    };
+    return loginUser;
+  });
+}
