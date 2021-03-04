@@ -16,6 +16,7 @@ import ml.market.cors.domain.mail.entity.EmailStateDAO;
 import ml.market.cors.domain.market.entity.MarketDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.map.MemberParam;
+import ml.market.cors.domain.member.query.MemberQuerys;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enums.eSocialType;
 import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -58,11 +60,12 @@ public class MemberManagement {
 
     private final ArticleRepository articleRepository;
 
+    private final MemberQuerys memberQuerys;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     public DivisionPageDTO getDivisionList(long memberId, Division division, int pageIndex){
-        Pageable pageable = PageRequest.of(pageIndex,10);
+        Pageable pageable = PageRequest.of(pageIndex,10, Sort.by("article_id").descending());
         Page<ArticleDAO> page = articleRepository.findAllByMemberIdAndDivision(memberId, division,pageable);
         List<ArticleDAO> articleDAOList = page.getContent();
         List<ArticleDivisionPageDTO> articleDivisionPageDTOList = new ArrayList<>();
@@ -121,8 +124,10 @@ public class MemberManagement {
             return false;
         }
         MemberDAO memberDAO = members.get(0);
-        if (!bCryptPasswordEncoder.matches(passwd, memberDAO.getPassword())) {
-            return false;
+        if(memberDAO.getESocialType() == eSocialType.NORMAL) {
+            if (!bCryptPasswordEncoder.matches(passwd, memberDAO.getPassword())) {
+                return false;
+            }
         }
         if(member.containsKey(MemberParam.INTRO)) {
             String intro = (String) member.get(MemberParam.INTRO);
@@ -266,6 +271,24 @@ public class MemberManagement {
         result.put(MemberParam.NICKNAME, memberDAO.getNickname());
         result.put(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
         result.put(MemberParam.INTRO, memberDAO.getIntro());
+        result.put(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
+        result.put(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
+        result.put(MemberParam.ROLE, memberDAO.getRole().getRole());
+        result.put(MemberParam.SOCIALTYPE, memberDAO.getESocialType().toString());
+        List<Object> wishIdList = memberQuerys.searchMemberWishArticleList(memberDAO.getMember_id());
+        if (wishIdList.size() > 0) {
+            result.put(MemberParam.WISHLIST, String.valueOf(wishIdList));
+        }
+
+        List<Object> marketList = memberQuerys.searchMemberMarketList(memberDAO.getMember_id());
+        if (marketList.size() > 0) {
+            result.put(MemberParam.MARKETLIST, String.valueOf(marketList));
+        }
+
+        List<Object> articleIdList = memberQuerys.searchMemberArticleIdList(memberDAO.getMember_id());
+        if(articleIdList.size() > 0){
+            result.put(MemberParam.ARTICLELIST, String.valueOf(articleIdList));
+        }
         return result;
     }
 }

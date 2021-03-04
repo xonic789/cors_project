@@ -149,33 +149,37 @@ public class LoginTokenManagement extends JwtTokenManagement{
 
     public void logout(HttpServletRequest request, HttpServletResponse response){
         Cookie[] cookies = request.getCookies();
-        Cookie cook = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), cookies);
+        Cookie accessTokenCook = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), cookies);
+        Cookie refreshTokenCook = CookieManagement.search(eCookie.REFRESH_TOKEN.getName(), cookies);
         StringBuilder tokenBuilder = new StringBuilder();
         Map<String, Object> claims = null;
         long expireTime;
-        if(cook != null){
-            tokenBuilder.append(cook.getValue());
+        if(accessTokenCook != null){
+            tokenBuilder.append(accessTokenCook.getValue());
             if(tokenBuilder.length() > 0){
                 if(isVerify(tokenBuilder.toString())){
                     expireTime = System.currentTimeMillis() + ACCESS_EXPIRETIME;
                     blacklist_tokenRepository.save(new Blacklist_TokenDAO(tokenBuilder.toString(), expireTime));
                 }
             }
-            CookieManagement.delete(response, eCookie.ACCESS_TOKEN.getName(), cookies);
+            Cookie cook = CookieManagement.delete(eCookie.ACCESS_TOKEN.getName(), cookies);
+            response.addCookie(cook);
         }
 
-        cook = CookieManagement.search(eCookie.REFRESH_TOKEN.getName(), cookies);
-        if(cook != null) {
-            claims = getClaims(cook.getValue());
+
+        if(refreshTokenCook != null) {
+            claims = getClaims(refreshTokenCook.getValue());
             if(claims != null){
                 long index = ((Number)claims.get(REFRESH_TOKEN_INDEX)).longValue();
                 TokenInfoDAO tokenInfoDAO = tokenInfoRepository.findByTokenindex(index);
                 if(tokenInfoDAO != null){
                     tokenInfoRepository.deleteById(index);
-                    blacklist_tokenRepository.save(new Blacklist_TokenDAO(tokenInfoDAO.getHash(), index));
+                    expireTime = System.currentTimeMillis() + REFRESH_EXPIRETIME;
+                    blacklist_tokenRepository.save(new Blacklist_TokenDAO(tokenInfoDAO.getHash(), expireTime));
                 }
             }
-            CookieManagement.delete(response, eCookie.REFRESH_TOKEN.getName(), cookies);
+            Cookie cook = CookieManagement.delete(eCookie.REFRESH_TOKEN.getName(), cookies);
+            response.addCookie(cook);
         }
     }
 

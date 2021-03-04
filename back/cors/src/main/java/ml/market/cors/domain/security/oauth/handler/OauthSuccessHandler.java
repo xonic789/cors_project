@@ -102,6 +102,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         if(accessCookie != null || refreshCookie != null){
             response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "로그아웃하고 와라");
             response.sendRedirect("/");
+            System.out.println("**********************Exsist Token***************************************************");
             return;
         }
         String email = getEmail(authentication);

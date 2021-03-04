@@ -1,13 +1,14 @@
 package ml.market.cors.config.security;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.security.oauth.exception.AccessDeniedHandlerImpl;
 import ml.market.cors.domain.security.oauth.exception.ExceptionPoint;
-import ml.market.cors.domain.security.CookieSecurityContextRepository;
-import ml.market.cors.domain.security.ParentProviderManager;
+import ml.market.cors.domain.security.oauth.service.CookieSecurityContextRepository;
+import ml.market.cors.domain.security.oauth.manager.ParentProviderManager;
 import ml.market.cors.domain.security.member.filter.MemberLoginAuthFilter;
 
-import java.util.List;
+import java.util.*;
 
 import ml.market.cors.domain.security.member.filter.MemberLogoutFilter;
 import ml.market.cors.domain.security.member.handler.MemberLoginSuccessHandler;
@@ -39,18 +40,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
-import org.springframework.security.web.csrf.CsrfFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CharacterEncodingFilter;
 
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
@@ -74,24 +65,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configureAuthentication(AuthenticationManagerBuilder builder, ParentProviderManager parentProviderManager) {
         builder.parentAuthenticationManager(parentProviderManager);
     }
-/*
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        //configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
-*/
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
             http.httpBasic().disable()
-                    //.cors().and()
                     .csrf().disable()
                     .headers()
                         .frameOptions().sameOrigin()
@@ -136,18 +113,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .addFilter(getMemberAuthenticationFilter());
     }
 
+    private ClientRegistration getOauth2ClientBasicRegistrations(OAuth2ClientProperties clientProperties, String client) {
+        if("google".equals(client)) {
+            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("google");
+            return CommonOAuth2Provider.GOOGLE.getBuilder(client)
+                    .redirectUri(CustomOAuth2Provider.DEFAULT_LOGIN_REDIRECT_URL)
+                    .clientId(registration.getClientId())
+                    .clientSecret(registration.getClientSecret())
+                    .scope("email", "profile")
+                    .build();
+        }
+        return null;
+    }
+
     @Bean
     public ClientRegistrationRepository clientRegistrationRepository(
-            OAuth2ClientProperties oAuth2ClientProperties,
+            OAuth2ClientProperties oauth2ClientProperties,
             @Value("${custom.oauth2.kakao.client-id}") String kakaoClientId,
             @Value("${custom.oauth2.kakao.client-secret}") String kakaoClientSecret,
             @Value("${custom.oauth2.naver.client-id}") String naverClientId,
             @Value("${custom.oauth2.naver.client-secret}") String naverClientSecret) {
-        List<ClientRegistration> registrations = oAuth2ClientProperties
-                .getRegistration().keySet().stream()
-                .map(client -> getRegistration(oAuth2ClientProperties, client))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<ClientRegistration> registrations = new ArrayList<>();
+        Iterator<String> iterator = oauth2ClientProperties.getRegistration().keySet().iterator();
+        ClientRegistration clientRegistration = null;
+        StringBuilder client = new StringBuilder();
+        boolean bNext = iterator.hasNext();
+        while (bNext) {
+            client.delete(0, client.length());
+            client.append(iterator.next());
+            clientRegistration = getOauth2ClientBasicRegistrations(oauth2ClientProperties, client.toString());
+            if(clientRegistration == null){
+                log.error("clientRegistrationRepository 메소드에서 clientRegistrations null 반환");
+                return null;
+            }
+            registrations.add(clientRegistration);
+            bNext = iterator.hasNext();
+        }
 
         registrations.add(CustomOAuth2Provider.KAKAO.getBuilder("kakao")
                 .clientId(kakaoClientId)
@@ -160,21 +161,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .clientSecret(naverClientSecret)
                 .jwkSetUri("temp")
                 .build());
+
         return new InMemoryClientRegistrationRepository(registrations);
     }
 
-    private ClientRegistration getRegistration(OAuth2ClientProperties clientProperties, String client) {
-        if("google".equals(client)) {
-            OAuth2ClientProperties.Registration registration = clientProperties.getRegistration().get("google");
-            return CommonOAuth2Provider.GOOGLE.getBuilder(client)
-                    .redirectUriTemplate(CustomOAuth2Provider.DEFAULT_LOGIN_REDIRECT_URL)
-                    .clientId(registration.getClientId())
-                    .clientSecret(registration.getClientSecret())
-                    .scope("email", "profile")
-                    .build();
-        }
-        return null;
-    }
+
 
     @Bean
     public MemberLogoutFilter getMemberLogoutFilter(){

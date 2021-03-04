@@ -20,6 +20,7 @@ import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,7 +44,7 @@ public class WishService {
         if(memberId == 0){
             return null;
         }
-        Pageable pageable = PageRequest.of(pageIndex, 10);
+        Pageable pageable = PageRequest.of(pageIndex, 10, Sort.by("wish_id").descending());
         Page<Wish_listDAO> wishPage = wish_list_repository.findAllByMemberId(pageable, memberId);
         List<Wish_listDAO> wishContent = wishPage.getContent();
         long wishId;

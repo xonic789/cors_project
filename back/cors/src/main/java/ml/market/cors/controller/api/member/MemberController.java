@@ -214,10 +214,11 @@ public class MemberController {
         String email = jwtCertificationToken.getName();
         long memberId = (long)jwtCertificationToken.getCredentials();
         try{
-            boolean bResult = marketService.save(marketInfo, email, memberId, imageFile);
-            if(!bResult){
+            long marketId = marketService.save(marketInfo, email, memberId, imageFile);
+            if(marketId == 0){
                 throw new RuntimeException();
             }
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(marketId);
         }catch (Exception e){
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("마켓 승인 요청 실패");
         }
@@ -251,6 +252,19 @@ public class MemberController {
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("나의페이지 문의하기 목록 가져오기 실패");
         } else{
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(questionMemberDTO);
+        }
+        return messageResponseEntity;
+    }
+
+    @GetMapping("/mypage/request/mymarket")
+    public ResponseEntity<Message<Object>> getRequestMyMarket(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken){
+        long memberId = (long)jwtCertificationToken.getCredentials();
+        boolean bResult = marketService.exsistsMyMarket(memberId);
+        ResponseEntity<Message<Object>> messageResponseEntity;
+        if(bResult){
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK("나의 마켓 등록확인 성공");
+        }else{
+            messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("나의 마켓 등록확인실패");
         }
         return messageResponseEntity;
     }

@@ -37,6 +37,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.Query;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -60,51 +63,58 @@ public class MarketService {
     private final LoginTokenManagement loginTokenManagement;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public boolean save(Map<MarketKey, Object> marketInfo, String email, long memberId, @NonNull MultipartFile imageFile){
+    public long save(Map<MarketKey, Object> marketInfo, String email, long memberId, @NonNull MultipartFile imageFile){
         Map<String, String> uploadResult;
-        String fileName = System.currentTimeMillis() + imageFile.getName();
-        try {
-            uploadResult = s3Uploader.upload(imageFile, email, System.currentTimeMillis(), imageFile.getOriginalFilename(), fileName);
-        }catch (Exception e){
-            return false;
+
+        String fileName = System.currentTimeMillis() + imageFile.getOriginalFilename();
+        MemberDAO memberDAO = new MemberDAO(memberId);
+        boolean bResult = marketRepository.existsByMember(memberDAO);
+        if(bResult){
+            return 0;
         }
+
         List<MemberDAO> memberDAOList = memberRepository.findByMemberId(memberId);
         if(memberDAOList.size() == 0){
-            return false;
+            return 0;
         }
-        MemberDAO memberDAO = memberDAOList.get(0);
+        memberDAO = memberDAOList.get(0);
         String location = (String) marketInfo.get(MarketKey.location);
         if(location == null){
-            return false;
+            return 0;
         }
         if(location.equals("")){
-            return false;
+            return 0;
         }
         String name = (String) marketInfo.get(MarketKey.name);
         if(name == null){
-            return false;
+            return 0;
         }
         if(name.equals("")){
-            return false;
+            return 0;
         }
         String intro = (String) marketInfo.get(MarketKey.intro);
         if(intro == null){
-            return false;
+            return 0;
         }
 
         KakaoResMapDTO kakaoResMapDTO = kaKaoRestManagement.transAddressToCoordinate(location);
         if(kakaoResMapDTO == null){
-            return false;
+            return 0;
         }
         MapDocumentsDTO mapResMapDocumentsDTO = kakaoResMapDTO.getDocuments().get(0);
         double latitude = mapResMapDocumentsDTO.getY();
         double longitude = mapResMapDocumentsDTO.getX();
-
         MarketStatus status = MarketStatus.WAIT;
+
+        try {
+            uploadResult = s3Uploader.upload(imageFile, email, System.currentTimeMillis(), imageFile.getOriginalFilename(), fileName);
+        }catch (Exception e){
+            return 0;
+        }
         String imageUrl = uploadResult.get("url");
         MarketDAO marketDAO = new MarketDAO(memberDAO, name, intro, location, latitude, longitude, imageUrl, status, null);
-        marketRepository.save(marketDAO);
-        return true;
+        marketDAO = marketRepository.save(marketDAO);
+        return marketDAO.getMarket_id();
     }
 
     public List<MarketApproveListVO> list(int pageIndex){
@@ -308,7 +318,7 @@ private Map<String, Object> setClaims(long member_id, List memberRoles, String e
             bResult = imageFile.isEmpty();
             if(!bResult){
                 Map<String, String> uploadResult;
-                String fileName = System.currentTimeMillis() + imageFile.getName();
+                String fileName = System.currentTimeMillis() + imageFile.getOriginalFilename();
                 try {
                     uploadResult = s3Uploader.upload(imageFile, email, System.currentTimeMillis(), imageFile.getOriginalFilename(), fileName);
                     imageUrl = uploadResult.get("url");
@@ -320,6 +330,24 @@ private Map<String, Object> setClaims(long member_id, List memberRoles, String e
         MarketDAO tempMarketDAO = new MarketDAO(marketId, marketDAO.getMember(), marketDAO.getArticles(), name, intro, location, latitude, longitude, imageUrl, marketDAO.getStatus(), null);
         marketRepository.save(tempMarketDAO);
         return true;
+    }
+
+    public boolean exsistsMyMarket(long memberId) {
+        if(memberId == 0){
+            return false;
+        }
+        MarketDAO marketDAO = marketRepository.findByMemberId(memberId);
+        if(marketDAO == null){
+            return false;
+        }
+        MarketStatus status = marketDAO.getStatus();
+        boolean bResult = false;
+        if(status == MarketStatus.ACCEPT){
+            bResult = true;
+        }else{
+            bResult = false;
+        }
+        return bResult;
     }
 }
 

@@ -1,0 +1,9 @@
+diff a/back/cors/src/test/resources/application.yml b/back/cors/src/test/resources/application.yml	(rejected hunks)
+@@ -5,7 +5,6 @@
+       - aws
+       - credentials
+       - email
+-=======
+ 
+ #  datasource:
+ #    url: jdbc:h2:tcp://localhost/~/test

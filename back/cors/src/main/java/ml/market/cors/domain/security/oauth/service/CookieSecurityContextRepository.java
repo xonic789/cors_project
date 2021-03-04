@@ -1,20 +1,17 @@
-package ml.market.cors.domain.security;
+package ml.market.cors.domain.security.oauth.service;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.MemberDAO;
-import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.security.member.role.MemberGrantAuthority;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.util.cookie.CookieManagement;
 import ml.market.cors.domain.util.cookie.eCookie;
-import ml.market.cors.domain.util.token.JwtTokenManagement;
 import ml.market.cors.domain.util.token.LoginTokenManagement;
 import ml.market.cors.repository.member.MemberRepository;
-import ml.market.cors.repository.member.TokenInfoRepository;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpRequestResponseHolder;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.Member;
 import java.util.*;
 
 
@@ -74,7 +70,7 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         return claims;
     }
 
-    private Map<String, Object> exsistAccessToken(@NonNull HttpServletResponse response, @NonNull HttpServletRequest request){
+    private Map<String, Object> existAccessToken(@NonNull HttpServletResponse response, @NonNull HttpServletRequest request){
         Cookie[] cookies = request.getCookies();
         Cookie cook = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), cookies);
         if (!loginTokenManagement.isVerify(cook.getValue())) {
@@ -84,10 +80,10 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         if(claims != null){
             long memberId = ((Number) claims.get(LoginTokenManagement.ID)).longValue();
             List<MemberDAO> memberDAOList = memberRepository.findByMemberId(memberId);
-            MemberDAO memberDAO = memberDAOList.get(0);
-            if(memberDAO == null){
+            if(memberDAOList.size() == 0){
                 return null;
             }
+            MemberDAO memberDAO = memberDAOList.get(0);
             MemberRole memberRole = memberDAO.getRole();
             List tokenRoleList = (List)claims.get(LoginTokenManagement.ROLE);
             try{
@@ -131,7 +127,7 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
             loginTokenManagement.logout(request, response);
             return securityContext;
         } else {
-            claims = exsistAccessToken(response, request);
+            claims = existAccessToken(response, request);
             if(claims == null){
                 loginTokenManagement.logout(request, response);
                 return securityContext;
@@ -152,12 +148,6 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         return securityContext;
     }
 
-    /*
-    토큰에 넣은 List<MemberGrantAUthority>가 json으로 바뀌면서 List 안에
-    객체배열들이 객체로 저장되는게 아니라
-    멤버필드에 저장되어서 임시로 변환 메소드를 작성한다.
-    시간되면 고치겠습니다.
-     */
     private List TransListMemberAuthority(@NonNull List<MemberGrantAuthority> roles){
         final String AUTHORITY ="authority";
         List<MemberGrantAuthority> memberRoles = new LinkedList();
@@ -181,9 +171,7 @@ public class CookieSecurityContextRepository implements SecurityContextRepositor
         }
         return memberRoles;
     }
-
-
-
+    
     @Override
     public void saveContext(SecurityContext securityContext, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 

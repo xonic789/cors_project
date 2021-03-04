@@ -1,4 +1,4 @@
-package ml.market.cors.domain.security;
+package ml.market.cors.domain.security.oauth.manager;
 
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;

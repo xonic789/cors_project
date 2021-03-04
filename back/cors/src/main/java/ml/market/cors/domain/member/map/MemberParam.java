@@ -16,4 +16,5 @@ public class MemberParam {
     public static final String ARTICLELIST = "articlelist";
     public static final String INTRO = "intro";
     public static final String MARKETLIST = "myMarketList";
+    public static final String SOCIALTYPE = "socialType";
 }
