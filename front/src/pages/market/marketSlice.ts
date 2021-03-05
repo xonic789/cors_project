@@ -7,6 +7,7 @@ const marketSlice = createSlice({
     marketList: [],
     marketDetail: null,
     marketPost: [],
+    myMarketList: [],
 
     isMaketDetailLoadLoading: false,
     isMaketDetailLoadDone: false,
@@ -100,6 +101,7 @@ const marketSlice = createSlice({
     addMarketSuccess(state, action) {
       state.addMarketLoading = false;
       state.addMarketDone = true;
+      state.myMarketList = [].concat(action.payload);
     },
     addMarketError(state, action) {
       state.addMarketLoading = false;
@@ -121,6 +123,9 @@ const marketSlice = createSlice({
       state.deleteMarketPostDone = false;
       state.deleteMarketPostError = action.payload.error;
     },
+    resetMyMarketList(state, action) {
+      state.myMarketList = [];
+    },
   },
 });
 
@@ -140,6 +145,7 @@ export const {
   addMarketRequest,
   addMarketSuccess,
   addMarketError,
+  resetMyMarketList,
 } = marketSlice.actions;
 
 export default marketSlice.reducer;

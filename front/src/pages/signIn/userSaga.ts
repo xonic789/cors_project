@@ -4,6 +4,7 @@ import {
   modifyProfileAsync,
   postLoginAsync,
   socialLoginAsync,
+  getUserInfoAsync,
 } from '../../api/userApi';
 import {
   postLoginRequest,
@@ -22,6 +23,9 @@ import {
   postRemoveWishListRequestSuccess,
   postAddWishListRequestError,
   postRemoveWishListRequestError,
+  getUserInfoRequest,
+  getUserInfoRequestSuccess,
+  getUserInfoRequestError,
 } from './userSlice';
 import { modifyProfileInterface } from '../../interfaces/UserInterface';
 import { addWishs, removeWishs } from '../../api/wishsApi';
@@ -85,7 +89,7 @@ function* postLogoutRequestSaga() {
   }
 }
 
-function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: FormData}}) {
+function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: FormData, history: any, ToastsStore: any}}) {
   try {
     console.log(action.payload.modifyProfile);
     const result = yield call(modifyProfileAsync, action.payload.modifyProfile);
@@ -95,7 +99,8 @@ function* postModifyProfileRequestSaga(action: {payload: {modifyProfile: FormDat
         type: postModifyProfileRequestSuccess,
         payload: { nickname: result.nickname, profileImg: result.profileImg },
       });
-      yield call(push, '/mypage');
+      action.payload.history.push('/mypage');
+      action.payload.ToastsStore.success('프로필 변경이 완료되었습니다.');
     } else {
       yield put({
         type: postModifyProfileRequestError,
@@ -148,10 +153,27 @@ function* postRemoveWishListRequestSaga(action: {payload: string}) {
   }
 }
 
+function* getUserInfo() {
+  try {
+    const result = yield getUserInfoAsync();
+    yield put({
+      type: getUserInfoRequestSuccess,
+      payload: result,
+    });
+  } catch (error) {
+    alert('서버통신에러');
+    yield put({
+      type: getUserInfoRequestError,
+      payload: error,
+    });
+  }
+}
+
 function* watchLogin(): Generator {
   yield takeLatest(postLoginRequest, postLoginRequestSaga);
   yield takeLatest(postSocialLoginRequest, postSocialLoginRequestSaga);
   yield takeLatest(postLogoutRequest, postLogoutRequestSaga);
+  yield takeLatest(getUserInfoRequest, getUserInfo);
 }
 
 function* watchProfile(): Generator {

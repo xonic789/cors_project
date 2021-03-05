@@ -30,6 +30,9 @@ const initialUserState = {
   isRemoveWishListLoading: false, // 찜 해제하기
   isRemoveWishListSuccess: false,
   isRemoveWishListError: null,
+  isGetUserInfoLoading: false,
+  isGetUserInfoSuccess: false,
+  isGetUserInfoError: null,
 };
 
 const userSlice = createSlice({
@@ -102,6 +105,24 @@ const userSlice = createSlice({
       state.isRemoveWishListLoading = false;
       state.isRemoveWishListError = action.payload;
     },
+    setMyMarketList: (state, action) => {
+      state.user.myMarketList = action.payload;
+    },
+    getUserInfoRequest: (state, action) => {
+      state.isGetUserInfoLoading = true;
+      state.isGetUserInfoSuccess = false;
+      state.isGetUserInfoError = null;
+    },
+    getUserInfoRequestSuccess: (state, action) => {
+      state.isGetUserInfoLoading = false;
+      state.isGetUserInfoSuccess = true;
+      state.isGetUserInfoError = null;
+    },
+    getUserInfoRequestError: (state, action) => {
+      state.isGetUserInfoLoading = false;
+      state.isGetUserInfoSuccess = false;
+      state.isGetUserInfoError = action.payload;
+    },
   },
 });
 
@@ -122,6 +143,10 @@ export const {
   postRemoveWishListRequest,
   postRemoveWishListRequestSuccess,
   postRemoveWishListRequestError,
+  setMyMarketList,
+  getUserInfoRequest,
+  getUserInfoRequestSuccess,
+  getUserInfoRequestError,
 } = userSlice.actions;
 
 export default userSlice.reducer;

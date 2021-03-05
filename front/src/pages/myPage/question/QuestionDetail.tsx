@@ -164,7 +164,7 @@ const CommentWriter = styled.div`
 `;
 
 function QuestionDetail():JSX.Element {
-  const { detailId, questionDetail, isGetQuestionDetailError, comments } = useSelector((state: any) => state.myPageSlice.questionSlice);
+  const { detailId, questionDetail, isGetQuestionDetailError } = useSelector((state: any) => state.myPageSlice.questionSlice);
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -216,7 +216,7 @@ function QuestionDetail():JSX.Element {
                     : (
                       <ul>
                         {
-                          comments.map((item: commentInterface) => (
+                          questionDetail.comments.map((item: commentInterface) => (
                             <li>
                               <CommentWriter>
                                 <h2>작성자 : {item.nickname}</h2>
