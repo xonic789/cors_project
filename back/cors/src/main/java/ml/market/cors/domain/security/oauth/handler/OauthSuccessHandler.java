@@ -2,6 +2,7 @@ package ml.market.cors.domain.security.oauth.handler;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.member.map.MemberParam;
@@ -36,6 +37,7 @@ import java.util.*;
 import java.io.IOException;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class OauthSuccessHandler implements AuthenticationSuccessHandler {
     private final MemberRepository memberRepository;
@@ -155,6 +157,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
             response.addCookie(cookie);
             response.sendRedirect("/home");
             setHeader(response, memberDAO);
+
         } catch(Exception e) {
             response.reset();
             throw new RuntimeException();
