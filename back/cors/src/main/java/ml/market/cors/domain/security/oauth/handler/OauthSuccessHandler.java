@@ -2,6 +2,7 @@ package ml.market.cors.domain.security.oauth.handler;
 
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.TokenInfoDAO;
 import ml.market.cors.domain.member.map.MemberParam;
@@ -36,6 +37,7 @@ import java.util.*;
 import java.io.IOException;
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class OauthSuccessHandler implements AuthenticationSuccessHandler {
     private final MemberRepository memberRepository;
@@ -100,14 +102,11 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         Cookie accessCookie = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), request.getCookies());
         Cookie refreshCookie = CookieManagement.search(eCookie.ACCESS_TOKEN.getName(), request.getCookies());
         if(accessCookie != null || refreshCookie != null){
-            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "로그아웃하고 와라");
             response.sendRedirect("/");
-            System.out.println("**********************Exsist Token***************************************************");
             return;
         }
         String email = getEmail(authentication);
         if (email == null) {
-            response.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE, "인증은 됐지만 이메일이 넘어오지 않음");
             response.sendRedirect("/");
             return;
         }
@@ -128,7 +127,6 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         } else{
             memberDAO = memberRepository.findByEmail(email);
             if(memberDAO.getESocialType() == eSocialType.NORMAL){
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "이미 가입된 아이디");
                 response.sendRedirect("/");
                 return;
             }
@@ -159,6 +157,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
             response.addCookie(cookie);
             response.sendRedirect("/home");
             setHeader(response, memberDAO);
+
         } catch(Exception e) {
             response.reset();
             throw new RuntimeException();
