@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import DaumPostCode, { AddressData } from 'react-daum-postcode';
-import { addMarketPostRequest, addMarketRequest } from '../../market/marketSlice';
+import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
+import { addMarketRequest } from '../../market/marketSlice';
 
 const Layout = styled.form`
   display: flex;
@@ -244,6 +245,7 @@ const SubmitButton = styled.button`
 
 function MyMarket():JSX.Element {
   const dispatch = useDispatch();
+  const history = useHistory();
   const [file, setFile] = useState<File | null>(null);
   const [imgView, setImgView] = useState<any>('/images/icons/init_market.png');
   const [marketInfo, setMarketInfo] = useState({
@@ -294,13 +296,11 @@ function MyMarket():JSX.Element {
     });
   };
 
-  const onSubmitAddMarket = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+  const onSubmitAddMarket = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const market = new FormData();
 
     if (file === null) {
-      alert('마켓이미지를 등록해주세요!');
-    } else if (marketInfo.name === '') {
       alert('마켓이름을 입력해주세요.');
     } else if (marketInfo.intro === '') {
       alert('마켓소개를 입력해주세요.');
@@ -310,13 +310,14 @@ function MyMarket():JSX.Element {
       market.append('image', file);
       market.append('name', marketInfo.name);
       market.append('intro', marketInfo.intro);
-      market.append('location', `${addressInputs.baseAddress} ${addressInputs.detailAddress}`);
-      dispatch(addMarketRequest({ market }));
+      market.append('location', `${addressInputs.baseAddress}`);
+      dispatch(addMarketRequest({ market, history, ToastsStore }));
     }
   };
 
   return (
-    <Layout>
+    <Layout onSubmit={onSubmitAddMarket}>
+      <ToastsContainer store={ToastsStore} position={ToastsContainerPosition.TOP_CENTER} lightBackground />
       <Header>
         <BackLink to="/mypage">
           <BackLogo src="/images/icons/back.png" />
@@ -358,7 +359,7 @@ function MyMarket():JSX.Element {
           </AddressFormBox>
         </InputsBox>
         <SubmitButtonBox>
-          <SubmitButton type="submit" onClick={onSubmitAddMarket}>마켓 등록하기</SubmitButton>
+          <SubmitButton type="submit">마켓 등록하기</SubmitButton>
         </SubmitButtonBox>
         <SearchModal style={{ display: showsModal ? 'flex' : 'none' }}>
           <CloseButton src="/images/icons/x.png" onClick={() => setShowsModal(false)} />

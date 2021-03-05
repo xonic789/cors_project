@@ -43,9 +43,18 @@ export function getNoticeRequestAsync(page: number): Promise<getNoticeInterface>
 }
 
 export function reomveNoticeRequestAsync(noticeId: string): Promise<AxiosResponse> {
+  console.log(noticeId, 'test');
   return axios({
     method: 'post',
     url: '/api/notice/delete',
-    params: noticeId,
+    params: { noticeId },
+  });
+}
+
+export function modifyNoticeRequestAsync(notice: FormData): Promise<AxiosResponse> {
+  return axios({
+    method: 'put',
+    url: '/api/notice/update',
+    data: notice,
   });
 }

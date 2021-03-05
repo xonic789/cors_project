@@ -13,6 +13,8 @@ interface marketPostActionInterface {
 
 interface addMarketActionInterface {
   market: FormData,
+  history: any,
+  ToastsStore: any,
 }
 interface addBookPostPayloadInterface {
   data: AddBookPostInterface
@@ -54,9 +56,11 @@ function* addMarketPost(action: PayloadAction<addBookPostPayloadInterface>) {
 }
 function* addMarket(action: PayloadAction<addMarketActionInterface>) {
   try {
-    console.log(action.payload, 'payload');
     const result = yield call(addMarketAPI, action.payload.market);
-    yield put(addMarketSuccess(result));
+    console.log(result);
+    yield put(addMarketSuccess(result.data.data));
+    action.payload.history.push('/mypage');
+    action.payload.ToastsStore.success('마켓 등록이 완료되었습니다.');
   } catch (error) {
     yield put(addMarketError({ error }));
   }
@@ -81,6 +85,7 @@ export default function* marketSaga():Generator {
     fork(watchloadMarketList),
     fork(watchloadMarketDetail),
     fork(watchloadMarketPost),
+    fork(watchAddMarketPost),
     fork(watchMarket),
   ]);
 }
