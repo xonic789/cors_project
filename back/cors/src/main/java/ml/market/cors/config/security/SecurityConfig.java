@@ -4,8 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.security.oauth.exception.AccessDeniedHandlerImpl;
 import ml.market.cors.domain.security.oauth.exception.ExceptionPoint;
-import ml.market.cors.domain.security.oauth.service.CookieSecurityContextRepository;
-import ml.market.cors.domain.security.oauth.manager.ParentProviderManager;
+import ml.market.cors.domain.security.common.service.CookieSecurityContextRepository;
 import ml.market.cors.domain.security.member.filter.MemberLoginAuthFilter;
 
 import java.util.*;
@@ -19,7 +18,6 @@ import ml.market.cors.domain.security.member.service.MemberLoginAuthService;
 import ml.market.cors.domain.security.oauth.handler.OauthSuccessHandler;
 import ml.market.cors.domain.security.oauth.provider.CustomOAuth2Provider;
 import ml.market.cors.domain.security.oauth.service.CustomOAuth2UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.boot.autoconfigure.security.oauth2.client.OAuth2ClientProperties;
@@ -28,7 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -59,11 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web)  {
        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
-
-    @Autowired
-    public void configureAuthentication(AuthenticationManagerBuilder builder, ParentProviderManager parentProviderManager) {
-        builder.parentAuthenticationManager(parentProviderManager);
     }
 
     @Override
@@ -165,8 +157,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new InMemoryClientRegistrationRepository(registrations);
     }
 
-
-
     @Bean
     public MemberLogoutFilter getMemberLogoutFilter(){
         MemberLogoutFilter memberLogoutFilter = new MemberLogoutFilter("/", getMemberLogoutHandler());
@@ -187,13 +177,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return memberLoginAuthFilter;
     }
 
-/*
-security는 parent provider manager가 있는데 이건 하나의 싱글빈으로 만들어진다
-만약 내가 providermanager상속받아서 구현한걸 bean으로 만들면 그놈이 싱글빈되서
-parent provider manager가 되버린다. 그러니까 providermanager만들떄 부모, 자식 관계를
-잘 생각해서 구조를 잡고 구현하자.
- */
-    private MemberProviderManager getMemberProviderManager(){
+    @Bean
+    public MemberProviderManager getMemberProviderManager(){
         List<AuthenticationProvider> providers = new LinkedList<AuthenticationProvider>();
         providers.add(getMemberLoginAuthProvider());
         return new MemberProviderManager(providers);
