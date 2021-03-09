@@ -103,7 +103,7 @@ nginx를 이용하여 프론트 서버를 따로 두지 않았습니다.<br>
 ### 5.3 ORM
 - 도메인 내 엔티티클래스에 비즈니스 로직 적용.<br> 
 - querydsl 라이브러리를 이용한 동적쿼리 구성.<br>
-  <img src="img/RDB.png" width="400px"><br>
+  <img src="img/querydsl.png" width="400px"><br>
   - 컴파일 단계에서 쿼리 오류 확인
   - `jpql`로 쿼리 구성시 쿼리 에러 확인 불가
 - Spring Data JPA를 이용하여 Repository interface 사용하였으며, 간단한 CRUD 이용
