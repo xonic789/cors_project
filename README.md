@@ -53,7 +53,7 @@ spring security와 jwt를 사용하여 보안을 고려하여 개발하였습니
 ### 3.2 CRUD
 **3.2.1 CRUD**
 
-<img src="img/CRUD.gif" width="400px"><br>
+<img src="img/CRUD.gif" width="800px"><br>
 알라딘 api 서버를 nginx를 통해 같은 도메인 내 upstream 등록으로 접근하게해 cors 에러 방지 하였습니다.<br>
 <img src="img/알라딘conf.png" width="400px"><br>
 AWS S3 버켓을 사용하여 파일 업로드를 구현하였습니다.<br> 
@@ -66,11 +66,21 @@ S3 라이브러리를 이용하여 업로드를 하고, 업로드 후 WAS에 업
 
 **3.2.3 search & filtering**
 
-<img src="img/필터링.gif" width="400px"><br>
+<img src="img/필터링.gif" width="800px"><br>
 querydsl을 이용한 동적쿼리를 구성하여 검색 및 필터링 적용을 하였습니다.<br>
 제목 검색 및 카테고리 정렬, 인피니트 스크롤링을 위한 쿼리 구성으로, 페이지네이션 없이 <br>
 스크롤링만으로 페이지 기능을 구현하였습니다.
 
+**3.2.4 mypage**
+
+<img src="img/마이페이지.png" "width="400px"><br>
+
+<img src="img/마이페이지찜.png" "width="400px"><br>
+
+<img src="img/판매목록.png" "width="400px"><br>
+
+jwt를 이용한 인증처리로, 멤버 마이페이지를 구현하였습니다.<br>
+찜목록 및 판매목록, 나의마켓 등을 볼 수 있습니다.
 
 ## 4. 프론트엔드
 ### 4.1 기술스택
@@ -82,6 +92,8 @@ nginx를 이용하여 프론트 서버를 따로 두지 않았습니다.<br>
 화면 깜빡임 없이 사용자가 어플리케이션을 이용할 수 있도록 개발하였습니다.
 
 ## 5. 백엔드
+
+<img src="img/아키텍처.jpg" width="400px"><br>
 
 ---
 ### 5.1 기술 스택
@@ -103,7 +115,7 @@ nginx를 이용하여 프론트 서버를 따로 두지 않았습니다.<br>
 ### 5.3 ORM
 - 도메인 내 엔티티클래스에 비즈니스 로직 적용.<br> 
 - querydsl 라이브러리를 이용한 동적쿼리 구성.<br>
-  <img src="img/RDB.png" width="400px"><br>
+  <img src="img/querydsl.png" width="400px"><br>
   - 컴파일 단계에서 쿼리 오류 확인
   - `jpql`로 쿼리 구성시 쿼리 에러 확인 불가
 - Spring Data JPA를 이용하여 Repository interface 사용하였으며, 간단한 CRUD 이용
