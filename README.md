@@ -53,7 +53,7 @@ spring security와 jwt를 사용하여 보안을 고려하여 개발하였습니
 ### 3.2 CRUD
 **3.2.1 CRUD**
 
-<img src="img/CRUD.gif" width="400px"><br>
+<img src="img/CRUD.gif" width="800px"><br>
 알라딘 api 서버를 nginx를 통해 같은 도메인 내 upstream 등록으로 접근하게해 cors 에러 방지 하였습니다.<br>
 <img src="img/알라딘conf.png" width="400px"><br>
 AWS S3 버켓을 사용하여 파일 업로드를 구현하였습니다.<br> 
