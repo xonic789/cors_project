@@ -1,8 +1,29 @@
 # cors project
+### BI
+![BI](./img/코스마켓.png)
+
 
 DNS : freenom
 
-url : corsmarket.ml
+url : <https://corsmarket.ml>
+
+
+## 0. 내용
+[1. 프로젝트 요약](#1.-프로젝트-요약)
+
+[2. 프로젝트 타겟](#2.-프로젝트-타겟)
+
+[3. 메인 기능](#3.-메인-기능)
+
+## 1. 프로젝트 요약
+## 2. 프로젝트 타겟
+## 3. 메인 기능
+
+--- 
+### 3.1 인증
+![join](./img/join.png)
+![authentic](./img/authentic.png)
+![crud](./img/CRUD.gif)
 
 
 ## 책 중고 마켓 프로젝트
