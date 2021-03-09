@@ -83,6 +83,8 @@ nginx를 이용하여 프론트 서버를 따로 두지 않았습니다.<br>
 
 ## 5. 백엔드
 
+<img src="img/아키텍처.png" width="400px"><br>
+
 ---
 ### 5.1 기술 스택
 - Programming Language : `java ` ver 11
