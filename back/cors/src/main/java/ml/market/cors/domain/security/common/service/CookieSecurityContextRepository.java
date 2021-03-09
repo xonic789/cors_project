@@ -1,4 +1,4 @@
-package ml.market.cors.domain.security.oauth.service;
+package ml.market.cors.domain.security.common.service;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
