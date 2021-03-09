@@ -73,11 +73,11 @@ querydsl을 이용한 동적쿼리를 구성하여 검색 및 필터링 적용�
 
 **3.2.4 mypage**
 
-<img src="img/마이페이지.png" "width="400px"><br>
+<img src="img/마이페이지.png" width="400px"><br>
 
-<img src="img/마이페이지찜.png" "width="400px"><br>
+<img src="img/마이페이지찜.png" width="400px"><br>
 
-<img src="img/판매목록.png" "width="400px"><br>
+<img src="img/판매목록.png" width="400px"><br>
 
 jwt를 이용한 인증처리로, 멤버 마이페이지를 구현하였습니다.<br>
 찜목록 및 판매목록, 나의마켓 등을 볼 수 있습니다.
