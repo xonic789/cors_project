@@ -104,6 +104,24 @@ public class MemberDAO implements UserDetails{
         this.eSocialType = eSocialType;
     }
 
+    public void updateProfile(String nickname, String intro, String profile_img, String password, String profileKey){
+        if(profileKey != null){
+            this.profileKey = profileKey;
+        }
+        if(nickname != null){
+            this.nickname = nickname;
+        }
+        if(intro != null){
+            this.intro = intro;
+        }
+        if(profile_img != null){
+            this.profile_img = profile_img;
+        }
+        if(password != null){
+            this.password = password;
+        }
+    }
+
     public MemberDAO(long memberId) {
         this.member_id = memberId;
     }

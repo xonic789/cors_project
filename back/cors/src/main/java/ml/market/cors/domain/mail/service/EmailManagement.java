@@ -1,9 +1,7 @@
 package ml.market.cors.domain.mail.service;
 
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 import ml.market.cors.domain.mail.entity.EmailStateDAO;
-import ml.market.cors.domain.mail.vo.MailVO;
 import ml.market.cors.domain.util.mail.MailTransfer;
 import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
 import ml.market.cors.repository.mail.EmailStateRepository;
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import javax.persistence.EntityExistsException;
 import java.util.*;
 
 @Service
@@ -75,14 +71,24 @@ public class EmailManagement extends MailTransfer {
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public boolean checkCode(@NonNull MailVO mailVO){
-        if(!emailStateRepository.existsById(mailVO.getEmail())){
+    public boolean checkCode(int code, String email){
+        if(code == 0){
+            return false;
+        }
+        if(email == null){
+            return false;
+        }
+        if(email.equals("")){
+            return false;
+        }
+
+        if(!emailStateRepository.existsById(email)){
             return false;
         }
         try{
-            Optional<EmailStateDAO> optional = emailStateRepository.findById(mailVO.getEmail());
+            Optional<EmailStateDAO> optional = emailStateRepository.findById(email);
             EmailStateDAO emailStateDAO = optional.get();
-            if(emailStateDAO.getCode() != mailVO.getCode()){
+            if(emailStateDAO.getCode() != code){
                 throw new Exception();
             }
             emailStateRepository.save(new EmailStateDAO(emailStateDAO.getEmail(), eMailAuthenticatedFlag.Y, emailStateDAO.getExpireTime(), emailStateDAO.getCode()));
