@@ -127,7 +127,14 @@ public class ArticleDAO {
                 articleForm.getTitle(),member,book_categoryDAO);
     }
 
-
+    /**
+     * by 이승우
+     * @param articleForm // @ModelAttribute
+     * @param member // find Member
+     * @param book_categoryDAO // find book_categoryDAO
+     * @param market // find market
+     * @return // create Article
+     */
     public static ArticleDAO createArticleMarket(ArticleForm articleForm, MemberDAO member,Book_CategoryDAO book_categoryDAO,MarketDAO market){
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),
@@ -138,6 +145,13 @@ public class ArticleDAO {
                 articleForm.getTitle(),member,book_categoryDAO,market);
     }
 
+    /**
+     * by 이승운
+     * @param articleForm
+     * @param image_info
+     * @param countDAO
+     * @return
+     */
     public ArticleDAO updateArticle(ArticleForm articleForm,Image_infoDAO image_info,CountDAO countDAO) {
         this.content = articleForm.getContent();
         this.tprice = articleForm.getTprice();
