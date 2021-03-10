@@ -57,7 +57,6 @@ public class ArticleRepositoryImpl implements ArticleRepositoryCustom {
                             titleLike(articleSearchCondition.getTitle()),
                             articleIdLt(articleSearchCondition.getLastId()),
                             divisionEq(division),
-                            articleDAO.market.isNull(),
                             articleDAO.category.cid.in(
                                     JPAExpressions
                                             .select(book_CategoryDAO.cid)
