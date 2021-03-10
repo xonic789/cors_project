@@ -77,15 +77,15 @@ querydsl을 이용한 동적쿼리를 구성하여 검색 및 필터링 적용�
 
 **3.2.5 찜**
 
-<img src="img/찜.gif" width="400px"><br>
+<img src="img/찜.gif" width="800px"><br>
 
 **3.2.6 판매내역**
 
-<img src="img/판매내역.gif" width="400px"><br>
+<img src="img/판매내역.gif" width="800px"><br>
 
 **3.2.7 구매내역**
 
-<img src="img/구매내역.gif" width="400px"><br>
+<img src="img/구매내역.gif" width="800px"><br>
 
 JWT Token을 이용한 인증처리로, 멤버 마이페이지를 구현하였습니다.<br>
 찜목록, 구매목록, 판매목록, 나의마켓, 공지사항을 볼 수 있습니다.
