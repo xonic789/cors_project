@@ -246,7 +246,7 @@ function MyPage():JSX.Element {
 
   const onClickAddmarket = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
     e.preventDefault();
-    if (!isLoginSucceed) {
+    if (!user.logedin) {
       ToastsStore.error('로그인이 필요한 서비스입니다.');
     } else if (marketAddBox.current !== null) {
       marketAddBox.current.style.opacity = '1';
@@ -264,7 +264,7 @@ function MyPage():JSX.Element {
   };
 
   const onClickLoginCheck = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
-    if (!isLoginSucceed || cookie.load('REFRESH_TOKEN') === undefined) {
+    if (!user.logedin || cookie.load('REFRESH_TOKEN') === undefined) {
       e.preventDefault();
       ToastsStore.error('로그인이 필요한 서비스입니다.');
     }

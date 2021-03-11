@@ -50,8 +50,10 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
 
     private void setHeader(HttpServletResponse response, MemberDAO memberDAO) throws UnsupportedEncodingException {
         String nickname = Base64.encodeBase64String(memberDAO.getNickname().getBytes(StandardCharsets.UTF_8));
+        response.setHeader(MemberParam.EMAIL, memberDAO.getEmail());
         response.setHeader(MemberParam.NICKNAME, nickname);
         response.setHeader(MemberParam.PROFILE_IMG, memberDAO.getProfile_img());
+        response.setHeader(MemberParam.INTRO, memberDAO.getIntro());
         response.setHeader(MemberParam.LATITUDE, String.valueOf(memberDAO.getLatitude()));
         response.setHeader(MemberParam.LONGITUDE, String.valueOf(memberDAO.getLongitude()));
         response.setHeader(MemberParam.ROLE, memberDAO.getRole().getRole());
@@ -114,7 +116,7 @@ public class OauthSuccessHandler implements AuthenticationSuccessHandler {
         OAuth2AuthenticationToken oAuth2AuthenticationToken = (OAuth2AuthenticationToken) authentication;
         String socialTypeName = oAuth2AuthenticationToken.getAuthorizedClientRegistrationId();
         String imageUrl = uploadSocialProfileImage(socialTypeName, oAuth2AuthenticationToken.getPrincipal());
-
+        response.setHeader(MemberParam.SOCIALTYPE, socialTypeName);
         MemberDAO memberDAO;
         boolean bResult = memberRepository.existsByEmail(email);
         if (!bResult) {
