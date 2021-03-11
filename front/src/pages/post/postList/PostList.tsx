@@ -28,7 +28,7 @@ function PostList(): JSX.Element {
     dispatch(loadBookPostRequest({ filtering }));
   }, [dispatch, filtering, filtering.category, filtering.division, filtering.title]);
   useEffect(() => {
-    if (cookie.load('REFRESH_TOKEN') !== undefined && user.nickname === '') {
+    if (cookie.load('REFRESH_TOKEN') !== undefined && !user.logedin) {
       dispatch(getUserInfoRequest({}));
     }
   });

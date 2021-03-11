@@ -8,9 +8,11 @@ const initialUser: memberInterface = {
   latitude: 0, // 위도
   longitude: 0, // 경도
   role: '', // 권한
+  socialType: '',
   articles: [], // 아이디 만
   wishList: [], // 아이디 만
   myMarketList: [],
+  logedin: false,
 };
 
 const initialUserState = {
@@ -117,6 +119,7 @@ const userSlice = createSlice({
       state.isGetUserInfoLoading = false;
       state.isGetUserInfoSuccess = true;
       state.isGetUserInfoError = null;
+      state.user = action.payload;
     },
     getUserInfoRequestError: (state, action) => {
       state.isGetUserInfoLoading = false;

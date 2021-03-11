@@ -8,6 +8,8 @@ export interface memberInterface {
   articles: string[], // 내 글 고유번호 배열
   wishList: string[], // 내 찜 고유번호 배열
   myMarketList: string[], // 내 마켓
+  socialType: string,
+  logedin: boolean,
 }
 
 export interface modifyProfileInterface {
