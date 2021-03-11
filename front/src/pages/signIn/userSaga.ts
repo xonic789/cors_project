@@ -156,6 +156,7 @@ function* postRemoveWishListRequestSaga(action: {payload: string}) {
 function* getUserInfo() {
   try {
     const result = yield getUserInfoAsync();
+    console.log(result, '유저정보');
     yield put({
       type: getUserInfoRequestSuccess,
       payload: result,

@@ -14,8 +14,7 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       passwd: user.passwd,
     },
   }).then((result) => {
-    console.log(result);
-    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist, mymarketlist } = result.headers;
+    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishlist, mymarketlist, socialtype } = result.headers;
 
     const loginUser: memberInterface = {
       email: user.email,
@@ -24,6 +23,8 @@ export function postLoginAsync(user: { email: string, passwd: string }): Promise
       latitude,
       longitude,
       role,
+      logedin: true,
+      socialType: socialtype,
       articles: articlelist === undefined ? [] : JSON.parse(articlelist),
       wishList: wishlist === undefined ? [] : JSON.parse(wishlist),
       myMarketList: mymarketlist === undefined ? [] : JSON.parse(mymarketlist),
@@ -88,15 +89,17 @@ export function getUserInfoAsync(): Promise<memberInterface> {
     method: 'get',
     url: '/api/mypage',
   }).then((result) => {
-    const { nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishList, mymarketlist } = result.data.data;
-
+    console.log(result.data.data, '소셜로그인');
+    const { email, nickname, profile_img: profileImg, latitude, longitude, role, articlelist, wishList, mymarketlist, socialtype } = result.data.data;
     const loginUser: memberInterface = {
-      email: '',
+      email,
       nickname,
       profileImg,
       latitude,
       longitude,
       role,
+      logedin: true,
+      socialType: socialtype,
       articles: articlelist === undefined ? [] : JSON.parse(articlelist),
       wishList: wishList === undefined ? [] : JSON.parse(wishList),
       myMarketList: mymarketlist === undefined ? [] : JSON.parse(mymarketlist),
