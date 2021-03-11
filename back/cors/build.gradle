@@ -17,6 +17,34 @@ plugins {
 	id 'org.springframework.boot' version '2.4.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'org.hidetake.ssh' version '2.10.1'
+}
+
+//원격서버 설정
+remotes {
+	corsServer {
+		host = project.properties["publicHost"]
+		port = project.properties["publicPort"].toInteger()
+		user = project.properties["publicUser"]
+		password = project.properties["publicPassword"]
+	}
+}
+
+//원격 scp 빌드파일 전송
+task scp {
+	doLast {
+		ssh.run {
+			session(remotes.corsServer) {
+				final String buildDir = project.projectDir.path + "/" + buildFileDir
+				put from: buildDir, into: project.properties["publicDir"]
+			}
+		}
+	}
+}
+
+//빌드명
+bootJar{
+	archiveFileName='cors.jar'
 }
 
 apply plugin: 'java'

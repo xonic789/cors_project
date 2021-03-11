@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.CountDAO;
 import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.article.entity.dto.MyWishListDTO;
@@ -13,17 +14,20 @@ import ml.market.cors.domain.bookcategory.entity.dto.BookCategoryDTO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.entity.QMemberDAO;
 import ml.market.cors.repository.article.ArticleRepository;
+import ml.market.cors.repository.article.CountRepository;
 import ml.market.cors.repository.article.Wish_list_Repository;
 import ml.market.cors.repository.member.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -34,11 +38,13 @@ public class WishService {
 
     private final MemberRepository memberRepository;
 
+    private final CountRepository countRepository;
+
     public MyWishListDTO getMyWishList(long memberId, int pageIndex){
         if(memberId == 0){
             return null;
         }
-        Pageable pageable = PageRequest.of(pageIndex, 10);
+        Pageable pageable = PageRequest.of(pageIndex, 10, Sort.by("wish_id").descending());
         Page<Wish_listDAO> wishPage = wish_list_repository.findAllByMemberId(pageable, memberId);
         List<Wish_listDAO> wishContent = wishPage.getContent();
         long wishId;
@@ -70,32 +76,57 @@ public class WishService {
         return count;
     }
 
-    public boolean save(long memberId, long articleId) {
+    @Transactional
+    public boolean save(long memberId, long articleId) throws RuntimeException{
         if(memberId == 0 || articleId == 0){
             return false;
         }
+        MemberDAO memberDAO = new MemberDAO(memberId);
+        ArticleDAO articleDAO = new ArticleDAO(articleId);
+        boolean bResult = wish_list_repository.existsByMemberAndArticle(memberDAO, articleDAO);
+        if(bResult){
+            return false;
+        }
         try{
-            MemberDAO memberDAO = memberRepository.findById(memberId);
-            ArticleDAO articleDAO = articleRepository.findById(articleId);
+            memberDAO = memberRepository.findById(memberId);
+            articleDAO = articleRepository.findById(articleId);
+            CountDAO countDAO = articleRepository.getCount(articleId);
+            if(countDAO == null){
+                throw new Exception();
+            }
             Wish_listDAO wishListDAO = new Wish_listDAO(memberDAO, articleDAO);
             wish_list_repository.save(wishListDAO);
+            countDAO.updateWishCount(countDAO.getWishCount() + 1);
         }catch (Exception e){
-            return false;
+            throw new RuntimeException();
         }
         return true;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public boolean delete(long articleId, long memberId) {
+    public boolean delete(long articleId, long memberId) throws RuntimeException{
         if(articleId == 0 || memberId == 0){
             return false;
         }
         try{
             MemberDAO memberDAO = memberRepository.findById(memberId);
             ArticleDAO articleDAO = articleRepository.findById(articleId);
+            boolean bResult = wish_list_repository.existsByMemberAndArticle(memberDAO, articleDAO);
+            if(!bResult){
+                return false;
+            }
             wish_list_repository.deleteByMemberAndArticle(memberDAO, articleDAO);
+            CountDAO countDAO = articleRepository.getCount(articleId);
+            if(countDAO == null){
+                throw new Exception();
+            }
+            int wishCount = countDAO.getWishCount();
+            if(wishCount > 0) {
+                wishCount--;
+            }
+            countDAO.updateWishCount(wishCount);
         }catch (Exception e){
-            return false;
+            throw new RuntimeException();
         }
         return true;
     }

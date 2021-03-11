@@ -4,6 +4,8 @@ spring:
     include:
       - aws
       - credentials
+      - email
+      - oauth
 
 #  datasource:
 #    url: jdbc:h2:tcp://localhost/~/test

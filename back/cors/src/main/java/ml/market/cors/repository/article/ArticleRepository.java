@@ -2,6 +2,7 @@ package ml.market.cors.repository.article;
 
 
 import ml.market.cors.domain.article.entity.dao.ArticleDAO;
+import ml.market.cors.domain.article.entity.dao.CountDAO;
 import ml.market.cors.domain.article.entity.dao.Image_infoDAO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
@@ -28,5 +29,6 @@ public interface ArticleRepository extends JpaRepository<ArticleDAO,Long>,Articl
 
     @Query("SELECT ArticleTb.category from ArticleDAO ArticleTb where ArticleTb.article_id=:articleId")
     Book_CategoryDAO getCategoryByArticleId(@Param("articleId") long articleId);
-
+    @Query("SELECT ArticleTb.countDAO from ArticleDAO ArticleTb where ArticleTb.article_id=:articleId")
+    CountDAO getCount(@Param("articleId") long articleId);
 }

@@ -67,8 +67,8 @@ public class ArticleDAO {
     @JoinColumn(name = "market_id")
     private MarketDAO market;
 
-    /**
-     * 일반 게시글
+    /** by 이승우
+     * 일반 게시글용 생성자
      */
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
                       Progress progress, int tprice, Division division,
@@ -86,8 +86,8 @@ public class ArticleDAO {
         this.category=category;
     }
 
-    /**
-     * 마켓 게시글
+    /** by 이승우
+     * 마켓 게시글용 생성자
      */
     public ArticleDAO(CountDAO countDAO, String content, int rprice, LocalDateTime write_date,
                       Progress progress, int tprice, Division division,
@@ -110,6 +110,13 @@ public class ArticleDAO {
         this.article_id = article_id;
     }
 
+    /**
+     * by 이승우
+     * @param articleForm / @ModelAttribute
+     * @param member / find Member
+     * @param book_categoryDAO / findById Book_CategoryDAO
+     * @return create ArticleDAO
+     */
     public static ArticleDAO createArticle(ArticleForm articleForm, MemberDAO member, Book_CategoryDAO book_categoryDAO){
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),
@@ -120,7 +127,14 @@ public class ArticleDAO {
                 articleForm.getTitle(),member,book_categoryDAO);
     }
 
-
+    /**
+     * by 이승우
+     * @param articleForm // @ModelAttribute
+     * @param member // find Member
+     * @param book_categoryDAO // find book_categoryDAO
+     * @param market // find market
+     * @return // create Article
+     */
     public static ArticleDAO createArticleMarket(ArticleForm articleForm, MemberDAO member,Book_CategoryDAO book_categoryDAO,MarketDAO market){
         return new ArticleDAO(
                 new CountDAO(), articleForm.getContent(),
@@ -131,6 +145,13 @@ public class ArticleDAO {
                 articleForm.getTitle(),member,book_categoryDAO,market);
     }
 
+    /**
+     * by 이승운
+     * @param articleForm
+     * @param image_info
+     * @param countDAO
+     * @return
+     */
     public ArticleDAO updateArticle(ArticleForm articleForm,Image_infoDAO image_info,CountDAO countDAO) {
         this.content = articleForm.getContent();
         this.tprice = articleForm.getTprice();

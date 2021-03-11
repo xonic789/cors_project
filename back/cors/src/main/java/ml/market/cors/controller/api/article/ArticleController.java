@@ -346,7 +346,7 @@ public class ArticleController {
                             findArticle.getWrite_date(),
                             findArticle.getProgress(),
                             findArticle.getDivision()));
-        }else if (findArticle!=null){
+        }else if (!eqMemberId(findMember,findArticle)){
             return responseEntityUtils.getMessageResponseEntityForbidden(
                     new Errors(
                             "request",
