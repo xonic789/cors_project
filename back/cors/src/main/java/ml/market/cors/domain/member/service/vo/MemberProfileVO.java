@@ -13,11 +13,11 @@ public class MemberProfileVO {
     @NonNull
     private final String passwd;
 
-    private String newpasswd;
+    private String newPasswd;
 
     private String intro;
 
-    private MultipartFile image;
+    private MultipartFile profile_img;
 
     private String nickname;
 }

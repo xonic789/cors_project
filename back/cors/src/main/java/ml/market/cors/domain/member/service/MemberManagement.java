@@ -139,14 +139,14 @@ public class MemberManagement {
             }
         }
 
-        String newPasswd = memberProfileVO.getNewpasswd();
+        String newPasswd = memberProfileVO.getNewPasswd();
         if(newPasswd != null) {
             if (!newPasswd.equals("")) {
                 newPasswd = bCryptPasswordEncoder.encode(newPasswd);
             }
         }
 
-        MultipartFile image = memberProfileVO.getImage();
+        MultipartFile image = memberProfileVO.getProfile_img();
         String imageKey = null;
         String imageUrl = null;
         if (image != null) {
