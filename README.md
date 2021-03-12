@@ -60,10 +60,6 @@ AWS S3 버켓을 사용하여 파일 업로드를 구현하였습니다.<br>
 multipart 파일을 java file로 변환하여 서버에 업로드 후<br>
 S3 라이브러리를 이용하여 업로드를 하고, 업로드 후 WAS에 업로드 된 파일을 삭제합니다.
 
-**3.2.2 wish**
-
-<img src="img/찜목록.png" width="400px"><br>
-
 **3.2.3 search & filtering**
 
 <img src="img/필터링.gif" width="800px"><br>
@@ -87,6 +83,17 @@ querydsl을 이용한 동적쿼리를 구성하여 검색 및 필터링 적용�
 
 <img src="img/구매내역.gif" width="800px"><br>
 
+**3.2.7 공지사항목록**
+
+<img src="img/공지사항목록.gif" width="800px"><br>
+
+**3.2.7 소셜로그인**
+
+<img src="img/소셜로그인.gif" width="800px"><br>
+
+**3.2.7 프로필편집**
+
+<img src="img/프로필편집.gif" width="800px"><br>
 JWT Token을 이용한 인증처리로, 멤버 마이페이지를 구현하였습니다.<br>
 찜목록, 구매목록, 판매목록, 나의마켓, 공지사항을 볼 수 있습니다.
 
