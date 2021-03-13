@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import cookie from 'react-cookies';
 import LoginForm from './LoginForm';
+import { postLogoutRequest } from '../../signIn/userSlice';
 
 const Wrapper = styled.div`
   width: 100%;
@@ -45,7 +46,7 @@ function AdminSignIn():JSX.Element {
   useEffect(() => {
     console.log(cookie.load('ACCESS_TOKEN') !== undefined);
     if (cookie.load('ACCESS_TOKEN') !== undefined || cookie.load('REFRESH_TOKEN') !== undefined) {
-      console.log('로그아웃');
+      dispatch(postLogoutRequest({}));
     }
   }, [dispatch]);
 

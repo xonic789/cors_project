@@ -277,11 +277,9 @@ function MyPage():JSX.Element {
       if (isPass) {
         dispatch(maketDetailLoadRequest(myMarketList[0]));
         history.push(`/market/${myMarketList[0]}`);
-      } else {
-        ToastsStore.error('마켓 승인 대기중입니다.');
       }
     } catch {
-      ToastsStore.error('서버 통신 에러');
+      ToastsStore.error('마켓 승인 대기');
     }
   };
 

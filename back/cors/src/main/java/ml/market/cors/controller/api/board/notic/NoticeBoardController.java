@@ -60,7 +60,7 @@ public class NoticeBoardController {
         return messageResponseEntity;
     }
 
-    @PostMapping("/save")
+    @PostMapping
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Message<Object>> save(@RequestParam("title") String title, @RequestParam("content") String content
             ,@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken){
@@ -75,7 +75,7 @@ public class NoticeBoardController {
         return messageResponseEntity;
     }
 
-    @PostMapping("/delete")
+    @DeleteMapping()
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Message<Object>> delete(@RequestParam("noticeId") long noticeId){
         ResponseEntity<Message<Object>> messageResponseEntity;
@@ -88,7 +88,7 @@ public class NoticeBoardController {
         return messageResponseEntity;
     }
 
-    @PutMapping("/update")
+    @PutMapping()
     @Secured("ROLE_ADMIN")
     public ResponseEntity<Message<Object>> update(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
             ,@RequestParam("title") String title, @RequestParam("content") String content

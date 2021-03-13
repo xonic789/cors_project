@@ -20,6 +20,7 @@ import ml.market.cors.domain.member.service.vo.MemberProfileVO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.util.Message;
 import ml.market.cors.domain.util.ResponseEntityUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
