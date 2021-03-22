@@ -1,31 +1,26 @@
 package ml.market.cors.controller.api.member;
 
-import io.jsonwebtoken.Jwt;
-import lombok.Data;
+
 import lombok.RequiredArgsConstructor;
+
 import ml.market.cors.controller.api.member.dto.DivisionPageDTO;
-import ml.market.cors.domain.article.entity.dao.ArticleDAO;
-import ml.market.cors.domain.article.entity.dao.Wish_listDAO;
 import ml.market.cors.domain.article.entity.dto.MyWishListDTO;
 import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.article.service.WishService;
 import ml.market.cors.domain.board.entity.dto.QuestionMemberDTO;
 import ml.market.cors.domain.board.service.QuestionService;
 import ml.market.cors.domain.mail.service.EmailManagement;
-import ml.market.cors.domain.mail.vo.MailVO;
+
 import ml.market.cors.domain.market.entity.dto.MarketViewDTO;
 import ml.market.cors.domain.market.enums.MarketKey;
 import ml.market.cors.domain.market.service.MarketService;
-import ml.market.cors.domain.member.entity.MemberDAO;
-import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.member.service.MemberManagement;
-import ml.market.cors.domain.member.service.MemberVO;
+import ml.market.cors.domain.member.service.vo.MemberJoinVO;
+import ml.market.cors.domain.member.service.vo.MemberProfileVO;
 import ml.market.cors.domain.security.member.JwtCertificationToken;
 import ml.market.cors.domain.util.Message;
 import ml.market.cors.domain.util.ResponseEntityUtils;
-import ml.market.cors.repository.article.Wish_list_Repository;
-import ml.market.cors.repository.member.MemberRepository;
-import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -35,6 +30,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.*;
+
+
+
 
 @RestController
 @RequestMapping("/api")
@@ -52,8 +50,8 @@ public class MemberController {
 
     private final QuestionService questionService;
 
-    @PostMapping("/check/nickname")
-    public ResponseEntity<Message<Object>> existNickname(@RequestParam String nickname){
+    @GetMapping("/nickname/{nickname}")
+    public ResponseEntity<Message<Object>> existNickname(@PathVariable String nickname){
         ResponseEntity<Message<Object>> messageResponseEntity;
         boolean bResult = memberManagement.existNickname(nickname);
         if(bResult) {
@@ -64,8 +62,8 @@ public class MemberController {
         return messageResponseEntity;
     }
 
-    @PostMapping("/check/email")
-    public ResponseEntity<Message<Object>> existEmail(@RequestParam String email){
+    @GetMapping("/email/{email}")
+    public ResponseEntity<Message<Object>> existEmail(@PathVariable String email){
         ResponseEntity<Message<Object>> messageResponseEntity;
         try{
             emailManagement.insert(email);
@@ -76,11 +74,12 @@ public class MemberController {
         return messageResponseEntity;
     }
 
-    @PostMapping("/check/code")
-    public ResponseEntity<Message<Object>> isCode(@ModelAttribute MailVO mailVO){
+    @GetMapping("/code/{code}")
+    public ResponseEntity<Message<Object>> isCode(@PathVariable int code, @RequestParam String email){
         ResponseEntity<Message<Object>> messageResponseEntity;
         try {
-            if (!emailManagement.checkCode(mailVO)) {
+            boolean bResult = emailManagement.checkCode(code, email);
+            if (!bResult) {
                 throw new Exception();
             }
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);
@@ -91,10 +90,11 @@ public class MemberController {
     }
 
     @PostMapping("/join")
-    public ResponseEntity<Message<Object>> join(@ModelAttribute MemberVO memberVo) {
+    public ResponseEntity<Message<Object>> join(@ModelAttribute MemberJoinVO memberJoinVo) {
         ResponseEntity<Message<Object>> messageResponseEntity;
         try{
-            if(!memberManagement.create(memberVo)){
+            boolean bResult = memberManagement.create(memberJoinVo);
+            if(!bResult){
                 throw new Exception();
             }
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(null);
@@ -104,14 +104,14 @@ public class MemberController {
         return messageResponseEntity;
     }
 
-    @PutMapping("/change/profile")
-    public ResponseEntity<Message<Object>> change(@AuthenticationPrincipal JwtCertificationToken memberIdentify
-                                                  , @RequestParam Map<String, Object> member
-            , @RequestPart(value = "profile_img", required = false)MultipartFile multipartFile) {
+
+    @PatchMapping("/profile")
+    public ResponseEntity<Message<Object>> changeProfile(@AuthenticationPrincipal JwtCertificationToken memberIdentify
+                                                  , @ModelAttribute MemberProfileVO memberProfileVO) {
         ResponseEntity<Message<Object>> messageResponseEntity;
         try {
             long memberId = (Long) memberIdentify.getCredentials();
-            if (memberManagement.change(member, memberId, multipartFile)) {
+            if (memberManagement.change(memberProfileVO, memberId)) {
                 messageResponseEntity = responseEntityUtils.getMessageResponseEntityOK(memberManagement.setMember(memberId));
             } else {
                 messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 변경 실패");
@@ -127,8 +127,8 @@ public class MemberController {
     public ResponseEntity<Message<Object>> getView(@AuthenticationPrincipal JwtCertificationToken jwtCertificationToken
     , HttpServletResponse response){
         ResponseEntity<Message<Object>> messageResponseEntity = null;
-
-        Map result = memberManagement.viewProfile(response, (long)jwtCertificationToken.getCredentials());
+        long memberId = (long)jwtCertificationToken.getCredentials();
+        Map result = memberManagement.viewProfile(memberId);
         if(result == null){
             messageResponseEntity = responseEntityUtils.getMessageResponseEntityBadRequest("프로필 로드 실패");
         }

@@ -45,8 +45,8 @@ export function getNoticeRequestAsync(page: number): Promise<getNoticeInterface>
 export function reomveNoticeRequestAsync(noticeId: string): Promise<AxiosResponse> {
   console.log(noticeId, 'test');
   return axios({
-    method: 'post',
-    url: '/api/notice/delete',
+    method: 'delete',
+    url: '/api/notice',
     params: { noticeId },
   });
 }
@@ -54,7 +54,15 @@ export function reomveNoticeRequestAsync(noticeId: string): Promise<AxiosRespons
 export function modifyNoticeRequestAsync(notice: FormData): Promise<AxiosResponse> {
   return axios({
     method: 'put',
-    url: '/api/notice/update',
+    url: '/api/notice',
+    data: notice,
+  });
+}
+
+export function addNoticeRequestAsync(notice: FormData): Promise<AxiosResponse> {
+  return axios({
+    method: 'post',
+    url: '/api/notice',
     data: notice,
   });
 }

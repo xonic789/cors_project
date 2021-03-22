@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
+import { postLoginRequest, postLoginRequestError, postLoginRequestSuccess } from '../../signIn/userSlice';
+import { LOGIN_ERROR, postLoginAsync, SERVER_ERROR } from '../../../api/userApi';
 
 interface inputFormInterface {
   email: string,
@@ -74,8 +76,25 @@ function LoginForm(): JSX.Element {
     });
   };
 
+  const dispatch = useDispatch();
+
+  const history = useHistory();
+  
   const onLogin = async (e:React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      const result = await postLoginAsync({ email: inputs.email, passwd: inputs.passwd });
+      console.log(result, 'asdasdsad');
+      dispatch(postLoginRequestSuccess(result));
+      history.push('/admin/home');
+    } catch (error) {
+      dispatch(postLoginRequestError(error.message));
+      if (error.message === LOGIN_ERROR) {
+        ToastsStore.error('로그인 정보를 확인해주세요.');
+      } else if (error.message === SERVER_ERROR) {
+        ToastsStore.error('서버 통신중 에러 발생');
+      }
+    }
   };
 
   return (

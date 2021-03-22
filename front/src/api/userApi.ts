@@ -66,8 +66,8 @@ export function logoutAsync(): Promise<boolean> {
 
 export function modifyProfileAsync(modifyProfile: FormData): Promise<AxiosResponse> {
   return axios({
-    method: 'put',
-    url: '/api/change/profile',
+    method: 'PATCH',
+    url: '/api/profile',
     headers: {
       'Content-Type': 'multipart/form-data',
     },
