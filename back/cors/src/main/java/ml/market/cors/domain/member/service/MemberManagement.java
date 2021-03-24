@@ -13,11 +13,10 @@ import ml.market.cors.domain.article.entity.enums.Division;
 import ml.market.cors.domain.bookcategory.entity.Book_CategoryDAO;
 import ml.market.cors.domain.bookcategory.entity.dto.BookCategoryDTO;
 import ml.market.cors.domain.mail.entity.EmailStateDAO;
+import ml.market.cors.domain.market.entity.MarketDAO;
 import ml.market.cors.domain.member.entity.MemberDAO;
 import ml.market.cors.domain.member.map.MemberParam;
 import ml.market.cors.domain.member.query.MemberQuerys;
-import ml.market.cors.domain.member.service.vo.MemberJoinVO;
-import ml.market.cors.domain.member.service.vo.MemberProfileVO;
 import ml.market.cors.domain.security.member.role.MemberRole;
 import ml.market.cors.domain.security.oauth.enums.eSocialType;
 import ml.market.cors.domain.util.mail.eMailAuthenticatedFlag;
@@ -25,10 +24,11 @@ import ml.market.cors.domain.util.kakao.dto.map.MapDocumentsDTO;
 import ml.market.cors.domain.util.kakao.KaKaoRestManagement;
 import ml.market.cors.domain.util.kakao.dto.map.KakaoResMapDTO;
 import ml.market.cors.repository.article.ArticleRepository;
+import ml.market.cors.repository.article.Image_info_Repository;
+import ml.market.cors.repository.bookcategory.BookCategoryRepository;
 import ml.market.cors.repository.mail.EmailStateRepository;
 import ml.market.cors.repository.member.MemberRepository;
 import ml.market.cors.upload.S3Uploader;
-import ml.market.cors.upload.vo.ImageInfoVO;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -110,62 +110,79 @@ public class MemberManagement {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public boolean change(MemberProfileVO memberProfileVO, long memberId) {
-        if (memberId == 0) {
+    public boolean change(@NonNull Map<String, Object> member, Long id, MultipartFile multipartFile){
+        if(id == 0){
             return false;
         }
-        String passwd = memberProfileVO.getPasswd();
+        String passwd = (String)member.get(MemberParam.PASSWD);
+        if(passwd == null){
+            return false;
+        }
 
-        List<MemberDAO> members = memberRepository.findByMemberId(memberId);
-        if (members == null) {
+        List<MemberDAO> members = memberRepository.findByMemberId(id);
+        if(members == null){
             return false;
         }
         MemberDAO memberDAO = members.get(0);
-        if (memberDAO.getESocialType() == eSocialType.NORMAL) {
+        if(memberDAO.getESocialType() == eSocialType.NORMAL) {
             if (!bCryptPasswordEncoder.matches(passwd, memberDAO.getPassword())) {
                 return false;
             }
         }
-        String intro = memberProfileVO.getIntro();
-        String nickname = memberProfileVO.getNickname();
-        if (nickname != null) {
+        if(member.containsKey(MemberParam.INTRO)) {
+            String intro = (String) member.get(MemberParam.INTRO);
+            memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getProfileKey(), memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType(), intro));
+        }
+        if(member.containsKey(MemberParam.NICKNAME)) {
+            String nickname = (String) member.get(MemberParam.NICKNAME);
             if (nickname.equals("")) {
                 return false;
             }
-            if (!existNickname(nickname, memberId)) {
+            if (!existNickname(nickname, id)) {
                 if (existNickname(nickname)) {
                     return false;
                 }
+                memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getProfileKey(), memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(),  memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), nickname, memberDAO.getESocialType(), memberDAO.getIntro()));
             }
         }
 
-        String newPasswd = memberProfileVO.getNewPasswd();
-        if(newPasswd != null) {
-            if (!newPasswd.equals("")) {
+        if(member.containsKey(MemberParam.NEWPASSWD)){
+            String newPasswd = (String) member.get(MemberParam.NEWPASSWD);
+            if(!newPasswd.equals("")){
                 newPasswd = bCryptPasswordEncoder.encode(newPasswd);
+                memberDAO = memberRepository.save(new MemberDAO(id, memberDAO.getProfileKey(), memberDAO.getProfile_img(), memberDAO.getEmail(), memberDAO.getRole(),  newPasswd, memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType(), memberDAO.getIntro()));
             }
         }
 
-        MultipartFile image = memberProfileVO.getProfile_img();
-        String imageKey = null;
-        String imageUrl = null;
-        if (image != null) {
-            if (!image.isEmpty()) {
+        if(multipartFile != null) {
+            if (!multipartFile.isEmpty()) {
                 try {
-                    String fileName = System.currentTimeMillis() + image.getOriginalFilename();
-                    ImageInfoVO imageInfoVO = s3Uploader.upload(image, memberDAO.getEmail(), System.currentTimeMillis(), image.getOriginalFilename(), fileName, memberDAO.getProfileKey());
-                    if (imageInfoVO == null) {
-                        return false;
+                    String fileName = System.currentTimeMillis() + multipartFile.getOriginalFilename();
+                    Map<String, String> result = s3Uploader.upload(multipartFile, memberDAO.getEmail(), System.currentTimeMillis(), multipartFile.getOriginalFilename(), fileName, memberDAO.getProfileKey());
+                    if (result == null) {
+                        return true;
                     }
-                    imageKey = imageInfoVO.getKey();
-                    imageUrl = imageInfoVO.getUrl();
+                    memberDAO = memberRepository.save(new MemberDAO(id, result.get("key"), result.get("url"), memberDAO.getEmail(), memberDAO.getRole(), memberDAO.getPassword(), memberDAO.getAddress(), memberDAO.getLatitude(), memberDAO.getLongitude(), memberDAO.getNickname(), memberDAO.getESocialType(), memberDAO.getIntro()));
                 } catch (Exception e) {
                     log.debug("파일 업로드 실패");
                     throw new RuntimeException();
                 }
             }
         }
-        memberDAO.updateProfile(nickname, intro, imageUrl, newPasswd, imageKey);
+        return true;
+    }
+
+
+    public boolean conditionJoin(String email, String nickname){
+        boolean bResult = existNickname(nickname);
+        if(bResult){
+            return false;
+        }
+
+        bResult = existEmail(email);
+        if(bResult){
+            return false;
+        }
         return true;
     }
 
@@ -179,14 +196,11 @@ public class MemberManagement {
         return memberRepository.existsByNickname(nickname);
     }
 
-    public boolean existNickname(String nickname, long memberId){
-        if(memberId == 0){
+    public boolean existNickname(@NonNull String nickname, long id){
+        if(id == 0){
             return false;
         }
-        if(nickname == null){
-            return false;
-        }
-        return memberRepository.existsByMemberIdAndNickname(memberId, nickname);
+        return memberRepository.existsByMemberIdAndNickname(id, nickname);
     }
 
     public boolean existEmail(String email){
@@ -196,27 +210,15 @@ public class MemberManagement {
 
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public boolean create(MemberJoinVO memberJoinVo) throws RuntimeException {
-        String email = memberJoinVo.getEmail();
-        String nickname = memberJoinVo.getNickname();
-        String passwd = memberJoinVo.getPasswd();
-        String address = memberJoinVo.getAddress();
-        if(email.equals("") || nickname.equals("") || passwd.equals("") || address.equals("")){
-            return false;
-        }
-
-        boolean bResult = existNickname(nickname);
-        if(bResult){
-            return false;
-        }
-
-        bResult = existEmail(email);
-        if(bResult){
+    public boolean create(MemberVO memberVo) throws RuntimeException {
+        String email = memberVo.getEmail();
+        String nickname = memberVo.getNickname();
+        if(!conditionJoin(email, nickname)){
             return false;
         }
 
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-        String encryptPasswd = bCryptPasswordEncoder.encode(passwd);
+        String passwd = bCryptPasswordEncoder.encode(memberVo.getPasswd());
 
         Optional<EmailStateDAO> optional = emailStateRepository.findById(email);
         EmailStateDAO emailStateDAO;
@@ -234,7 +236,9 @@ public class MemberManagement {
             return false;
         }
 
-        KakaoResMapDTO kakaoResMapDTO = kaKaoRestManagement.transAddressToCoordinate(memberJoinVo.getAddress());
+
+        String address = memberVo.getAddress();
+        KakaoResMapDTO kakaoResMapDTO = kaKaoRestManagement.transAddressToCoordinate(memberVo.getAddress());
         if(kakaoResMapDTO == null){
             return false;
         }
@@ -245,14 +249,14 @@ public class MemberManagement {
         }
         double latitude = mapResMapDocumentsDTO.getY();
         double longitude = mapResMapDocumentsDTO.getX();
-        MemberDAO memberDAO = new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, MemberParam.DEFAULT_PROFILE_IMG_DIR, email, MemberRole.USER, null, encryptPasswd
+        MemberDAO memberDAO = new MemberDAO(MemberParam.DEFAULT_PROFILE_KEY, MemberParam.DEFAULT_PROFILE_IMG_DIR, email, MemberRole.USER, null, passwd
                 ,address, latitude, longitude, nickname, eSocialType.NORMAL);
         memberRepository.save(memberDAO);
         emailStateRepository.deleteById(email);
         return true;
     }
 
-    public Map<String, String> viewProfile(long memberId){
+    public Map<String, String> viewProfile(@NonNull HttpServletResponse response, long memberId){
         if(memberId == 0){
             return null;
         }

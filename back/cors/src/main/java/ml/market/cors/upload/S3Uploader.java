@@ -5,7 +5,6 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ml.market.cors.upload.vo.ImageInfoVO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -46,7 +45,7 @@ public class S3Uploader implements Uploader{
         return result;
     }
 
-    public ImageInfoVO upload(MultipartFile multipartFile, String dirName, Long id, String dir, String fileName, String key) throws IOException {
+    public Map<String, String> upload(MultipartFile multipartFile, String dirName, Long id, String dir, String fileName, String key) throws IOException {
         Map<String, Object> map = convert(multipartFile, fileName);
         File convertedFile = (File) map.get("file");
         String uploadFileKey = (String)map.get("key");
@@ -55,9 +54,11 @@ public class S3Uploader implements Uploader{
             return null;
         }
 
+        Map<String, String> result = new HashMap<>();
         String url = upload(convertedFile,dirName,id,dir);
-        ImageInfoVO profileImageInfo = new ImageInfoVO(url,uploadFileKey);
-        return profileImageInfo;
+        result.put("url", url);
+        result.put("key", uploadFileKey);
+        return result;
     }
 
     private String upload(File uploadFile, String dirName,Long id,String dir) {
@@ -67,12 +68,10 @@ public class S3Uploader implements Uploader{
         return uploadImageUrl;
     }
 
-
     private String putS3(File uploadFile, String fileName) {
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
-
 
     public void deleteObject(String key){
         amazonS3Client.deleteObject(bucket, key);
@@ -82,7 +81,7 @@ public class S3Uploader implements Uploader{
         if (targetFile.delete()) {
             return;
         }
-        log.debug("임시 파일이 삭제 되지 못했습니다. 파일 이름: {}", targetFile.getName());
+        log.info("임시 파일이 삭제 되지 못했습니다. 파일 이름: {}", targetFile.getName());
     }
 
 
