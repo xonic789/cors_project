@@ -18,7 +18,7 @@ public class Image_infoDAO {
     private Long index_id;
 
     @Column(name = "image1")
-    private String image1;           
+    private String image1;
     @Column(name = "image2")
     private String image2;
     @Column(name = "image3")
