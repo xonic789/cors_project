@@ -64,7 +64,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrf().disable()
                     .headers()
                         .frameOptions().sameOrigin()
-                    .and()
+                    .and()            
                     .securityContext().securityContextRepository(mCookieSecurityContextRepository)
                     .and()
                     .authorizeRequests()
