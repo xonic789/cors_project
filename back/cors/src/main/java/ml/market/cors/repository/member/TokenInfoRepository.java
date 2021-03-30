@@ -8,3 +8,4 @@ import org.springframework.stereotype.Repository;
 public interface TokenInfoRepository extends JpaRepository<TokenInfoDAO, Long> {
     public TokenInfoDAO findByTokenindex(long tokenIndex);
 }
+
