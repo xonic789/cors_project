@@ -21,7 +21,7 @@ plugins {
 }
 
 //원격서버 설정
-remotes {
+remotes {                          
 	corsServer {
 		host = project.properties["publicHost"]
 		port = project.properties["publicPort"].toInteger()
