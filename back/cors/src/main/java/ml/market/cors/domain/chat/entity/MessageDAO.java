@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Entity
-@Table(name = "massage")
+@Table(name = "message")
 @Getter
 @NoArgsConstructor
 public class MessageDAO {

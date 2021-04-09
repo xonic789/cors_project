@@ -7,10 +7,10 @@ spring:
     - oauth
 
   datasource:
-    url: jdbc:mysql://115.85.183.222:3306/corsdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://moaproject.cqkjko8dt72i.ap-northeast-2.rds.amazonaws.com:3306/corsdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     #url: jdbc:mysql://127.0.0.1:3306/corsdb?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-    username: cors
-    password: Dd3552468!
+    username: root
+    password: d3552468
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   devtools:
@@ -20,7 +20,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: validate
     properties:
       hibernate:
         format_sql: true

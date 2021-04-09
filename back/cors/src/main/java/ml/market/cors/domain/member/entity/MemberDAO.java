@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @Entity
-@Table(name="member")
+@Table(name="members")
 @Getter
 @NoArgsConstructor
 public class MemberDAO implements UserDetails{
