@@ -164,7 +164,7 @@ public class ArticleDAO {
 
     public Progress updateProgress(Progress progress){
         this.progress=progress;
-        return this.getProgress();
+        return this.getProgress();              
     }
 
     @Override

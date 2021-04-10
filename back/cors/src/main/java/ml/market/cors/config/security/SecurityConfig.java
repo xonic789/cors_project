@@ -7,6 +7,7 @@ import ml.market.cors.domain.security.oauth.exception.ExceptionPoint;
 import ml.market.cors.domain.security.common.service.CookieSecurityContextRepository;
 import ml.market.cors.domain.security.member.filter.MemberLoginAuthFilter;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 import ml.market.cors.domain.security.member.filter.MemberLogoutFilter;
@@ -56,6 +57,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web)  {
        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+        DecimalFormat
     }
 
     @Override
