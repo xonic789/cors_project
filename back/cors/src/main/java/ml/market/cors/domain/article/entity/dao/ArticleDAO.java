@@ -164,7 +164,7 @@ public class ArticleDAO {
 
     public Progress updateProgress(Progress progress){
         this.progress=progress;
-        return this.getProgress();              
+        return this.getProgress();
     }
 
     @Override
@@ -175,7 +175,7 @@ public class ArticleDAO {
         return getRprice() == that.getRprice() && getTprice() == that.getTprice() && Objects.equals(getArticle_id(), that.getArticle_id()) && Objects.equals(getContent(), that.getContent()) && getProgress() == that.getProgress() && getDivision() == that.getDivision();
     }
 
-    @Override
+    @Override                   
     public int hashCode() {
         return Objects.hash(getArticle_id(), getContent(), getRprice(), getProgress(), getTprice(), getDivision());
     }
