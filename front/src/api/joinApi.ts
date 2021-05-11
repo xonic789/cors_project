@@ -3,7 +3,7 @@ import axios from 'axios';
 export function emailDuplicationAsync(email: string): Promise<boolean> {
   return axios({
     method: 'GET',
-    url: '/api/email/' + email,
+    url: `/api/email/${email}`,
   }).then((res) => true).catch((error) => {
     if (error.response.status !== 400) {
       throw new Error('서버 통신 오류');
@@ -16,7 +16,7 @@ export function emailDuplicationAsync(email: string): Promise<boolean> {
 export function emailCertificationAsync(email: string, code: string): Promise<boolean> {
   return axios({
     method: 'GET',
-    url: '/api/code/' + code,
+    url: `/api/code/${code}`,
     params: { email },
   }).then((res) => true).catch((error) => {
     if (error.response.status !== 400) {
@@ -30,7 +30,7 @@ export function emailCertificationAsync(email: string, code: string): Promise<bo
 export function nicknameDuplicationAsync(nickname: string): Promise<boolean> {
   return axios({
     method: 'GET',
-    url: '/api/nickname/' + nickname,
+    url: `/api/nickname/${nickname}`,
   }).then((res) => true).catch((error) => {
     if (error.response.status !== 400) {
       throw new Error('서버통신에러');

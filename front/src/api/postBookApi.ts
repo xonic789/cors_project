@@ -1,8 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { AddBookPostInterface } from '../interfaces/PostList.interface';
 
-//const BASEURL = 'https://corsmarket.ml/api';
-const BASEURL = 'http://localhost:3000';
+const BASEURL = 'https://corsmarket.shop/api';
 
 const FormDataConfig = {
   headers: {
@@ -11,7 +10,7 @@ const FormDataConfig = {
 };
 // 알라딘 API
 export function getAladinBook(title: string):Promise<AxiosResponse> {
-  return axios.get(`https://corsmarket.ml/ttb/api/ItemSearch.aspx?ttbkey=ttbehaakdl1816001&QueryType=Title&Query=${title}&output=js`);
+  return axios.get(`https://corsmarket.shop/ttb/api/ItemSearch.aspx?ttbkey=ttbehaakdl1816001&QueryType=Title&Query=${title}&output=js`);
 }
 // 일반사용자 판매/구매글 추가
 export function addBookPostAPI(data: AddBookPostInterface):Promise<AxiosResponse> {

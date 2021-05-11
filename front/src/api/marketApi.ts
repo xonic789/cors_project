@@ -1,7 +1,6 @@
 import axios, { AxiosResponse } from 'axios';
 
-//const URL = 'https://corsmarket.ml';
-const URL = 'http://localhost:3000';
+const URL = 'https://corsmarket.shop';
 
 // 마켓리스트 불러오기
 export function loadMarketAPI(): Promise<AxiosResponse> {

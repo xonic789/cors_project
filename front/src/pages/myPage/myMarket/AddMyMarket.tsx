@@ -311,7 +311,7 @@ function MyMarket():JSX.Element {
       market.append('name', marketInfo.name);
       market.append('intro', marketInfo.intro);
       market.append('location', `${addressInputs.baseAddress}`);
-      console.log("두번인것인가?");
+      console.log('두번인것인가?');
       dispatch(addMarketRequest({ market, history, ToastsStore }));
     }
   };

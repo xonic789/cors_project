@@ -3,8 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useParams } from 'react-router-dom';
 import { ToastsContainer, ToastsContainerPosition, ToastsStore } from 'react-toasts';
 import styled from 'styled-components';
-import { addNoticeRequestAsync} from '../../../api/noticeApi';
-
+import { addNoticeRequestAsync } from '../../../api/noticeApi';
 
 const Layout = styled.div`
   position: relative;
@@ -208,7 +207,7 @@ function AdminNoticeAdd():JSX.Element {
   const dispatch = useDispatch();
   const [inputs, setInputs] = useState({
     title: '',
-    content:'',
+    content: '',
   });
 
   const onchangeInputs = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -244,15 +243,15 @@ function AdminNoticeAdd():JSX.Element {
         <h1>공지사항 관리</h1>
       </Header>
       <Content>
-                <TitleArea>
-                  <input type="text" onChange={onchangeInputs} name="title"/>
-                </TitleArea>
-                <TextArea>
-                  <textarea onChange={onchangeInputs} name="content"/>
-                </TextArea>
-                <ButtonBox>
-                <button onClick={onClickAdd} className="modify" type="button">등록</button>
-                </ButtonBox>
+        <TitleArea>
+          <input type="text" onChange={onchangeInputs} name="title" />
+        </TitleArea>
+        <TextArea>
+          <textarea onChange={onchangeInputs} name="content" />
+        </TextArea>
+        <ButtonBox>
+          <button onClick={onClickAdd} className="modify" type="button">등록</button>
+        </ButtonBox>
       </Content>
     </Layout>
   );
