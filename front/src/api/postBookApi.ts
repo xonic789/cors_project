@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { AddBookPostInterface } from '../interfaces/PostList.interface';
 
-const BASEURL = 'https://corsmarket.shop/api';
+const BASEURL = 'https://corsmarket.shop';
 
 const FormDataConfig = {
   headers: {
