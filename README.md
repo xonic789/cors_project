@@ -3,7 +3,7 @@
 ![BI](./img/코스마켓.png)
 
 
-DNS : freenom
+DNS : 가비아
 
 url : <https://corsmarket.shop>
 
