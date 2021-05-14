@@ -5,7 +5,7 @@
 
 DNS : freenom
 
-url : <https://corsmarket.ml>
+url : <https://corsmarket.shop>
 
 
 ## 0. 목차
