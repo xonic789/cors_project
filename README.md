@@ -5,7 +5,7 @@
 
 DNS : 가비아
 
-url : <https://corsmarket.shop>
+url : X
 
 
 ## 0. 목차
