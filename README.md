@@ -107,6 +107,7 @@ JWT Token을 이용한 인증처리로, 멤버 마이페이지를 구현하였�
 ## 4. 프론트엔드
 ### 4.1 기술스택
 - `React.js,redux,redux-saga,axios` 등
+- 패키지 잠금 파일은 `front/yarn.lock`을 정본으로 사용합니다.
 ### 4.2 CSR (Client Side Rendering)
 서버사이드렌더링 보다는 UX을 중시하여 SPA를 적용하였습니다.<br>
 nginx를 이용하여 프론트 서버를 따로 두지 않았습니다.<br>
