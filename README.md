@@ -7,6 +7,14 @@ DNS : 가비아
 
 url : X
 
+## 자격증명 관리
+
+AWS, OAuth, 이메일과 데이터베이스 자격증명은 `application-credential.yml`, `application-credentials.yml` 또는 `.env` 같은 로컬 비추적 파일로 관리합니다. 실제 값을 저장소에 커밋하지 않습니다.
+
+```bash
+bash tests/check_credentials.sh
+```
+
 
 ## 0. 목차
 [1. 프로젝트 요약](#1-프로젝트-요약)

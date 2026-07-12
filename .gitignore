@@ -1,6 +1,7 @@
 /www
 back/cors/gradle.properties
 back/cors/src/main/resources/application-credentials.yml
+back/cors/src/main/resources/application-credential.yml
 back/cors/src/main/resources/application-email.yml
 cors-0.0.1-SNAPSHOT.jar
 back/cors/logs
@@ -8,7 +9,11 @@ back/cors/cors-0.0.1-SNAPSHOT.jar
 back/cors/awscli-bundle/
 back/cors/awscli-bundle.zip
 back/cors/src/test/resources/application-credentials.yml
+back/cors/src/test/resources/application-credential.yml
 back/cors/src/test/resources/application-email.yml
-back/cors/src/main/resources/application-oauth.yml  
+back/cors/src/main/resources/application-oauth.yml
 back/cors/src/main/resources/application-datasource.yml
+**/.env
+**/.env.*
+!**/.env.example
 
