@@ -1,4 +1,5 @@
 /www
+front/.eslintcache
 back/cors/gradle.properties
 back/cors/src/main/resources/application-credentials.yml
 back/cors/src/main/resources/application-credential.yml
